@@ -49,7 +49,7 @@ end
 premake.info("Startup project: " .. startup)
 
 -- This is our solution name
-workspace "OTTER"
+workspace "HarmonicOTTER"
 	-- Processor architecture
 	architecture "x64"
 
