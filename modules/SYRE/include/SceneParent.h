@@ -4,11 +4,11 @@
 
 namespace syre {
 
-	class Scene
+	class SceneParent
 	{
 	public:
-		Scene();
-		~Scene();
+		SceneParent();
+		~SceneParent();
 		virtual void Start();
 		virtual void Update();
 		entt::registry m_Registry;

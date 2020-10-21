@@ -1,12 +1,27 @@
 #include "Mesh.h"
-#include "Scene.h"
+#include "SceneParent.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <GLM/glm.hpp>
 int main()
 {
-	syre::Scene* curScene = new syre::Scene;
-	std::string fileName;
+	GLFWwindow* window;
+	glfwInit();
+	//Create a new GLFW window
+	window = glfwCreateWindow(800, 800, "INFR1350U", nullptr, nullptr);
+	glfwMakeContextCurrent(window);
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+
+	syre::SceneParent* curScene = new syre::SceneParent;
+	std::string fileName = "monkey.obj";
 	entt::entity test = curScene->m_Registry.create();
 	curScene->m_Registry.emplace<syre::Mesh>(test, fileName);
+	while (true)
+	{
+		curScene->m_Registry.get<syre::Mesh>(test).Render();
 
-	syre::Mesh testMesh("C:\\tmp\\justACube.obj");
+	}
+
 	return 0;
 } 

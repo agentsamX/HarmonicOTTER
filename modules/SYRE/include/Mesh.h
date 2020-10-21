@@ -13,9 +13,9 @@ namespace syre
 	{
 	public:
 	
-		VertexBuffer::sptr vbo;
-		IndexBuffer::sptr ibo;
-		VertexArrayObject::sptr vao;
+		VertexBuffer::sptr vbo=VertexBuffer::Create();
+		IndexBuffer::sptr ibo=IndexBuffer::Create();
+		VertexArrayObject::sptr vao=VertexArrayObject::Create();
 		Mesh(std::string fileName);
 		glm::vec3 Vector3Parser(std::string line, int offset);
 		glm::vec2 Vector2Parser(std::string line, int offset);

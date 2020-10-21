@@ -46,12 +46,12 @@ syre::Mesh::Mesh(std::string fileName)
 				}
 			}
 			//Fill Vertex arrays up here
-			vbo = VertexBuffer::Create();
+			//vbo = VertexBuffer::Create();
 			vbo->LoadData(vertAsFloat.data(), vertAsFloat.size());
 			vbo->Bind();
-			ibo = IndexBuffer::Create();
+			//ibo = IndexBuffer::Create();
 			ibo->LoadData(indexedVertices.data(), sizeof(int), indexedVertices.size(), GL_UNSIGNED_INT);
-			vao = VertexArrayObject::Create();
+			//vao = VertexArrayObject::Create();
 			vao->AddVertexBuffer(vbo, {
 				BufferAttribute(0, 3, GL_FLOAT, false, 0, NULL)
 				});
