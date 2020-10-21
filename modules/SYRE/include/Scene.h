@@ -9,7 +9,10 @@ namespace syre {
 	public:
 		Scene();
 		~Scene();
-	private:
+		virtual void Start();
+		virtual void Update();
 		entt::registry m_Registry;
+
+	private:
 	};
 }
