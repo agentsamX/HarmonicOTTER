@@ -4,8 +4,8 @@
 
 syre::Mesh::Mesh(std::string fileName)
 {
-	std::vector<unsigned int> indexedVertices;
 	std::vector<float> vertAsFloat;
+	std::vector<unsigned int> indexedVertices;
 	std::vector<glm::vec2> vertUVs;
 	std::vector<glm::vec3> vertNormals;
 
@@ -45,13 +45,13 @@ syre::Mesh::Mesh(std::string fileName)
 					FaceLineProcessor(curLine,indexedVertices);
 				}
 			}
-			//Fill Vertex arrays up here
-			//vbo = VertexBuffer::Create();
+			
+			
+			VertexBuffer::sptr vbo = VertexBuffer::Create();
+			IndexBuffer::sptr ibo = IndexBuffer::Create();
 			vbo->LoadData(vertAsFloat.data(), vertAsFloat.size());
 			vbo->Bind();
-			//ibo = IndexBuffer::Create();
 			ibo->LoadData(indexedVertices.data(), sizeof(int), indexedVertices.size(), GL_UNSIGNED_INT);
-			//vao = VertexArrayObject::Create();
 			vao->AddVertexBuffer(vbo, {
 				BufferAttribute(0, 3, GL_FLOAT, false, 0, NULL)
 				});
@@ -67,7 +67,6 @@ syre::Mesh::Mesh(std::string fileName)
 	{
 		printf("not an obj");
 	}
-
 }
 
 glm::vec3 syre::Mesh::Vector3Parser(std::string line, int offset)
@@ -132,7 +131,7 @@ glm::vec2 syre::Mesh::Vector2Parser(std::string line, int offset)
 	return glm::vec2(std::stof(xCoord), std::stof(yCoord));
 }
 
-void syre::Mesh::FaceLineProcessor(std::string line, std::vector<unsigned int> indexVec)
+void syre::Mesh::FaceLineProcessor(std::string line, std::vector<unsigned int>& indexVec)
 {
 	int vertCounter=0;
 	std::string vertHolder;
@@ -203,7 +202,7 @@ void syre::Mesh::FaceLineProcessor(std::string line, std::vector<unsigned int> i
 		indexVec.push_back(verts[2]);
 		indexVec.push_back(verts[3]);
 	}
-	std::cout << std::endl;
+	//std::cout << std::endl;
 }
 
 void syre::Mesh::Render()
