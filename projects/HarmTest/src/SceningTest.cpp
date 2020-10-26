@@ -1,6 +1,11 @@
 #include "SceningTest.h"
 
 
+SceningTest::SceningTest(GLFWwindow* inWind)
+{
+	window = inWind;
+}
+
 void SceningTest::Start()
 {
 	std::string fileName = "monkey.obj";
@@ -12,6 +17,8 @@ void SceningTest::Start()
 	m_Camera = camera;
 	
 	m_Registry.emplace<syre::Mesh>(testModel, fileName);
+	m_Registry.emplace<syre::Transform>(testModel,glm::vec3(2.0f,2.0f,2.0f));
+
 	m_Registry.emplace<Camera::sptr>(camera);
 	m_Registry.emplace<Shader::sptr>(shader);
 
@@ -54,13 +61,55 @@ void SceningTest::Update()
 	shaderComponent->Bind();
 	shaderComponent->SetUniform("u_CamPos", camComponent->GetPosition());
 
-	auto renderView = m_Registry.view<syre::Mesh>();
+	auto renderView = m_Registry.view<syre::Mesh,syre::Transform>();
 	for (auto entity : renderView)
 	{
-		glm::mat4 transform = glm::mat4(1.0f);
+		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
 		shaderComponent->SetUniformMatrix("u_ModelViewProjection", camComponent->GetViewProjection() * transform);
 		shaderComponent->SetUniformMatrix("u_Model", transform);
 		shaderComponent->SetUniformMatrix("u_ModelRotation", glm::mat3(transform));
 		renderView.get<syre::Mesh>(entity).Render();
 	}
+}
+
+void SceningTest::ImGUIUpdate()
+{
+		// Implementation new frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		// ImGui context new frame
+		ImGui::NewFrame();
+
+		if (ImGui::Begin("Debug")) {
+			// Render our GUI stuff
+			auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
+			for (auto entity : movable)
+			{
+				auto& transform = m_Registry.get<syre::Transform>(entity);
+				ImGui::SliderFloat("Entity x", &transform.position.x, -2.0f, 2.0f);
+				ImGui::SliderFloat("Entity y", &transform.position.y, -2.0f, 2.0f);
+				ImGui::SliderFloat("Entity z", &transform.position.z, -2.0f, 2.0f);
+			}
+
+			ImGui::End();
+		}
+
+		// Make sure ImGui knows how big our window is
+		ImGuiIO& io = ImGui::GetIO();
+		int width{ 0 }, height{ 0 };
+		glfwGetWindowSize(window, &width, &height);
+		io.DisplaySize = ImVec2((float)width, (float)height);
+
+		// Render all of our ImGui elements
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+			// Update the windows that ImGui is using
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			// Restore our gl context
+			glfwMakeContextCurrent(window);
+		}
+	
 }

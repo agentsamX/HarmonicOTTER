@@ -13,3 +13,7 @@ void syre::SceneParent::Start()
 void syre::SceneParent::Update()
 {
 }
+
+void syre::SceneParent::ImGUIUpdate()
+{
+}

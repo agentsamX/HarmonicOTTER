@@ -3,9 +3,6 @@
 #include <GLFW/glfw3.h>
 
 #include <GLM/glm.hpp>
-#include <imgui.h>
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
 
 #include "SceneParent.h"
 #include "SceningTest.h"
@@ -164,7 +161,7 @@ int main()
 
 	std::vector<syre::SceneParent*> scenes;
 	scenes.push_back(new syre::SceneParent);
-	scenes.push_back(new SceningTest);
+	scenes.push_back(new SceningTest(window));
 	
 	syre::SceneParent* curScene = scenes[1];
 	
@@ -179,6 +176,8 @@ int main()
 	
 	glDisable(GL_CULL_FACE);
 
+	InitImGui();
+
 	curScene->Start();
 
 	while (!glfwWindowShouldClose(window))
@@ -189,8 +188,10 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		curScene->Update();
+		curScene->ImGUIUpdate();
 		glfwSwapBuffers(window);
 	}
 
+	ShutdownImGui();
 	return 0;
 } 
