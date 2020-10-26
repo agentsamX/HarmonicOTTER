@@ -7,10 +7,9 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include "Mesh.h"
 #include "SceneParent.h"
-#include "Shader.h"
-#include "Camera.h"
+#include "SceningTest.h"
+
 //taken from CG tutorials
 extern "C" {
 	__declspec(dllexport) unsigned long NvOptimusEnablement = 0x01;
@@ -165,45 +164,12 @@ int main()
 
 	std::vector<syre::SceneParent*> scenes;
 	scenes.push_back(new syre::SceneParent);
+	scenes.push_back(new SceningTest);
 	
-	syre::SceneParent* curScene = scenes[0];
-	std::string fileName = "monkey.obj";
-	entt::entity testModel = curScene->m_Registry.create();
-	entt::entity camera = curScene->m_Registry.create();
-
-	curScene->m_Registry.emplace<syre::Mesh>(testModel, fileName);
-	curScene->m_Registry.emplace<Camera::sptr>(camera);
-
-	Shader::sptr testShader = Shader::Create();
-	testShader->LoadShaderPartFromFile("vertex_shader.glsl", GL_VERTEX_SHADER);
-	testShader->LoadShaderPartFromFile("frag_blinn_phong.glsl", GL_FRAGMENT_SHADER);
-	testShader->Link();
-
-	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 2.0f);
-	glm::vec3 lightCol = glm::vec3(1.0f, 1.0f, 1.0f);
-	float     lightAmbientPow = 0.1f;
-	float     lightSpecularPow = 1.0f;
-	glm::vec3 ambientCol = glm::vec3(1.0f);
-	float     ambientPow = 0.1f;
-	float     shininess = 4.0f;
-	// These are our application / scene level uniforms that don't necessarily update
-	// every frame
-	testShader->SetUniform("u_LightPos", lightPos);
-	testShader->SetUniform("u_LightCol", lightCol);
-	testShader->SetUniform("u_AmbientLightStrength", lightAmbientPow);
-	testShader->SetUniform("u_SpecularLightStrength", lightSpecularPow);
-	testShader->SetUniform("u_AmbientCol", ambientCol);
-	testShader->SetUniform("u_AmbientStrength", ambientPow);
-	testShader->SetUniform("u_Shininess", shininess);
+	syre::SceneParent* curScene = scenes[1];
 	
 	glEnable(GL_DEPTH_TEST);
 
-	auto& camComponent = curScene->m_Registry.get<Camera::sptr>(camera);
-	camComponent = Camera::Create();
-	camComponent->SetPosition(glm::vec3(0, 3, 3)); // Set initial position
-	camComponent->SetUp(glm::vec3(0, 0, 1)); // Use a z-up coordinate system
-	camComponent->LookAt(glm::vec3(0.0f)); // Look at center of the screen
-	camComponent->SetFovDegrees(100.0f); // Set an initial FOV
 
 	int width = 0;
 	int height = 0;
@@ -213,6 +179,7 @@ int main()
 	
 	glDisable(GL_CULL_FACE);
 
+	curScene->Start();
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -221,13 +188,7 @@ int main()
 		glClearColor(0.08f, 0.17f, 0.31f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		testShader->Bind();
-		testShader->SetUniform("u_CamPos", camComponent->GetPosition());
-		testShader->SetUniformMatrix("u_ModelViewProjection", camComponent->GetViewProjection() * transform);
-		testShader->SetUniformMatrix("u_Model", transform);
-		testShader->SetUniformMatrix("u_ModelRotation", glm::mat3(transform));
-
-		curScene->m_Registry.get<syre::Mesh>(testModel).Render();
+		curScene->Update();
 		glfwSwapBuffers(window);
 	}
 

@@ -1,6 +1,9 @@
 #pragma once
 
 #include "entt.hpp"
+#include "Mesh.h"
+#include "Camera.h"
+#include "Shader.h"
 
 namespace syre {
 
