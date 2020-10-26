@@ -9,13 +9,14 @@ namespace syre
 	{
 	public:
 		Transform();
-		Transform(glm::vec3 pos, glm::quat rot, glm::vec3 sca);
+		Transform(glm::vec3 pos, glm::vec3 rot, glm::vec3 sca);
 		Transform(glm::vec3 pos);
 		glm::mat4 GetModelMat();
 
 		glm::vec3 globalPosition;
 		glm::vec3 position;
 		glm::vec3 scale;
+		glm::vec3 rotationEuler;
 		glm::quat rotation;
 		
 

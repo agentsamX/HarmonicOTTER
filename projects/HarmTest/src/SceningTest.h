@@ -9,6 +9,7 @@ public:
 	void Update();
 	void ImGUIUpdate();
 private:
+	void KeyEvents(float delta);
 	entt::entity m_Camera;
 	entt::entity m_Shader;
 };

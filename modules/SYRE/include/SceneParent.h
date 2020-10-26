@@ -24,6 +24,8 @@ namespace syre {
 		GLFWwindow* window;
 	protected:
 		entt::registry m_Registry;
+		double lastFrame;
+		double thisFrame;
 
 	};
 }
