@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Transform.h"
+#include "Texture.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"

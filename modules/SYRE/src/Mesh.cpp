@@ -119,14 +119,14 @@ syre::Mesh::Mesh(std::string fileName)
 
 				}
 			}
-			for (int i = 0; i < combinedVertBuffer.size(); i += 8)
+			/*for (int i = 0; i < combinedVertBuffer.size(); i += 8)
 			{
 				printf("%f %f %f %f %f %f %f %f\n", combinedVertBuffer[i], combinedVertBuffer[i + 1], combinedVertBuffer[i + 2], combinedVertBuffer[i + 3], combinedVertBuffer[i + 4], combinedVertBuffer[i + 5], combinedVertBuffer[i + 6], combinedVertBuffer[i + 7]);
 			}
 			
 			printf("%i ",combinedVertBuffer.size());
 			printf("%i ", indexedVertices.size());
-
+			*/
 			VertexBuffer::sptr vbo = VertexBuffer::Create();
 			IndexBuffer::sptr ibo = IndexBuffer::Create();
 
