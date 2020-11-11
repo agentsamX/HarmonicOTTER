@@ -16,12 +16,30 @@ void SceningTest::Start()
 	entt::entity shader = m_Registry.create();
 	entt::entity Car = m_Registry.create();
 
+	//cards
+	entt::entity NO2Card = m_Registry.create();
+	entt::entity SlipstreamCard = m_Registry.create();
+
+
 	m_Shader = shader;
 	m_Camera = camera;
 	
 
 	m_Registry.emplace<syre::Mesh>(testModel, fileName);
 	m_Registry.emplace<syre::Transform>(testModel,glm::vec3(2.0f,2.0f,2.0f));
+
+	//cards
+	m_Registry.emplace<syre::Mesh>(NO2Card, "CardNO2.obj");
+	m_Registry.emplace<syre::Transform>(NO2Card, glm::vec3(0.0f, 0.0f, 2.0f));
+	//m_Registry.emplace<syre::Texture>(NO2Card, "NO2.png");
+
+	m_Registry.emplace<syre::Mesh>(SlipstreamCard, "CardNO2.obj");
+	m_Registry.emplace<syre::Transform>(SlipstreamCard, glm::vec3(-3.0f, 0.0f, 2.0f));
+	//m_Registry.emplace<syre::Texture>(SlipstreamCard, "Slipstream.png");
+
+
+
+
 
 	m_Registry.emplace<Camera::sptr>(camera);
 	m_Registry.emplace<Shader::sptr>(shader);
