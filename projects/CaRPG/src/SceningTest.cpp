@@ -1,6 +1,4 @@
 #include "SceningTest.h"
-#include "Hand.h"
-#include "Deck.h"
 #include "Cars.h"
 
 SceningTest::SceningTest(GLFWwindow* inWind)
@@ -23,7 +21,9 @@ void SceningTest::Start()
 
 	m_Shader = shader;
 	m_Camera = camera;
+	m_PCar = Car;
 	
+	m_Registry.emplace<Cars>(Car);
 
 	m_Registry.emplace<syre::Mesh>(testModel, fileName);
 	m_Registry.emplace<syre::Transform>(testModel,glm::vec3(2.0f,2.0f,2.0f));
@@ -83,6 +83,7 @@ void SceningTest::Update()
 	float deltaTime = thisFrame - lastFrame;
 	auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
 	auto& shaderComponent = m_Registry.get<Shader::sptr>(m_Shader);
+
 
 	KeyEvents(deltaTime);
 
@@ -148,6 +149,7 @@ void SceningTest::ImGUIUpdate()
 void SceningTest::KeyEvents(float delta)
 {
 	auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
+	auto& PlayerComponent = m_Registry.view<Cars>();
 	glm::vec3 curCamPos = camComponent->GetPosition();
 	glm::vec3 curCamFor = camComponent->GetForward();
 
@@ -182,6 +184,9 @@ void SceningTest::KeyEvents(float delta)
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 	{
 		curCamFor.y += 0.01f * delta;
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
 	}
 	camComponent->SetPosition(curCamPos);
 	camComponent->SetForward(glm::normalize(curCamFor));

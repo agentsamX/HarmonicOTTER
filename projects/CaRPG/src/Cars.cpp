@@ -45,6 +45,71 @@ void Cars::SetBrk()
 		Brake = false;
 }
 
-void Cars::PlayCard(int type)
+void Cars::PlayCard(int Position)
+{
+	if (Hand[Position] == 1)
+	{
+		printf("NO2 played");
+	}
+	if (Hand[Position] == 2)
+	{
+		printf("Slipstream played");
+	}
+	if (Hand[Position] == 3)
+	{
+		printf("Drift");
+	}
+}
+
+void Cars::AddCard(int NewCard, bool object)
+{
+	if (object == true)
+	{
+		for (int i = 0; i <= 4; i++)
+		{
+			if (Hand[i] == 0)
+			{
+				Hand[i] = NewCard;
+				break;
+			}
+		}
+	}
+	if (object == false)
+	{
+		Deck.emplace_back(NewCard);
+	}
+}
+
+void Cars::RemoveCard(int Position, bool object)
+{
+	if (object == true)
+	{
+		Hand[Position - 1] = 0;
+	}
+	if (object == false)
+	{
+		Deck.erase(Deck.begin() + Position - 1);
+	}
+}
+
+int Cars::GetCard(int Position, bool object)
+{
+	if (object == true)
+	{
+		return Hand[Position];
+	}
+	if (object == false)
+	{
+		return Deck.at(Position);
+	}
+}
+
+int Cars::Draw()
+{
+	return 0;
+}
+
+void Cars::Shuffle()
 {
 }
+
