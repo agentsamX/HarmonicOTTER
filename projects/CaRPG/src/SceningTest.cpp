@@ -94,10 +94,10 @@ void SceningTest::Update()
 	KeyEvents(deltaTime);
 	flatShader->Bind();
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(-2.f, -3.7f));
+	flatShader->SetUniform("offset", glm::vec2(-.4f, -.7f));
 	m_Registry.get<syre::Texture>(NO2Card).Bind();
 	m_Registry.get<syre::Mesh>(NO2Card).Render();
-	flatShader->SetUniform("offset", glm::vec2(0.f, -3.7f));
+	flatShader->SetUniform("offset", glm::vec2(0.f, -.7f));
 	m_Registry.get<syre::Texture>(SlipstreamCard).Bind();
 	m_Registry.get<syre::Mesh>(SlipstreamCard).Render();
 
@@ -204,6 +204,14 @@ void SceningTest::KeyEvents(float delta)
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
 		m_Registry.get<Cars>(m_PCar).PlayCard(0);
+	}
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	{
+		double* x = new double;
+		double* y = new double;
+
+		glfwGetCursorPos(window, x,y);
+		printf("Mouse at X %f Y %f\n", *x, *y);
 	}
 	camComponent->SetPosition(curCamPos);
 	camComponent->SetForward(glm::normalize(curCamFor));

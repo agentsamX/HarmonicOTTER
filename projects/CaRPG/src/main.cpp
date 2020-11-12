@@ -180,6 +180,13 @@ int main()
 
 	curScene->Start();
 
+
+	/*glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	GLFWcursor* cursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+	glfwSetCursor(window, cursor);
+	*/
+
+
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();

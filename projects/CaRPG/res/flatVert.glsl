@@ -15,7 +15,8 @@ uniform mat4 scale;
 
 void main() {
 
-	gl_Position = scale * vec4(inPosition.x+offset.x,-inPosition.z+offset.y,inPosition.y, 1.0);
+	vec4 scaled = scale * vec4(inPosition.x,-inPosition.z,inPosition.y, 1.0);
+	gl_Position = vec4(scaled.x+offset.x,scaled.y+offset.y,scaled.zw);
 
 	// Lecture 5
 	// Pass vertex pos in world space to frag shader
