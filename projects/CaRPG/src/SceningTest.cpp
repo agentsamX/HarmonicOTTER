@@ -15,8 +15,8 @@ void SceningTest::Start()
 	entt::entity Car = m_Registry.create();
 
 	//cards
-	entt::entity NO2Card = m_Registry.create();
-	entt::entity SlipstreamCard = m_Registry.create();
+	NO2Card = m_Registry.create();
+	SlipstreamCard = m_Registry.create();
 
 
 	m_Shader = shader;
@@ -27,16 +27,22 @@ void SceningTest::Start()
 
 	m_Registry.emplace<syre::Mesh>(testModel, fileName);
 	m_Registry.emplace<syre::Transform>(testModel,glm::vec3(2.0f,2.0f,2.0f));
+	m_Registry.emplace<syre::Texture>(testModel, "Slipstream.png");
 
 	//cards
 	m_Registry.emplace<syre::Mesh>(NO2Card, "CardNO2.obj");
-	m_Registry.emplace<syre::Transform>(NO2Card, glm::vec3(0.0f, 0.0f, 2.0f));
-	//m_Registry.emplace<syre::Texture>(NO2Card, "NO2.png");
+	m_Registry.emplace<syre::Transform>(NO2Card, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2f));
+	m_Registry.emplace<syre::Texture>(NO2Card, "NO2.png");
 
 	m_Registry.emplace<syre::Mesh>(SlipstreamCard, "CardNO2.obj");
-	m_Registry.emplace<syre::Transform>(SlipstreamCard, glm::vec3(-3.0f, 0.0f, 2.0f));
-	//m_Registry.emplace<syre::Texture>(SlipstreamCard, "Slipstream.png");
+	m_Registry.emplace<syre::Transform>(SlipstreamCard, glm::vec3(-3.0f, 0.0f, 2.0f),glm::vec3(0.0,0.0,0.0),glm::vec3(0.2f));
+	m_Registry.emplace<syre::Texture>(SlipstreamCard, "Slipstream.png");
 
+
+	flatShader = Shader::Create();
+	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
+	flatShader->LoadShaderPartFromFile("flatFrag.glsl", GL_FRAGMENT_SHADER);
+	flatShader->Link();
 
 
 
@@ -47,7 +53,7 @@ void SceningTest::Start()
 	auto& shaderComponent = m_Registry.get<Shader::sptr>(shader);
 	shaderComponent = Shader::Create();
 	shaderComponent->LoadShaderPartFromFile("vertex_shader.glsl", GL_VERTEX_SHADER);
-	shaderComponent->LoadShaderPartFromFile("frag_blinn_phong.glsl", GL_FRAGMENT_SHADER);
+	shaderComponent->LoadShaderPartFromFile("frag_shader.glsl", GL_FRAGMENT_SHADER);
 	shaderComponent->Link();
 
 	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 2.0f);
@@ -83,20 +89,30 @@ void SceningTest::Update()
 	float deltaTime = thisFrame - lastFrame;
 	auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
 	auto& shaderComponent = m_Registry.get<Shader::sptr>(m_Shader);
-
+	glm::vec3 camX = glm::cross(camComponent->GetForward(), camComponent->GetUp());
 
 	KeyEvents(deltaTime);
+	flatShader->Bind();
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+	flatShader->SetUniform("offset", glm::vec2(-2.f, -3.7f));
+	m_Registry.get<syre::Texture>(NO2Card).Bind();
+	m_Registry.get<syre::Mesh>(NO2Card).Render();
+	flatShader->SetUniform("offset", glm::vec2(0.f, -3.7f));
+	m_Registry.get<syre::Texture>(SlipstreamCard).Bind();
+	m_Registry.get<syre::Mesh>(SlipstreamCard).Render();
+
 
 	shaderComponent->Bind();
 	shaderComponent->SetUniform("u_CamPos", camComponent->GetPosition());
 
-	auto renderView = m_Registry.view<syre::Mesh,syre::Transform>();
+	auto renderView = m_Registry.view<syre::Mesh,syre::Transform,syre::Texture>();
 	for (auto entity : renderView)
 	{
 		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
 		shaderComponent->SetUniformMatrix("u_ModelViewProjection", camComponent->GetViewProjection() * transform);
 		shaderComponent->SetUniformMatrix("u_Model", transform);
 		shaderComponent->SetUniformMatrix("u_ModelRotation", glm::mat3(transform));
+		renderView.get<syre::Texture>(entity).Bind();
 		renderView.get<syre::Mesh>(entity).Render();
 	}
 }
@@ -187,7 +203,9 @@ void SceningTest::KeyEvents(float delta)
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
+		m_Registry.get<Cars>(m_PCar).PlayCard(0);
 	}
 	camComponent->SetPosition(curCamPos);
 	camComponent->SetForward(glm::normalize(curCamFor));
 }
+

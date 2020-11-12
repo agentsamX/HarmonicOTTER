@@ -13,4 +13,7 @@ private:
 	entt::entity m_Camera;
 	entt::entity m_Shader;
 	entt::entity m_PCar;
+	entt::entity NO2Card;
+	entt::entity SlipstreamCard;
+	Shader::sptr flatShader;
 };
