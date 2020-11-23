@@ -64,7 +64,7 @@ syre::Mesh::Mesh(std::string fileName)
 						if (stream.peek() != EOF)
 						{
 							char tempChar;
-							vertexIndices = glm::ivec3(0);
+							vertexIndices = glm::ivec3(0,0,0);
 							stream >> vertexIndices.x >> tempChar >> vertexIndices.y >> tempChar >> vertexIndices.z;
 
 							const uint64_t mask = 0b0'000000000000000000000'000000000000000000000'111111111111111111111;

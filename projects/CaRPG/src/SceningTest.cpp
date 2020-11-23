@@ -24,6 +24,9 @@ void SceningTest::Start()
 	m_PCar = Car;
 	
 	m_Registry.emplace<Cars>(Car);
+	m_Registry.emplace<syre::Mesh>(Car, "Car2.obj");
+	m_Registry.emplace<syre::Transform>(Car, glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(90.f,0.0f,0.0f),glm::vec3(1.0f));
+	m_Registry.emplace<syre::Texture>(Car, "Car2.png");
 
 	m_Registry.emplace<syre::Mesh>(testModel, fileName);
 	m_Registry.emplace<syre::Transform>(testModel,glm::vec3(2.0f,2.0f,2.0f));
