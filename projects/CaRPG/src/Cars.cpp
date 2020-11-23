@@ -50,6 +50,7 @@ void Cars::PlayCard(int Position)
 	if (Hand[Position] == 1)
 	{
 		printf("NO2 played");
+		RemoveCard(Position, true);
 	}
 	if (Hand[Position] == 2)
 	{
@@ -84,11 +85,11 @@ void Cars::RemoveCard(int Position, bool object)
 {
 	if (object == true)
 	{
-		Hand[Position - 1] = 0;
+		Hand[Position] = 0;
 	}
 	if (object == false)
 	{
-		Deck.erase(Deck.begin() + Position - 1);
+		Deck.erase(Deck.begin() + Position);
 	}
 }
 
@@ -106,6 +107,7 @@ int Cars::GetCard(int Position, bool object)
 
 int Cars::Draw()
 {
+	
 	return 0;
 }
 

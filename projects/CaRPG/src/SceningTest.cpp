@@ -168,7 +168,7 @@ void SceningTest::ImGUIUpdate()
 void SceningTest::KeyEvents(float delta)
 {
 	auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
-	auto& PlayerComponent = m_Registry.view<Cars>();
+	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	glm::vec3 curCamPos = camComponent->GetPosition();
 	glm::vec3 curCamFor = camComponent->GetForward();
 
@@ -206,7 +206,7 @@ void SceningTest::KeyEvents(float delta)
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		m_Registry.get<Cars>(m_PCar).PlayCard(0);
+		PlayerComponent.PlayCard(0);
 	}
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
