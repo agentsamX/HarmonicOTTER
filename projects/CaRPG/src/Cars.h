@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
 class Cars
 {
@@ -30,5 +32,5 @@ private:
 	bool Brake;
 	int Gear;
 	int Hand[4] = {1,0,0,0};
-	std::vector <int> Deck = {};
+	std::vector <int> Deck = {1,2,3,4,5};
 };
