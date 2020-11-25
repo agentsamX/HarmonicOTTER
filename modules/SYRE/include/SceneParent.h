@@ -3,6 +3,7 @@
 #include "entt.hpp"
 #include "Mesh.h"
 #include "Camera.h"
+#include "MorphRenderer.h"
 #include "Shader.h"
 #include "Transform.h"
 #include "Texture.h"

@@ -16,4 +16,5 @@ private:
 	entt::entity NO2Card;
 	entt::entity SlipstreamCard;
 	Shader::sptr flatShader;
+	Shader::sptr morphShader;
 };

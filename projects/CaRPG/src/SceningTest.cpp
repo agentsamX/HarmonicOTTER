@@ -27,6 +27,7 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(Car, "Car2.obj");
 	m_Registry.emplace<syre::Transform>(Car, glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(90.f,0.0f,0.0f),glm::vec3(1.0f));
 	m_Registry.emplace<syre::Texture>(Car, "Car2.png");
+	m_Registry.emplace<syre::MorphRenderer>(Car);
 
 	m_Registry.emplace<syre::Mesh>(testModel, fileName);
 	m_Registry.emplace<syre::Transform>(testModel,glm::vec3(2.0f,2.0f,2.0f));
@@ -76,6 +77,29 @@ void SceningTest::Start()
 	shaderComponent->SetUniform("u_AmbientStrength", ambientPow);
 	shaderComponent->SetUniform("u_Shininess", shininess);
 
+
+	morphShader = Shader::Create();
+	morphShader->LoadShaderPartFromFile("vertex_shader.glsl", GL_VERTEX_SHADER);
+	morphShader->LoadShaderPartFromFile("frag_shader.glsl", GL_FRAGMENT_SHADER);
+	morphShader->Link();
+
+	lightPos = glm::vec3(0.0f, 0.0f, 2.0f);
+	lightCol = glm::vec3(1.0f, 1.0f, 1.0f);
+	lightAmbientPow = 0.1f;
+	lightSpecularPow = 1.0f;
+	ambientCol = glm::vec3(1.0f);
+	ambientPow = 0.5f;
+	shininess = 4.0f;
+	// These are our application / scene level uniforms that don't necessarily update
+	// every frame
+	morphShader->SetUniform("u_LightPos", lightPos);
+	morphShader->SetUniform("u_LightCol", lightCol);
+	morphShader->SetUniform("u_AmbientLightStrength", lightAmbientPow);
+	morphShader->SetUniform("u_SpecularLightStrength", lightSpecularPow);
+	morphShader->SetUniform("u_AmbientCol", ambientCol);
+	morphShader->SetUniform("u_AmbientStrength", ambientPow);
+	morphShader->SetUniform("u_Shininess", shininess);
+
 	auto& camComponent = m_Registry.get<Camera::sptr>(camera);
 	camComponent = Camera::Create();
 	camComponent->SetPosition(glm::vec3(0, 3, 3)); // Set initial position
@@ -117,6 +141,17 @@ void SceningTest::Update()
 		shaderComponent->SetUniformMatrix("u_ModelRotation", glm::mat3(transform));
 		renderView.get<syre::Texture>(entity).Bind();
 		renderView.get<syre::Mesh>(entity).Render();
+	}
+	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
+	for (auto entity : morphRenderView)
+	{
+		glm::mat4 transform = morphRenderView.get<syre::Transform>(entity).GetModelMat();
+		morphShader->SetUniformMatrix("u_ModelViewProjection", camComponent->GetViewProjection() * transform);
+		morphShader->SetUniformMatrix("u_Model", transform);
+		morphShader->SetUniformMatrix("u_ModelRotation", glm::mat3(transform));
+		morphShader->SetUniform("t", morphRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime));
+		morphRenderView.get<syre::Texture>(entity).Bind();
+		morphRenderView.get<syre::MorphRenderer>(entity).Render();
 	}
 }
 

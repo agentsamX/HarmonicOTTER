@@ -31,7 +31,6 @@ syre::Transform::Transform(glm::vec3 pos)
 
 glm::mat4 syre::Transform::GetModelMat()
 {
-	rotation = (glm::quat(glm::radians(rotationEuler)));
 	return glm::mat4(glm::translate(glm::mat4(1.0f), position) * glm::toMat4(rotation) * glm::scale(glm::mat4(1.0f), scale));
 }
 
@@ -53,4 +52,10 @@ glm::vec3 syre::Transform::GetRotation()
 void syre::Transform::SetRotation(glm::vec3 rotIn)
 {
 	rotationEuler = rotIn;
+	rotation = (glm::quat(glm::radians(rotationEuler)));
+}
+
+void syre::Transform::SetRotQuat(glm::quat quatIn)
+{
+	rotation = quatIn;
 }

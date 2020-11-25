@@ -18,7 +18,7 @@ namespace syre
 		PathAnimator(PathType initType, bool speedCont,glm::vec3 startPoint);
 		void AddPoint(glm::vec3 pos, glm::vec3 rot);
 		void AddPoint(std::vector<glm::vec3>& pos, std::vector<glm::vec3>& rot);
-		void Update(Transform* curTrans, float delta);
+		void Update(Transform& curTrans, float delta);
 		void Reset();
 	private:
 		PathType pathType;
@@ -26,9 +26,16 @@ namespace syre
 		bool absolutePos = true;
 		std::vector<glm::mat2x3> points;
 		glm::vec3 startPoint;
+		float distTravelled = 0.f;
 		int currentIndex = 0;
 		int handleIndex1 = 1;
 		int handleIndex2 = 2;
 		int nextIndex = 1;
+		int stopPoint;
 	};
+}
+
+static inline glm::vec3 Bezier(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, float t)
+{
+	return glm::mix(glm::mix(glm::mix(p0, p1, t), glm::mix(p1, p2, t), t), glm::mix(glm::mix(p1, p2, t), glm::mix(p2, p3, t), t), t);
 }
