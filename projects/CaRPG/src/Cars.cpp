@@ -1,5 +1,6 @@
 #include "Cars.h"
 
+
 Cars::Cars()
 {
 	Accelerate = false;
@@ -50,15 +51,18 @@ void Cars::PlayCard(int Position)
 	if (Hand[Position] == 1)
 	{
 		printf("NO2 played");
+		Gear += 4;
 		RemoveCard(Position, true);
 	}
 	if (Hand[Position] == 2)
 	{
 		printf("Slipstream played");
+		RemoveCard(Position, true);
 	}
 	if (Hand[Position] == 3)
 	{
 		printf("Drift");
+		RemoveCard(Position, true);
 	}
 }
 
@@ -113,5 +117,20 @@ int Cars::Draw()
 
 void Cars::Shuffle()
 {
+	srand((unsigned)time(0));
+	int randomNumber1;
+	int randomNumber2;
+	int temp;
+	for (int index = 0; index < 5; index++) {
+		randomNumber1 = (rand() % Deck.size());
+		randomNumber2 = (rand() % Deck.size());
+		temp = Deck.at(randomNumber1);
+		Deck.at(randomNumber1) = Deck.at(randomNumber2);
+		Deck.at(randomNumber2) = temp;
+	}
+	for (int index = 0; index < Deck.size() - 1; index++)
+	{
+		printf("%i", Deck.at(index));
+	}
 }
 

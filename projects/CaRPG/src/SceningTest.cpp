@@ -33,6 +33,7 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Texture>(testModel, "Slipstream.png");
 
 	//cards
+
 	m_Registry.emplace<syre::Mesh>(NO2Card, "CardNO2.obj");
 	m_Registry.emplace<syre::Transform>(NO2Card, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2f));
 	m_Registry.emplace<syre::Texture>(NO2Card, "NO2.png");
@@ -92,17 +93,32 @@ void SceningTest::Update()
 	float deltaTime = thisFrame - lastFrame;
 	auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
 	auto& shaderComponent = m_Registry.get<Shader::sptr>(m_Shader);
+	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	glm::vec3 camX = glm::cross(camComponent->GetForward(), camComponent->GetUp());
-
 	KeyEvents(deltaTime);
 	flatShader->Bind();
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
 	flatShader->SetUniform("offset", glm::vec2(-.4f, -.7f));
-	m_Registry.get<syre::Texture>(NO2Card).Bind();
-	m_Registry.get<syre::Mesh>(NO2Card).Render();
+	//m_Registry.get<syre::Texture>(NO2Card).Bind();
+	//m_Registry.get<syre::Mesh>(NO2Card).Render();
 	flatShader->SetUniform("offset", glm::vec2(0.f, -.7f));
-	m_Registry.get<syre::Texture>(SlipstreamCard).Bind();
-	m_Registry.get<syre::Mesh>(SlipstreamCard).Render();
+	for (int i = 0; i <= 4; i++)
+	{
+		if (PlayerComponent.GetCard(i, true) == 1)
+		{
+			m_Registry.get<syre::Texture>(NO2Card).Bind();
+			m_Registry.get<syre::Mesh>(SlipstreamCard).Render();
+		}
+		if (PlayerComponent.GetCard(i, true) == 2)
+		{
+			m_Registry.get<syre::Texture>(SlipstreamCard).Bind();
+			m_Registry.get<syre::Mesh>(SlipstreamCard).Render();
+		}
+		if (PlayerComponent.GetCard(i, true) == 3)
+		{
+
+		}
+	}
 
 
 	shaderComponent->Bind();
@@ -122,6 +138,7 @@ void SceningTest::Update()
 
 void SceningTest::ImGUIUpdate()
 {
+	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 		// Implementation new frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -206,7 +223,7 @@ void SceningTest::KeyEvents(float delta)
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		PlayerComponent.PlayCard(0);
+		PlayerComponent.Shuffle();
 	}
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
@@ -215,6 +232,10 @@ void SceningTest::KeyEvents(float delta)
 
 		glfwGetCursorPos(window, x,y);
 		printf("Mouse at X %f Y %f\n", *x, *y);
+		if (*x >= 320.0 && *x <= 480.0 && *y <= 798.0 && *y >= 560.0)
+		{
+			PlayerComponent.PlayCard(0);
+		}
 	}
 	camComponent->SetPosition(curCamPos);
 	camComponent->SetForward(glm::normalize(curCamFor));
