@@ -39,15 +39,18 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Texture>(Car, "Car2.png");
 	m_Registry.emplace<syre::PathAnimator>(Car,syre::PathType::BEZIER);
 	auto& carPath = m_Registry.get<syre::PathAnimator>(Car);
+
 	carPath.AddPoint(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	carPath.AddPoint(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	carPath.AddPoint(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	carPath.AddPoint(glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	carPath.AddPoint(glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	carPath.AddPoint(glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	carPath.AddPoint(glm::vec3(4.0f, -5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	carPath.AddPoint(glm::vec3(3.0f, -5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	carPath.AddPoint(glm::vec3(3.0f, -5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(2.0f, 3.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(3.0f, 3.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(4.0f, 3.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(5.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
 	carPath.SpeedControl();
 
