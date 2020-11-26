@@ -22,7 +22,7 @@ uniform float t;
 
 void main() {
 
-	gl_Position = u_ModelViewProjection * vec4(inPosition, 1.0);
+	gl_Position = u_ModelViewProjection * vec4(mix(inPosition,inPosition2,t), 1.0);
 
 	// Lecture 5
 	// Pass vertex pos in world space to frag shader

@@ -191,7 +191,7 @@ float syre::MorphRenderer::Update(float delta)
 		else
 		{
 			vao->AddVertexBuffer(Keys[curFrame].VBO, attribs);
-			vao->AddVertexBuffer(Keys[curFrame].VBO, attribs2);
+			vao->AddVertexBuffer(Keys[curFrame+1].VBO, attribs2);
 		}
 	}
 	return timer / frameTime;

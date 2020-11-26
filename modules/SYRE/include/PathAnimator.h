@@ -19,14 +19,19 @@ namespace syre
 		void AddPoint(glm::vec3 pos, glm::vec3 rot);
 		void AddPoint(std::vector<glm::vec3>& pos, std::vector<glm::vec3>& rot);
 		void Update(Transform& curTrans, float delta);
+		void SpeedControl();
 		void Reset();
 	private:
 		PathType pathType;
+		float InvLerp(float start, float end, float cur);
 		bool speedControl = true;
 		bool absolutePos = true;
 		std::vector<glm::mat2x3> points;
 		glm::vec3 startPoint;
+		std::vector<std::vector<glm::vec2>> bezierTable;//t value is x, total distance is z
+		bool isPlay = true;
 		float distTravelled = 0.f;
+		int samplesPerSeg = 10;
 		int currentIndex = 0;
 		int handleIndex1 = 1;
 		int handleIndex2 = 2;

@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "MorphRenderer.h"
+#include "PathAnimator.h"
 #include "Shader.h"
 #include "Transform.h"
 #include "Texture.h"

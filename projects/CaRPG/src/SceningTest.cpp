@@ -17,6 +17,16 @@ void SceningTest::Start()
 	//cards
 	NO2Card = m_Registry.create();
 	SlipstreamCard = m_Registry.create();
+	entt::entity morphTest = m_Registry.create();
+	m_Registry.emplace<syre::MorphRenderer>(morphTest);
+	m_Registry.emplace<syre::Texture>(morphTest, "Car2.png");
+	m_Registry.emplace<syre::Transform>(morphTest, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.0f), glm::vec3(1.0f));
+	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_1.obj");
+	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_2.obj");
+	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_3.obj");
+	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_2.obj");
+
+
 
 
 	m_Shader = shader;
@@ -27,7 +37,20 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(Car, "Car2.obj");
 	m_Registry.emplace<syre::Transform>(Car, glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(90.f,0.0f,0.0f),glm::vec3(1.0f));
 	m_Registry.emplace<syre::Texture>(Car, "Car2.png");
-	m_Registry.emplace<syre::MorphRenderer>(Car);
+	m_Registry.emplace<syre::PathAnimator>(Car,syre::PathType::BEZIER);
+	auto& carPath = m_Registry.get<syre::PathAnimator>(Car);
+	carPath.AddPoint(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(4.0f, -5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(3.0f, -5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(3.0f, -5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.SpeedControl();
+
 
 	m_Registry.emplace<syre::Mesh>(testModel, fileName);
 	m_Registry.emplace<syre::Transform>(testModel,glm::vec3(2.0f,2.0f,2.0f));
@@ -80,7 +103,7 @@ void SceningTest::Start()
 
 
 	morphShader = Shader::Create();
-	morphShader->LoadShaderPartFromFile("vertex_shader.glsl", GL_VERTEX_SHADER);
+	morphShader->LoadShaderPartFromFile("morph_vertex_shader.glsl", GL_VERTEX_SHADER);
 	morphShader->LoadShaderPartFromFile("frag_shader.glsl", GL_FRAGMENT_SHADER);
 	morphShader->Link();
 
@@ -113,6 +136,7 @@ void SceningTest::Start()
 
 void SceningTest::Update()
 {
+	
 	thisFrame = glfwGetTime();
 	float deltaTime = thisFrame - lastFrame;
 	auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
@@ -143,11 +167,16 @@ void SceningTest::Update()
 
 		}
 	}
+	auto pathView = m_Registry.view<syre::PathAnimator, syre::Transform>();
+	for (auto entity : pathView)
+	{
+		auto& transform = m_Registry.get<syre::Transform>(entity);
+		m_Registry.get<syre::PathAnimator>(entity).Update(transform, deltaTime);
+	}
 
 
 	shaderComponent->Bind();
 	shaderComponent->SetUniform("u_CamPos", camComponent->GetPosition());
-
 	auto renderView = m_Registry.view<syre::Mesh,syre::Transform,syre::Texture>();
 	for (auto entity : renderView)
 	{
@@ -159,16 +188,19 @@ void SceningTest::Update()
 		renderView.get<syre::Mesh>(entity).Render();
 	}
 	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
+	morphShader->Bind();
 	for (auto entity : morphRenderView)
 	{
+		float t = morphRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime);
 		glm::mat4 transform = morphRenderView.get<syre::Transform>(entity).GetModelMat();
 		morphShader->SetUniformMatrix("u_ModelViewProjection", camComponent->GetViewProjection() * transform);
 		morphShader->SetUniformMatrix("u_Model", transform);
 		morphShader->SetUniformMatrix("u_ModelRotation", glm::mat3(transform));
-		morphShader->SetUniform("t", morphRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime));
+		morphShader->SetUniform("t", t);
 		morphRenderView.get<syre::Texture>(entity).Bind();
 		morphRenderView.get<syre::MorphRenderer>(entity).Render();
 	}
+	lastFrame = thisFrame;
 }
 
 void SceningTest::ImGUIUpdate()
@@ -271,6 +303,10 @@ void SceningTest::KeyEvents(float delta)
 		{
 			PlayerComponent.PlayCard(0);
 		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+	{
+		m_Registry.get<syre::PathAnimator>(m_PCar).Reset();
 	}
 	camComponent->SetPosition(curCamPos);
 	camComponent->SetForward(glm::normalize(curCamFor));
