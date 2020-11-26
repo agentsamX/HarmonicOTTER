@@ -17,4 +17,5 @@ private:
 	entt::entity SlipstreamCard;
 	Shader::sptr flatShader;
 	Shader::sptr morphShader;
+	bool manualCamera = false;
 };

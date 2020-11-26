@@ -40,7 +40,7 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::PathAnimator>(Car,syre::PathType::BEZIER);
 	auto& carPath = m_Registry.get<syre::PathAnimator>(Car);
 
-	carPath.AddPoint(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f,90.0f));
+	carPath.AddPoint(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f,100.0f));
 	carPath.AddPoint(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	carPath.AddPoint(glm::vec3(2.0f, 3.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -203,8 +203,11 @@ void SceningTest::Update()
 		morphRenderView.get<syre::Texture>(entity).Bind();
 		morphRenderView.get<syre::MorphRenderer>(entity).Render();
 	}
-	camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 3.0f, 3.0f));
-	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition()-camComponent->GetPosition()));
+	if (!manualCamera)
+	{
+		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 3.0f, 3.0f));
+	}
+	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition() - camComponent->GetPosition()));
 
 	lastFrame = thisFrame;
 }
@@ -221,17 +224,17 @@ void SceningTest::ImGUIUpdate()
 		if (ImGui::Begin("Debug")) {
 			// Render our GUI stuff
 			auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
-			for (auto entity : movable)
+			auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
+			glm::vec3 camPos = camComponent->GetPosition();
+			if (ImGui::Button(manualCamera?"Auto Camera": "Manual Camera"))
 			{
-				auto& transform = m_Registry.get<syre::Transform>(entity);
-				ImGui::SliderFloat("Entity x", &transform.position.x, -2.0f, 2.0f);
-				ImGui::SliderFloat("Entity y", &transform.position.y, -2.0f, 2.0f);
-				ImGui::SliderFloat("Entity z", &transform.position.z, -2.0f, 2.0f);
-				ImGui::SliderFloat("Entity rotx", &transform.rotationEuler.x, 0.f, 360.0f);
-				ImGui::SliderFloat("Entity roty", &transform.rotationEuler.y, 0.0f, 360.0f);
-				ImGui::SliderFloat("Entity rotz", &transform.rotationEuler.z, 0.0f, 360.0f);
+				manualCamera = !manualCamera;
 			}
-
+			if (manualCamera)
+			{
+				ImGui::SliderFloat3("Camera Position", &camPos.x,-50.f,50.f);
+			}
+			camComponent->SetPosition(camPos);
 			ImGui::End();
 		}
 
