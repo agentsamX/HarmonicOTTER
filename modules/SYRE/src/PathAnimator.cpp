@@ -31,7 +31,7 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
 {
     if (isPlay)
     {
-        distTravelled += delta / 10;
+        distTravelled += delta / 10.0f;
 
         if (points.size() > 5 && points.size() % 3 == 0)
         {
@@ -41,7 +41,7 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
             {
                 if (bezierTable[curSeg][i].y > distTravelled)
                 {
-                    t = InvLerp(bezierTable[curSeg][i].x, bezierTable[curSeg][i - 1].x, distTravelled);
+                    t = InvLerp(bezierTable[curSeg][i - 1].x, bezierTable[curSeg][i].x, distTravelled);
                     break;
                 }
                 else if (bezierTable[curSeg][i].y == distTravelled)
