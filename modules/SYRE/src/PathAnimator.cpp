@@ -36,11 +36,17 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
         if (points.size() > 5 && points.size() % 3 == 0)
         {
             int curSeg = currentIndex / 3;
+            printf("CurSeg: %i\n", curSeg);
             float t = 0.0f;
-            for (float i = 0; i < samplesPerSeg; ++i)
+            for (int i = 0; i <= samplesPerSeg; ++i)
             {
                 if (bezierTable[curSeg][i].y > distTravelled)
                 {
+                    if (i == 0)
+                    {
+                        t = 0.0f;
+                        break;
+                    }
                     t = InvLerp(bezierTable[curSeg][i - 1].x, bezierTable[curSeg][i].x, distTravelled);
                     break;
                 }
@@ -49,7 +55,6 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
                     t = bezierTable[curSeg][i].x;
                     break;
                 }
-
             }
 
             curTrans.SetPosition(Bezier(points[currentIndex][0], points[handleIndex1][0], points[handleIndex2][0], points[nextIndex][0], t));
@@ -86,7 +91,7 @@ void syre::PathAnimator::SpeedControl()
     {
         std::vector<glm::vec2> samples;
         float distTotal = 0.0f;
-        for (float t = 0.0f; t <= 1.0f; t += 1.0f / samplesPerSeg)
+        for (float t = 0.0f; t <= 1.01f; t += 1.0f / samplesPerSeg)
         {
             if (t == 0.0f)
             {
@@ -98,6 +103,7 @@ void syre::PathAnimator::SpeedControl()
             }
             samples.push_back(glm::vec2(t, distTotal));
         }
+        
         bezierTable.push_back(samples);
     }
 }
