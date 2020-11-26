@@ -9,6 +9,7 @@ October 13 2020
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLM/gtc/type_ptr.hpp>
 #include "VertexArrayObject.h"
+#include <algorithm>
 
 namespace syre
 {

@@ -13,6 +13,7 @@ void SceningTest::Start()
 	entt::entity testModel = m_Registry.create();
 	entt::entity shader = m_Registry.create();
 	entt::entity Car = m_Registry.create();
+	entt::entity Track = m_Registry.create();
 
 	//cards
 	NO2Card = m_Registry.create();
@@ -27,7 +28,9 @@ void SceningTest::Start()
 	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_2.obj");
 
 
-
+	m_Registry.emplace<syre::Mesh>(Track, "Track1.obj");
+	m_Registry.emplace<syre::Transform>(Track, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Texture>(Track, "PossibleRoad.png");
 
 	m_Shader = shader;
 	m_Camera = camera;
@@ -35,22 +38,53 @@ void SceningTest::Start()
 	
 	m_Registry.emplace<Cars>(Car);
 	m_Registry.emplace<syre::Mesh>(Car, "Car2.obj");
-	m_Registry.emplace<syre::Transform>(Car, glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(90.f,0.0f,0.0f),glm::vec3(1.0f));
+	m_Registry.emplace<syre::Transform>(Car, glm::vec3(6.0f, 0.0f, 0.0f),glm::vec3(90.f,0.0f,0.0f),glm::vec3(1.0f));
 	m_Registry.emplace<syre::Texture>(Car, "Car2.png");
 	m_Registry.emplace<syre::PathAnimator>(Car,syre::PathType::BEZIER);
 	auto& carPath = m_Registry.get<syre::PathAnimator>(Car);
 
-	carPath.AddPoint(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f,100.0f));
-	carPath.AddPoint(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	carPath.AddPoint(glm::vec3(2.0f, 3.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-
-	carPath.AddPoint(glm::vec3(3.0f, 3.0f, 0.0f), glm::vec3(90.0f, 0.0f, 80.0f));
-	carPath.AddPoint(glm::vec3(4.0f, 3.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	carPath.AddPoint(glm::vec3(5.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-
-	carPath.AddPoint(glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //start point
 	carPath.AddPoint(glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	carPath.AddPoint(glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(6.0f, -70.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //end of first straight
+	carPath.AddPoint(glm::vec3(6.0f, -70.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(6.0f, -70.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(35.0f, -99.f, 0.0f), glm::vec3(90.0f, 0.0f, 90.0f)); //end of first turn /////////fix curve
+	carPath.AddPoint(glm::vec3(35.0f, -99.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(3.0f, -104.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(110.0f, -101.f, 0.0f), glm::vec3(90.0f, 0.0f, 90.0f)); //end of 2nd straight
+	carPath.AddPoint(glm::vec3(110.0f, -101.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(110.0f, -101.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(155.0f, -140.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //end of 2nd turn /////////////
+	carPath.AddPoint(glm::vec3(155.0f, -140.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(155.0f, -140.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(155.0f, -205.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //end of 3rd str 
+	carPath.AddPoint(glm::vec3(155.0f, -205.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(155.0f, -205.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(232.5f, -286.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //end of S /////////////
+	carPath.AddPoint(glm::vec3(232.5f, -286.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(232.5f, -286.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(232.5f, -420.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //end of str
+	carPath.AddPoint(glm::vec3(232.5f, -420.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(232.5f, -420.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(198.f, -458.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //end turn
+	carPath.AddPoint(glm::vec3(198.f, -458.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(198.f, -458.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(163.f, -416.f, 0.0f), glm::vec3(90.0f, 0.0f, -180.0f)); //end u turn
+	carPath.AddPoint(glm::vec3(163.f, -416.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(163.f, -416.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	
+	
+	
 
 	carPath.SpeedControl();
 
@@ -223,6 +257,8 @@ void SceningTest::ImGUIUpdate()
 
 		if (ImGui::Begin("Debug")) {
 			// Render our GUI stuff
+			
+
 			auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
 			auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
 			glm::vec3 camPos = camComponent->GetPosition();
@@ -232,7 +268,7 @@ void SceningTest::ImGUIUpdate()
 			}
 			if (manualCamera)
 			{
-				ImGui::SliderFloat3("Camera Position", &camPos.x,-50.f,50.f);
+				ImGui::SliderFloat3("Camera Position", &camPos.x,-200.f, 200.f);
 			}
 			camComponent->SetPosition(camPos);
 			ImGui::End();
@@ -267,35 +303,35 @@ void SceningTest::KeyEvents(float delta)
 
 	if (glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
 	{
-		curCamPos.x += 0.01f * delta;
+		curCamPos.x += 10.f * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		curCamPos.x -= 0.01f * delta;
+		curCamPos.x -= 10.f * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		curCamPos.y -= 0.01f * delta;
+		curCamPos.y -= 10.f * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		curCamPos.y += 0.01f * delta;
+		curCamPos.y += 10.f * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 	{
-		curCamFor.x += 0.01f * delta;
+		curCamFor.x += 0.1f * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
-		curCamFor.x -= 0.01f * delta;
+		curCamFor.x -= 0.1f * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 	{
-		curCamFor.y -= 0.01f * delta;
+		curCamFor.y -= 0.1f * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 	{
-		curCamFor.y += 0.01f * delta;
+		curCamFor.y += 0.1f * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
