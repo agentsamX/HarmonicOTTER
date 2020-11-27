@@ -31,12 +31,14 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
 {
     if (isPlay)
     {
-        distTravelled += delta / 10.0f;
-
         if (points.size() > 5 && points.size() % 3 == 0)
         {
             int curSeg = currentIndex / 3;
+            if (maxSegment <= curSeg&&maxSegment!=0)
+                return;
+            distTravelled += delta*30.f ;
             printf("CurSeg: %i\n", curSeg);
+            printf("CurDistance : %f\n", distTravelled);
             float t = 0.0f;
             for (int i = 0; i <= samplesPerSeg; ++i)
             {
@@ -47,7 +49,8 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
                         t = 0.0f;
                         break;
                     }
-                    t = InvLerp(bezierTable[curSeg][i - 1].x, bezierTable[curSeg][i].x, distTravelled);
+                    float tSample = InvLerp(bezierTable[curSeg][i - 1].y, bezierTable[curSeg][i].y, distTravelled);
+                    t = glm::mix(bezierTable[curSeg][i - 1].x, bezierTable[curSeg][i].x, tSample);
                     break;
                 }
                 else if (bezierTable[curSeg][i].y == distTravelled)
@@ -55,20 +58,23 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
                     t = bezierTable[curSeg][i].x;
                     break;
                 }
+                else
+                {
+                    t = 1.0f;
+                }
             }
 
             curTrans.SetPosition(Bezier(points[currentIndex][0], points[handleIndex1][0], points[handleIndex2][0], points[nextIndex][0], t));
             curTrans.SetRotQuat(glm::slerp(glm::quat(glm::radians(points[currentIndex][1])), glm::quat(glm::radians(points[nextIndex][1])), t));
+            printf("t value: %f\n", t);
 
             if (t >= 1.f)
             {
-                distTravelled = 0.0f;
                 currentIndex += 3;
                 nextIndex += 3;
                 handleIndex1 += 3;
                 handleIndex2 += 3;
                 t = 0.f;
-
 
                 if (nextIndex >= points.size())
                 {
@@ -78,7 +84,7 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
                     nextIndex = 3;
                     isPlay = false;
                 }
-
+             
             }
 
         }
@@ -95,13 +101,20 @@ void syre::PathAnimator::SpeedControl()
         {
             if (t == 0.0f)
             {
-                distTotal = 0.0f;
+                if (i == 0)
+                    distTotal = 0;
+                else
+                    distTotal = bezierTable.back().back().y;
             }
             else
             {
                 distTotal =samples.back().y+glm::distance(Bezier(points[i][0], points[i + 1][0], points[i + 2][0], points[i + 3][0],t), Bezier(points[i][0], points[i + 1][0], points[i + 2][0], points[i + 3][0], t+1.0f/samplesPerSeg));
             }
             samples.push_back(glm::vec2(t, distTotal));
+        }
+        for (int j = 0; j <= samplesPerSeg; ++j)
+        {
+            printf("t val : %f, dist : %f\n", samples[j].x, samples[j].y);
         }
         
         bezierTable.push_back(samples);
