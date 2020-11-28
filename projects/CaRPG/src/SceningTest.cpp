@@ -16,19 +16,15 @@ void SceningTest::Start()
 	entt::entity Track = m_Registry.create();
 
 	//cards
-	Card1 = m_Registry.create();
-	Card2 = m_Registry.create();
-	Card3 = m_Registry.create();
-	Card4 = m_Registry.create();
-	Card5 = m_Registry.create();
+	m_Card = m_Registry.create();
+
 	entt::entity morphTest = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(morphTest);
 	m_Registry.emplace<syre::Texture>(morphTest, "Car2.png");
 	m_Registry.emplace<syre::Transform>(morphTest, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.0f), glm::vec3(1.0f));
-	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_1.obj");
-	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_2.obj");
-	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_3.obj");
-	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_2.obj");
+	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("morph01.obj");
+	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("morph02.obj");
+	
 
 
 	m_Registry.emplace<syre::Mesh>(Track, "Track1.obj");
@@ -212,24 +208,17 @@ void SceningTest::Start()
 
 	//cards
 
-	m_Registry.emplace<syre::Mesh>(Card1, "Card.obj");
-	m_Registry.emplace<syre::Transform>(Card1, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2f));
-	m_Registry.emplace<syre::Texture>(Card1, "NO2.png");
-
-	m_Registry.emplace<syre::Mesh>(Card2, "Card.obj");
-	m_Registry.emplace<syre::Transform>(Card2, glm::vec3(-3.0f, 0.0f, 2.0f),glm::vec3(0.0,0.0,0.0),glm::vec3(0.2f));
-	m_Registry.emplace<syre::Texture>(Card2, "Slipstream.png");
-
-	m_Registry.emplace<syre::Mesh>(Card3, "Card.obj");
-	m_Registry.emplace<syre::Transform>(Card3, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2f));
-	m_Registry.emplace<syre::Texture>(Card3, "Drift.png");
-
-	m_Registry.emplace<syre::Mesh>(Card4, "Card.obj");
-	m_Registry.emplace<syre::Transform>(Card4, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2f));
+	m_Registry.emplace<syre::Mesh>(m_Card, "Card.obj");
+	m_Registry.emplace<syre::Transform>(m_Card, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2f));
+	m_Registry.emplace<syre::Texture>(m_Card, "NO2.png");
 
 
-	m_Registry.emplace<syre::Mesh>(Card5, "Card.obj");
-	m_Registry.emplace<syre::Transform>(Card5, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2f));
+	cardTextures.push_back(syre::Texture("NO2.png"));
+	cardTextures.push_back(syre::Texture("NO2.png"));
+	cardTextures.push_back(syre::Texture("Drift.png"));
+	cardTextures.push_back(syre::Texture("Slipstream.png"));
+	cardTextures.push_back(syre::Texture("Slipstream.png"));
+	//cardTextures.push_back(syre::Texture("Muffler.png"));
 
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
@@ -313,32 +302,14 @@ void SceningTest::Update()
 	for (int i = 0; i <= 4; i++)
 	{
 		//Card slot 1
-		flatShader->SetUniform("offset", glm::vec2(-.4f, -.7f));
+		int cardVal = PlayerComponent.GetCard(i, true);
+		if (cardVal != 0)
+		{
+			flatShader->SetUniform("offset", glm::vec2(-.4f+i/5.f, -.7f));
+			cardTextures[cardVal].Bind();
+			m_Registry.get<syre::Mesh>(m_Card).Render();
+		}
 		
-		/*
-		//Card slot 5
-
-		if (PlayerComponent.GetCard(i, true) == 1 && i == 4)
-		{
-			m_Registry.get<syre::Texture>(Card1).Bind();
-			m_Registry.get<syre::Mesh>(Card5).Render();
-		}
-		if (PlayerComponent.GetCard(i, true) == 2 && i == 4)
-		{
-			m_Registry.get<syre::Texture>(Card2).Bind();
-			m_Registry.get<syre::Mesh>(Card5).Render();
-		}
-		if (PlayerComponent.GetCard(i, true) == 3 && i == 4)
-		{
-			m_Registry.get<syre::Texture>(Card3).Bind();
-			m_Registry.get<syre::Mesh>(Card5).Render();
-		}
-		if (PlayerComponent.GetCard(i, true) == 4 && i == 4)
-		{
-			m_Registry.get<syre::Texture>(Card4).Bind();
-			m_Registry.get<syre::Mesh>(Card5).Render();
-		}
-		*/
 	}
 	auto pathView = m_Registry.view<syre::PathAnimator, syre::Transform>();
 	for (auto entity : pathView)
