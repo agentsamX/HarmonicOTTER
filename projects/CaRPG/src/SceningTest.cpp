@@ -187,7 +187,7 @@ void SceningTest::Update()
 	//m_Registry.get<syre::Texture>(NO2Card).Bind();
 	//m_Registry.get<syre::Mesh>(NO2Card).Render();
 	flatShader->SetUniform("offset", glm::vec2(0.f, -.7f));
-	for (int i = 0; i <= 4; i++)
+	for (int i = 0; i <= 0; i++)
 	{
 		if (PlayerComponent.GetCard(i, true) == 1)
 		{
@@ -335,7 +335,7 @@ void SceningTest::KeyEvents(float delta)
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		PlayerComponent.Shuffle();
+		PlayerComponent.Draw();
 	}
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
@@ -346,7 +346,7 @@ void SceningTest::KeyEvents(float delta)
 		printf("Mouse at X %f Y %f\n", *x, *y);
 		if (*x >= 320.0 && *x <= 480.0 && *y <= 798.0 && *y >= 560.0)
 		{
-			PlayerComponent.PlayCard(0);
+			PlayerComponent.PlayCard(0, 0);
 		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)

@@ -46,7 +46,7 @@ void Cars::SetBrk()
 		Brake = false;
 }
 
-void Cars::PlayCard(int Position)
+void Cars::PlayCard(int Position, int NewGear)
 {
 	if (Hand[Position] == 1)
 	{
@@ -57,13 +57,26 @@ void Cars::PlayCard(int Position)
 	if (Hand[Position] == 2)
 	{
 		printf("Slipstream played");
+		Gear = NewGear;
 		RemoveCard(Position, true);
 	}
 	if (Hand[Position] == 3)
 	{
 		printf("Drift");
+		Gear = NewGear;
 		RemoveCard(Position, true);
 	}
+}
+
+int Cars::GetActions()
+{
+	return Actions;
+}
+
+void Cars::ResetTurn()
+{
+	Draw();
+	Actions = 0;
 }
 
 void Cars::AddCard(int NewCard, bool object)
@@ -109,10 +122,17 @@ int Cars::GetCard(int Position, bool object)
 	}
 }
 
-int Cars::Draw()
+void Cars::Draw()
 {
-	
-	return 0;
+	for (int i = 0; i < 4; i++)
+	{
+		if (Hand[i] == 0)
+		{
+			Hand[i] = Deck.at(Increment);
+			Increment += 1;
+			break;
+		}
+	}
 }
 
 void Cars::Shuffle()
