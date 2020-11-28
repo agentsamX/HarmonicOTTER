@@ -35,6 +35,6 @@ private:
 	int Gear;
 	int Increment = 0;
 	int Actions = 0;
-	int Hand[5] = {1,0,1,0,1};
+	int Hand[5] = {1,2,1,3,4};
 	std::vector <int> Deck = {1,2,3,4,5};
 };
