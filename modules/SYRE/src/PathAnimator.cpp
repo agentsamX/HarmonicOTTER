@@ -112,10 +112,11 @@ void syre::PathAnimator::SpeedControl()
             }
             samples.push_back(glm::vec2(t, distTotal));
         }
-        for (int j = 0; j <= samplesPerSeg; ++j)
+        /*for (int j = 0; j <= samplesPerSeg; ++j)
         {
             printf("t val : %f, dist : %f\n", samples[j].x, samples[j].y);
-        }
+            //prints values of the speed control table
+        }*/
         
         bezierTable.push_back(samples);
     }

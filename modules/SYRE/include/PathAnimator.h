@@ -31,7 +31,7 @@ namespace syre
 		std::vector<std::vector<glm::vec2>> bezierTable;//t value is x, total distance is z
 		bool isPlay = true;
 		float distTravelled = 0.f;
-		int samplesPerSeg = 20;
+		int samplesPerSeg = 10;
 		int currentIndex = 0;
 		int handleIndex1 = 1;
 		int handleIndex2 = 2;

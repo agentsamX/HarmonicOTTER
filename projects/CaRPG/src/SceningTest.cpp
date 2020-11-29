@@ -14,6 +14,7 @@ void SceningTest::Start()
 	entt::entity testModel = m_Registry.create();
 	entt::entity shader = m_Registry.create();
 	entt::entity Car = m_Registry.create();
+	entt::entity EnemyCar = m_Registry.create();
 	entt::entity Track = m_Registry.create();
 
 	//cards
@@ -194,17 +195,18 @@ void SceningTest::Start()
 	carPath.AddPoint(glm::vec3(-276.f, -119.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	carPath.AddPoint(glm::vec3(-276.f, -119.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
-
-	
-	
-	
-
 	carPath.SpeedControl();
 
 
-	m_Registry.emplace<syre::Mesh>(testModel, fileName);
-	m_Registry.emplace<syre::Transform>(testModel,glm::vec3(2.0f,2.0f,2.0f));
-	m_Registry.emplace<syre::Texture>(testModel, "Slipstream.png");
+	m_Registry.emplace<Cars>(EnemyCar);
+	m_Registry.emplace<syre::Mesh>(EnemyCar, "Car2.obj");
+	m_Registry.emplace<syre::Transform>(EnemyCar, glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(90.f, 0.0f, 0.0f), glm::vec3(1.0f));
+	m_Registry.emplace<syre::Texture>(EnemyCar, "Car2.png");
+	m_Registry.emplace<syre::PathAnimator>(EnemyCar, syre::PathType::BEZIER);
+	auto& enemyCarPath = m_Registry.get<syre::PathAnimator>(EnemyCar);
+
+	enemyCarPath.AddPoint(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //start point
+
 
 	//cards
 
