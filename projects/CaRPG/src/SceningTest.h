@@ -8,9 +8,11 @@ public:
 	void Start();
 	void Update();
 	void ImGUIUpdate();
+	Camera::sptr& GetCam();
+
 private:
 	void KeyEvents(float delta);
-	entt::entity m_Camera;
+	Camera::sptr camera;
 	entt::entity m_Shader;
 	entt::entity m_PCar;
 	entt::entity m_Card;

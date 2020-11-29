@@ -60,6 +60,12 @@ const glm::mat4& Camera::GetViewProjection() const {
 	return _viewProjection;
 }
 
+const float& Camera::GetAspect() const
+{
+	// TODO: insert return statement here
+	return _aspectRatio;
+}
+
 void Camera::__CalculateProjection() {
 	_projection = glm::perspective(_fovRadians, _aspectRatio, _nearPlane, _farPlane);
 	_isDirty = true;

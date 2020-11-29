@@ -78,6 +78,8 @@ public:
 	/// </summary>
 	const glm::mat4& GetViewProjection() const;
 
+	const float& GetAspect() const;
+
 protected:
 	float _nearPlane;
 	float _farPlane;
