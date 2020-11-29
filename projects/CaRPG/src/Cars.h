@@ -7,9 +7,10 @@
 class Cars
 {
 public:
-	// 1 is NO2
-	// 2 is Drift
-	// 3 is Slipstream
+	// 0 is NO2
+	// 1 is Drift
+	// 2 is Slipstream
+	// 3 is Muffler
 	Cars();
 	~Cars();
 	void ChangeGears(int);
@@ -17,7 +18,10 @@ public:
 	int GetGear();
 	void SetAcc();
 	void SetBrk();
-	void PlayCard(int);
+	void PlayCard(int, int);
+	int GetAction1();
+	int GetAction2();
+	void ResetTurn();
 
 	//Hand interactions
 	void AddCard(int, bool);
@@ -25,12 +29,16 @@ public:
 	int GetCard(int, bool);
 
 	// Deck interactions
-	int Draw();
+	void Draw();
 	void Shuffle();
 private:
 	bool Accelerate;
 	bool Brake;
 	int Gear;
-	int Hand[4] = {1,0,0,0};
-	std::vector <int> Deck = {1,2,3,4,5};
+	int Increment = 0;
+	int Action1 = -1;
+	int Action2 = -1;
+	int CompletedObs = 0;
+	int Hand[5] = {0,1,0,2,2};
+	std::vector <int> Deck = {1,2,2,0,0};
 };

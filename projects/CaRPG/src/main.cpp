@@ -51,7 +51,7 @@ bool initGLFW() {
 #endif
 
 	//Create a new GLFW window
-	window = glfwCreateWindow(800, 800, "SYRE baybeeeee", nullptr, nullptr);
+	window = glfwCreateWindow(1280,720, "SYRE baybeeeee", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Set our window resized callback
@@ -179,6 +179,9 @@ int main()
 	InitImGui();
 
 	curScene->Start();
+
+	camera = curScene->GetCam();
+	GlfwWindowResizedCallback(window, 1280, 720);
 
 
 	/*glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

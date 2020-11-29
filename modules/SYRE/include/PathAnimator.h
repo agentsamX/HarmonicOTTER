@@ -37,7 +37,7 @@ namespace syre
 		int handleIndex2 = 2;
 		int nextIndex = 1;
 		int stopPoint;
-		int maxSegment = 0;
+		int maxSegment = 0;//putting 0 does not limit the segment
 	};
 }
 

@@ -8,13 +8,17 @@ public:
 	void Start();
 	void Update();
 	void ImGUIUpdate();
+	Camera::sptr& GetCam();
+
 private:
 	void KeyEvents(float delta);
-	entt::entity m_Camera;
+	Camera::sptr camera;
 	entt::entity m_Shader;
 	entt::entity m_PCar;
-	entt::entity NO2Card;
-	entt::entity SlipstreamCard;
+	entt::entity m_Card;
+
+	std::vector<syre::Texture> cardTextures;
+	
 	Shader::sptr flatShader;
 	Shader::sptr morphShader;
 	bool manualCamera = false;

@@ -46,24 +46,55 @@ void Cars::SetBrk()
 		Brake = false;
 }
 
-void Cars::PlayCard(int Position)
+void Cars::PlayCard(int Position, int NewGear)
 {
-	if (Hand[Position] == 1)
+	if (Hand[Position] == 0)
 	{
 		printf("NO2 played");
-		Gear += 4;
+		Gear += 3;
+		if (Action1 == -1)
+			Action1 = Hand[Position];
+		else
+			Action2 = Hand[Position];
+		RemoveCard(Position, true);
+	}
+	if (Hand[Position] == 1)
+	{
+		printf("Slipstream played");
+		Gear = NewGear;
+		if (Action1 == -1)
+			Action1 = Hand[Position];
+		else
+			Action2 = Hand[Position];
 		RemoveCard(Position, true);
 	}
 	if (Hand[Position] == 2)
 	{
-		printf("Slipstream played");
-		RemoveCard(Position, true);
-	}
-	if (Hand[Position] == 3)
-	{
 		printf("Drift");
+		Gear = NewGear;
+		if (Action1 == -1)
+			Action1 = Hand[Position];
+		else
+			Action2 = Hand[Position];
 		RemoveCard(Position, true);
 	}
+}
+
+int Cars::GetAction1()
+{
+	return Action1;
+}
+
+int Cars::GetAction2()
+{
+	return Action2;
+}
+
+void Cars::ResetTurn()
+{
+	Draw();
+	Action1 = -1;
+	Action2 = -1;
 }
 
 void Cars::AddCard(int NewCard, bool object)
@@ -89,7 +120,7 @@ void Cars::RemoveCard(int Position, bool object)
 {
 	if (object == true)
 	{
-		Hand[Position] = 0;
+		Hand[Position] = -1;
 	}
 	if (object == false)
 	{
@@ -109,10 +140,17 @@ int Cars::GetCard(int Position, bool object)
 	}
 }
 
-int Cars::Draw()
+void Cars::Draw()
 {
-	
-	return 0;
+	for (int i = 0; i < 5; i++)
+	{
+		if (Hand[i] == -1)
+		{
+			Hand[i] = Deck.at(Increment);
+			Increment += 1;
+			break;
+		}
+	}
 }
 
 void Cars::Shuffle()

@@ -8,24 +8,24 @@ SceningTest::SceningTest(GLFWwindow* inWind)
 
 void SceningTest::Start()
 {
+
+	camera = Camera::Create();
 	std::string fileName = "monkey.obj";
-	entt::entity camera = m_Registry.create();
 	entt::entity testModel = m_Registry.create();
 	entt::entity shader = m_Registry.create();
 	entt::entity Car = m_Registry.create();
 	entt::entity Track = m_Registry.create();
 
 	//cards
-	NO2Card = m_Registry.create();
-	SlipstreamCard = m_Registry.create();
+	m_Card = m_Registry.create();
+
 	entt::entity morphTest = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(morphTest);
 	m_Registry.emplace<syre::Texture>(morphTest, "Car2.png");
 	m_Registry.emplace<syre::Transform>(morphTest, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.0f), glm::vec3(1.0f));
-	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_1.obj");
-	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_2.obj");
-	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_3.obj");
-	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("cubeMorphTest_2.obj");
+	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("morph01.obj");
+	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("morph02.obj");
+	
 
 
 	m_Registry.emplace<syre::Mesh>(Track, "Track1.obj");
@@ -33,7 +33,6 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Texture>(Track, "PossibleRoad.png");
 
 	m_Shader = shader;
-	m_Camera = camera;
 	m_PCar = Car;
 	
 	m_Registry.emplace<Cars>(Car);
@@ -209,14 +208,16 @@ void SceningTest::Start()
 
 	//cards
 
-	m_Registry.emplace<syre::Mesh>(NO2Card, "CardNO2.obj");
-	m_Registry.emplace<syre::Transform>(NO2Card, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2f));
-	m_Registry.emplace<syre::Texture>(NO2Card, "NO2.png");
+	m_Registry.emplace<syre::Mesh>(m_Card, "Card.obj");
+	m_Registry.emplace<syre::Transform>(m_Card, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2f));
+	m_Registry.emplace<syre::Texture>(m_Card, "NO2.png");
 
-	m_Registry.emplace<syre::Mesh>(SlipstreamCard, "CardNO2.obj");
-	m_Registry.emplace<syre::Transform>(SlipstreamCard, glm::vec3(-3.0f, 0.0f, 2.0f),glm::vec3(0.0,0.0,0.0),glm::vec3(0.2f));
-	m_Registry.emplace<syre::Texture>(SlipstreamCard, "Slipstream.png");
 
+
+	cardTextures.push_back(syre::Texture("NO2.png"));
+	cardTextures.push_back(syre::Texture("Drift.png"));
+	cardTextures.push_back(syre::Texture("Slipstream.png"));
+	cardTextures.push_back(syre::Texture("Muffler.png"));
 
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
@@ -226,7 +227,6 @@ void SceningTest::Start()
 
 
 
-	m_Registry.emplace<Camera::sptr>(camera);
 	m_Registry.emplace<Shader::sptr>(shader);
 
 	auto& shaderComponent = m_Registry.get<Shader::sptr>(shader);
@@ -274,9 +274,8 @@ void SceningTest::Start()
 	morphShader->SetUniform("u_AmbientCol", ambientCol);
 	morphShader->SetUniform("u_AmbientStrength", ambientPow);
 	morphShader->SetUniform("u_Shininess", shininess);
-
-	auto& camComponent = m_Registry.get<Camera::sptr>(camera);
-	camComponent = Camera::Create();
+	
+	auto& camComponent = camera;
 	camComponent->SetPosition(glm::vec3(0, 3, 3)); // Set initial position
 	camComponent->SetUp(glm::vec3(0, 0, 1)); // Use a z-up coordinate system
 	camComponent->LookAt(glm::vec3(0.0f)); // Look at center of the screen
@@ -290,33 +289,29 @@ void SceningTest::Update()
 	
 	thisFrame = glfwGetTime();
 	float deltaTime = thisFrame - lastFrame;
-	auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
+	auto& camComponent = camera;
 	auto& shaderComponent = m_Registry.get<Shader::sptr>(m_Shader);
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	glm::vec3 camX = glm::cross(camComponent->GetForward(), camComponent->GetUp());
 	KeyEvents(deltaTime);
 	flatShader->Bind();
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(-.4f, -.7f));
-	//m_Registry.get<syre::Texture>(NO2Card).Bind();
-	//m_Registry.get<syre::Mesh>(NO2Card).Render();
-	flatShader->SetUniform("offset", glm::vec2(0.f, -.7f));
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.13f)));
+	flatShader->SetUniform("aspect", camera->GetAspect());
 	for (int i = 0; i <= 4; i++)
 	{
-		if (PlayerComponent.GetCard(i, true) == 1)
+		//Card slot 1
+		int cardVal = PlayerComponent.GetCard(i, true);
+		if (cardVal != -1)
 		{
-			m_Registry.get<syre::Texture>(NO2Card).Bind();
-			m_Registry.get<syre::Mesh>(SlipstreamCard).Render();
+			flatShader->SetUniform("offset", glm::vec2(-0.2f+i/3.8f, -.62f));
+			cardTextures[cardVal].Bind();
+			m_Registry.get<syre::Mesh>(m_Card).Render();
 		}
-		if (PlayerComponent.GetCard(i, true) == 2)
-		{
-			m_Registry.get<syre::Texture>(SlipstreamCard).Bind();
-			m_Registry.get<syre::Mesh>(SlipstreamCard).Render();
-		}
-		if (PlayerComponent.GetCard(i, true) == 3)
-		{
-
-		}
+		
+	}
+	if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
+	{
+		PlayerComponent.ResetTurn();
 	}
 	auto pathView = m_Registry.view<syre::PathAnimator, syre::Transform>();
 	for (auto entity : pathView)
@@ -374,7 +369,7 @@ void SceningTest::ImGUIUpdate()
 			
 
 			auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
-			auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
+			auto& camComponent = camera;
 			glm::vec3 camPos = camComponent->GetPosition();
 			if (ImGui::Button(manualCamera?"Auto Camera": "Manual Camera"))
 			{
@@ -408,9 +403,15 @@ void SceningTest::ImGUIUpdate()
 	
 }
 
+Camera::sptr& SceningTest::GetCam()
+{
+	// TODO: insert return statement here
+	return camera;
+}
+
 void SceningTest::KeyEvents(float delta)
 {
-	auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
+	auto& camComponent = camera;
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	glm::vec3 curCamPos = camComponent->GetPosition();
 	glm::vec3 curCamFor = camComponent->GetForward();
@@ -449,7 +450,7 @@ void SceningTest::KeyEvents(float delta)
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		PlayerComponent.Shuffle();
+		PlayerComponent.Draw();
 	}
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
@@ -458,9 +459,10 @@ void SceningTest::KeyEvents(float delta)
 
 		glfwGetCursorPos(window, x,y);
 		printf("Mouse at X %f Y %f\n", *x, *y);
-		if (*x >= 320.0 && *x <= 480.0 && *y <= 798.0 && *y >= 560.0)
+		for (float i = 0; i <= 5; i++)
 		{
-			PlayerComponent.PlayCard(0);
+			if ((i * 165) +  429 <= *x && (i+1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i,true) != -1)
+				PlayerComponent.PlayCard(i, 0);
 		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)

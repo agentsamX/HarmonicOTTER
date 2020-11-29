@@ -6,6 +6,7 @@
 namespace syre {
 	class Texture {
 	public:
+		Texture();
 		Texture(std::string);
 		void Bind();
 	private:
