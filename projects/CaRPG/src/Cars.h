@@ -36,8 +36,8 @@ private:
 	bool Brake;
 	int Gear;
 	int Increment = 0;
-	int Action1 = 0;
-	int Action2 = 0;
+	int Action1 = -1;
+	int Action2 = -1;
 	int CompletedObs = 0;
 	int Hand[5] = {0,1,0,2,2};
 	std::vector <int> Deck = {1,2,2,0,0};
