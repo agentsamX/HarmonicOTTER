@@ -27,14 +27,14 @@ bool Obstacles::Resolve()
 {
 	if (CurObs == 0)
 	{
-
+		return 1;
 	}
 	else if (CurObs == 1)
 	{
-
+		return 1;
 	}
 	else if (CurObs == 2)
 	{
-
+		return 1;
 	}
 }
