@@ -295,20 +295,23 @@ void SceningTest::Update()
 	glm::vec3 camX = glm::cross(camComponent->GetForward(), camComponent->GetUp());
 	KeyEvents(deltaTime);
 	flatShader->Bind();
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.15f)));
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.13f)));
 	flatShader->SetUniform("aspect", camera->GetAspect());
-	printf("aspect %f", camera->GetAspect());
 	for (int i = 0; i <= 4; i++)
 	{
 		//Card slot 1
 		int cardVal = PlayerComponent.GetCard(i, true);
 		if (cardVal != -1)
 		{
-			flatShader->SetUniform("offset", glm::vec2(-1.f+(i+1)/2.5, -.7f));
+			flatShader->SetUniform("offset", glm::vec2(-0.2f+i/3.8f, -.62f));
 			cardTextures[cardVal].Bind();
 			m_Registry.get<syre::Mesh>(m_Card).Render();
 		}
 		
+	}
+	if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
+	{
+		PlayerComponent.ResetTurn();
 	}
 	auto pathView = m_Registry.view<syre::PathAnimator, syre::Transform>();
 	for (auto entity : pathView)
@@ -456,9 +459,10 @@ void SceningTest::KeyEvents(float delta)
 
 		glfwGetCursorPos(window, x,y);
 		printf("Mouse at X %f Y %f\n", *x, *y);
-		if (*x >= 320.0 && *x <= 480.0 && *y <= 798.0 && *y >= 560.0)
+		for (float i = 0; i <= 5; i++)
 		{
-			PlayerComponent.PlayCard(0, 0);
+			if ((i * 165) +  429 <= *x && (i+1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i,true) != -1)
+				PlayerComponent.PlayCard(i, 0);
 		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)

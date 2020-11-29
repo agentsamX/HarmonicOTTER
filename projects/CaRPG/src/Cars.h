@@ -19,7 +19,8 @@ public:
 	void SetAcc();
 	void SetBrk();
 	void PlayCard(int, int);
-	int GetActions();
+	int GetAction1();
+	int GetAction2();
 	void ResetTurn();
 
 	//Hand interactions
@@ -35,7 +36,9 @@ private:
 	bool Brake;
 	int Gear;
 	int Increment = 0;
-	int Actions = 0;
-	int Hand[5] = {0,1,0,2,3};
-	std::vector <int> Deck = {1,2,3,4,5};
+	int Action1 = 0;
+	int Action2 = 0;
+	int CompletedObs = 0;
+	int Hand[5] = {0,1,0,2,2};
+	std::vector <int> Deck = {1,2,2,0,0};
 };
