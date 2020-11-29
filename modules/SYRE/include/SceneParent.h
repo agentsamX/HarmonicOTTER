@@ -25,10 +25,13 @@ namespace syre {
 		virtual void Update();
 		virtual void ImGUIUpdate();
 		GLFWwindow* window;
+		virtual Camera::sptr& GetCam();
+
 	protected:
 		entt::registry m_Registry;
 		double lastFrame;
 		double thisFrame;
+		Camera::sptr camera;
 
 	};
 }

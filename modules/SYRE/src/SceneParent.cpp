@@ -17,3 +17,9 @@ void syre::SceneParent::Update()
 void syre::SceneParent::ImGUIUpdate()
 {
 }
+
+Camera::sptr& syre::SceneParent::GetCam()
+{
+    // TODO: insert return statement here
+    return camera;
+}

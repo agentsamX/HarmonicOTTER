@@ -8,8 +8,9 @@ SceningTest::SceningTest(GLFWwindow* inWind)
 
 void SceningTest::Start()
 {
+
+	camera = Camera::Create();
 	std::string fileName = "monkey.obj";
-	entt::entity camera = m_Registry.create();
 	entt::entity testModel = m_Registry.create();
 	entt::entity shader = m_Registry.create();
 	entt::entity Car = m_Registry.create();
@@ -32,7 +33,6 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Texture>(Track, "PossibleRoad.png");
 
 	m_Shader = shader;
-	m_Camera = camera;
 	m_PCar = Car;
 	
 	m_Registry.emplace<Cars>(Car);
@@ -217,8 +217,7 @@ void SceningTest::Start()
 	cardTextures.push_back(syre::Texture("NO2.png"));
 	cardTextures.push_back(syre::Texture("Drift.png"));
 	cardTextures.push_back(syre::Texture("Slipstream.png"));
-	cardTextures.push_back(syre::Texture("Slipstream.png"));
-	//cardTextures.push_back(syre::Texture("Muffler.png"));
+	cardTextures.push_back(syre::Texture("Muffler1.png"));
 
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
@@ -228,7 +227,6 @@ void SceningTest::Start()
 
 
 
-	m_Registry.emplace<Camera::sptr>(camera);
 	m_Registry.emplace<Shader::sptr>(shader);
 
 	auto& shaderComponent = m_Registry.get<Shader::sptr>(shader);
@@ -276,9 +274,8 @@ void SceningTest::Start()
 	morphShader->SetUniform("u_AmbientCol", ambientCol);
 	morphShader->SetUniform("u_AmbientStrength", ambientPow);
 	morphShader->SetUniform("u_Shininess", shininess);
-
-	auto& camComponent = m_Registry.get<Camera::sptr>(camera);
-	camComponent = Camera::Create();
+	
+	auto& camComponent = camera;
 	camComponent->SetPosition(glm::vec3(0, 3, 3)); // Set initial position
 	camComponent->SetUp(glm::vec3(0, 0, 1)); // Use a z-up coordinate system
 	camComponent->LookAt(glm::vec3(0.0f)); // Look at center of the screen
@@ -292,13 +289,15 @@ void SceningTest::Update()
 	
 	thisFrame = glfwGetTime();
 	float deltaTime = thisFrame - lastFrame;
-	auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
+	auto& camComponent = camera;
 	auto& shaderComponent = m_Registry.get<Shader::sptr>(m_Shader);
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	glm::vec3 camX = glm::cross(camComponent->GetForward(), camComponent->GetUp());
 	KeyEvents(deltaTime);
 	flatShader->Bind();
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.15f)));
+	flatShader->SetUniform("aspect", camera->GetAspect());
+	printf("aspect %f", camera->GetAspect());
 	for (int i = 0; i <= 4; i++)
 	{
 		//Card slot 1
@@ -367,7 +366,7 @@ void SceningTest::ImGUIUpdate()
 			
 
 			auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
-			auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
+			auto& camComponent = camera;
 			glm::vec3 camPos = camComponent->GetPosition();
 			if (ImGui::Button(manualCamera?"Auto Camera": "Manual Camera"))
 			{
@@ -401,9 +400,15 @@ void SceningTest::ImGUIUpdate()
 	
 }
 
+Camera::sptr& SceningTest::GetCam()
+{
+	// TODO: insert return statement here
+	return camera;
+}
+
 void SceningTest::KeyEvents(float delta)
 {
-	auto& camComponent = m_Registry.get<Camera::sptr>(m_Camera);
+	auto& camComponent = camera;
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	glm::vec3 curCamPos = camComponent->GetPosition();
 	glm::vec3 curCamFor = camComponent->GetForward();
