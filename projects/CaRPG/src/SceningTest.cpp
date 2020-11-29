@@ -206,6 +206,7 @@ void SceningTest::Start()
 	auto& enemyCarPath = m_Registry.get<syre::PathAnimator>(EnemyCar);
 
 	enemyCarPath.AddPoint(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //start point
+	
 
 
 	//cards

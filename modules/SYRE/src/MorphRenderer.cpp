@@ -72,7 +72,7 @@ void syre::MorphRenderer::AddFrame(std::string fileName)
 							vertexIndices = glm::ivec3(0, 0, 0);
 							stream >> vertexIndices.x >> tempChar >> vertexIndices.y >> tempChar >> vertexIndices.z;
 
-							const uint64_t mask = 0b0'000000000000000000000'000000000000000000000'111111111111111111111;
+							/*const uint64_t mask = 0b0'000000000000000000000'000000000000000000000'111111111111111111111;
 							uint64_t key = ((vertexIndices.x & mask) << 42) | ((vertexIndices.y & mask) << 21) | (vertexIndices.z & mask);
 
 							auto it = indexMap.find(key);
@@ -80,7 +80,7 @@ void syre::MorphRenderer::AddFrame(std::string fileName)
 							if (it != indexMap.end()) {
 								edges[i] = it->second;
 							}
-							else {
+							else {*/
 								// Construct a new vertex using the indices for the vertex
 
 
@@ -94,12 +94,12 @@ void syre::MorphRenderer::AddFrame(std::string fileName)
 								combinedVertBuffer.push_back(vertexIndices.z != 0 ? vertNormals[vertexIndices.z - 1].z : 0.0f);
 
 								// Add to the mesh, get index of the added vertex
-								uint32_t index = (combinedVertBuffer.size() / 8) - 1;
+								//uint32_t index = (combinedVertBuffer.size() / 8) - 1;
 								// Cache the index based on our key
-								indexMap[key] = index;
+								//indexMap[key] = index;
 								// Add index to mesh, and add to edges list for if we are using quads
-								edges[i] = index;
-							}
+								//edges[i] = index;
+							//}
 						}
 						else
 						{
@@ -145,7 +145,6 @@ void syre::MorphRenderer::AddFrame(std::string fileName)
 				attribs.push_back(BufferAttribute(2, 3, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 5));
 				*/
 
-				vao->SetIndexBuffer(ibo);
 			}
 			
 		}
@@ -177,9 +176,9 @@ float syre::MorphRenderer::Update(float delta)
 		attribs.push_back(BufferAttribute(1, 2, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 3));
 		attribs.push_back(BufferAttribute(2, 3, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 5));
 		std::vector<BufferAttribute>  attribs2;
-		attribs.push_back(BufferAttribute(3, 3, GL_FLOAT, false, sizeof(float) * 8, NULL));
-		attribs.push_back(BufferAttribute(4, 2, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 3));
-		attribs.push_back(BufferAttribute(5, 3, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 5));
+		attribs2.push_back(BufferAttribute(3, 3, GL_FLOAT, false, sizeof(float) * 8, NULL));
+		attribs2.push_back(BufferAttribute(4, 2, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 3));
+		attribs2.push_back(BufferAttribute(5, 3, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 5));
 		if (curFrame == Keys.size())
 		{
 			curFrame = 0;
