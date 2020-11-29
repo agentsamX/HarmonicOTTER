@@ -48,19 +48,19 @@ void Cars::SetBrk()
 
 void Cars::PlayCard(int Position, int NewGear)
 {
-	if (Hand[Position] == 1)
+	if (Hand[Position] == 0)
 	{
 		printf("NO2 played");
-		Gear += 4;
+		Gear += 3;
 		RemoveCard(Position, true);
 	}
-	if (Hand[Position] == 2)
+	if (Hand[Position] == 1)
 	{
 		printf("Slipstream played");
 		Gear = NewGear;
 		RemoveCard(Position, true);
 	}
-	if (Hand[Position] == 3)
+	if (Hand[Position] == 2)
 	{
 		printf("Drift");
 		Gear = NewGear;
@@ -102,7 +102,7 @@ void Cars::RemoveCard(int Position, bool object)
 {
 	if (object == true)
 	{
-		Hand[Position] = 0;
+		Hand[Position] = -1;
 	}
 	if (object == false)
 	{
@@ -126,7 +126,7 @@ void Cars::Draw()
 {
 	for (int i = 0; i < 4; i++)
 	{
-		if (Hand[i] == 0)
+		if (Hand[i] == -1)
 		{
 			Hand[i] = Deck.at(Increment);
 			Increment += 1;

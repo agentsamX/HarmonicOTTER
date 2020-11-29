@@ -7,9 +7,10 @@
 class Cars
 {
 public:
-	// 1 is NO2
-	// 2 is Drift
-	// 3 is Slipstream
+	// 0 is NO2
+	// 1 is Drift
+	// 2 is Slipstream
+	// 3 is Muffler
 	Cars();
 	~Cars();
 	void ChangeGears(int);
@@ -35,6 +36,6 @@ private:
 	int Gear;
 	int Increment = 0;
 	int Actions = 0;
-	int Hand[5] = {1,2,1,3,4};
+	int Hand[5] = {0,1,0,2,3};
 	std::vector <int> Deck = {1,2,3,4,5};
 };

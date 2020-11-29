@@ -213,12 +213,11 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Texture>(m_Card, "NO2.png");
 
 
-	cardTextures.push_back(syre::Texture("NO2.png"));
+
 	cardTextures.push_back(syre::Texture("NO2.png"));
 	cardTextures.push_back(syre::Texture("Drift.png"));
 	cardTextures.push_back(syre::Texture("Slipstream.png"));
-	cardTextures.push_back(syre::Texture("Slipstream.png"));
-	//cardTextures.push_back(syre::Texture("Muffler.png"));
+	cardTextures.push_back(syre::Texture("Muffler.png"));
 
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
@@ -303,9 +302,9 @@ void SceningTest::Update()
 	{
 		//Card slot 1
 		int cardVal = PlayerComponent.GetCard(i, true);
-		if (cardVal != 0)
+		if (cardVal != -1)
 		{
-			flatShader->SetUniform("offset", glm::vec2(-.4f+i/5.f, -.7f));
+			flatShader->SetUniform("offset", glm::vec2(-1.f+(i+1)/2.5, -.7f));
 			cardTextures[cardVal].Bind();
 			m_Registry.get<syre::Mesh>(m_Card).Render();
 		}
