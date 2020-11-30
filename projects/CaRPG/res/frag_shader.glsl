@@ -18,21 +18,26 @@ uniform vec3  u_LightCol;
 
 uniform vec3  u_CamPos;
 
+uniform vec3 playerPos;
+uniform vec3 enemyPos;
+
 
 out vec4 frag_color;
 
 
 void main() {
+	float distPlay= max(2.0,distance(playerPos,inPos));
+	float distEnemy =max(2.0,distance(enemyPos,inPos));
+
 	
 	vec3 textureColor = texture(textureSampler, UV).xyz;
 
 
-	// Lecture 5
 	vec3 lightColor = vec3(1.0, 1.0, 1.0);
 
 	float ambientStrength = u_AmbientStrength;
 	vec3 ambient = ambientStrength * lightColor * textureColor;//inColor;
-
+	
 	// Diffuse
 	vec3 N = normalize(inNormal);
 	vec3 lightDir = normalize(u_LightPos - inPos);
@@ -54,5 +59,5 @@ void main() {
 
 	vec3 result = (ambient + diffuse + specular);
 
-	frag_color = texture(textureSampler, UV) * vec4(result, 1.0);
+	frag_color = (texture(textureSampler, UV) * vec4(result, 1.0)) +vec4(1/distPlay,0.0f,1/distEnemy,0.0f);
 }

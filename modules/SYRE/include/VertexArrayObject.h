@@ -1,3 +1,4 @@
+//code taken from cg tutorials
 #pragma once
 #include <glad/glad.h>
 #include <cstdint>

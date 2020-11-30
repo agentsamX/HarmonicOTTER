@@ -15,6 +15,7 @@ private:
 	Camera::sptr camera;
 	entt::entity m_Shader;
 	entt::entity m_PCar;
+	entt::entity m_enemy;
 	entt::entity m_Card;
 
 	std::vector<syre::Texture> cardTextures;

@@ -20,14 +20,10 @@ void main() {
 
 	gl_Position = u_ModelViewProjection * vec4(inPosition, 1.0);
 
-	// Lecture 5
-	// Pass vertex pos in world space to frag shader
 	outPos = (u_Model * vec4(inPosition, 1.0)).xyz;
 
-	// Normals
 	outNormal = u_ModelRotation * inNormal;
 
-	///////////
 	outColor = vec3(1.0,1.0,1.0);
 	outUV = inUV;
 }
