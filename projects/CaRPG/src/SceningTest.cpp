@@ -32,7 +32,7 @@ void SceningTest::Start()
 	
 
 
-	m_Registry.emplace<syre::Mesh>(Track, "Track1.obj");
+	m_Registry.emplace<syre::Mesh>(Track, "Track1New.obj");
 	m_Registry.emplace<syre::Transform>(Track, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(Track, "PossibleRoad.png");
 
