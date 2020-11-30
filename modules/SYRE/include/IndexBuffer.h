@@ -1,3 +1,4 @@
+//code taken from cg tutorial
 #pragma once
 #include "IBuffer.h"
 #include <cstdint>

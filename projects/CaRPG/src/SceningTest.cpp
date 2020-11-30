@@ -16,8 +16,8 @@ void SceningTest::Start()
 	std::string fileName = "monkey.obj";
 	entt::entity testModel = m_Registry.create();
 	entt::entity shader = m_Registry.create();
-	entt::entity Car = m_Registry.create();
-	entt::entity EnemyCar = m_Registry.create();
+	m_PCar = m_Registry.create();
+	m_enemy = m_Registry.create();
 	entt::entity Track = m_Registry.create();
 	entt::entity Obstacle = m_Registry.create();
 	//cards
@@ -43,12 +43,12 @@ void SceningTest::Start()
 	m_Obstacle = Obstacle;
 	m_ECar = EnemyCar;
 	
-	m_Registry.emplace<Cars>(Car);
-	m_Registry.emplace<syre::Mesh>(Car, "Car2.obj");
-	m_Registry.emplace<syre::Transform>(Car, glm::vec3(6.0f, 0.0f, 0.0f),glm::vec3(90.f,0.0f,0.0f),glm::vec3(1.0f));
-	m_Registry.emplace<syre::Texture>(Car, "Car2.png");
-	m_Registry.emplace<syre::PathAnimator>(Car,syre::PathType::BEZIER);
-	auto& carPath = m_Registry.get<syre::PathAnimator>(Car);
+	m_Registry.emplace<Cars>(m_PCar);
+	m_Registry.emplace<syre::Mesh>(m_PCar, "Car2.obj");
+	m_Registry.emplace<syre::Transform>(m_PCar, glm::vec3(6.0f, 0.0f, 0.0f),glm::vec3(90.f,0.0f,0.0f),glm::vec3(1.0f));
+	m_Registry.emplace<syre::Texture>(m_PCar, "Car2.png");
+	m_Registry.emplace<syre::PathAnimator>(m_PCar,syre::PathType::BEZIER);
+	auto& carPath = m_Registry.get<syre::PathAnimator>(m_PCar);
 
 	carPath.AddPoint(glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //start point
 	carPath.AddPoint(glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -205,12 +205,12 @@ void SceningTest::Start()
 	carPath.SpeedControl();
 
 
-	m_Registry.emplace<Cars>(EnemyCar);
-	m_Registry.emplace<syre::Mesh>(EnemyCar, "Car2.obj");
-	m_Registry.emplace<syre::Transform>(EnemyCar, glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(90.f, 0.0f, 0.0f), glm::vec3(1.0f));
-	m_Registry.emplace<syre::Texture>(EnemyCar, "Car2.png");
-	m_Registry.emplace<syre::PathAnimator>(EnemyCar, syre::PathType::BEZIER);
-	auto& enemyCarPath = m_Registry.get<syre::PathAnimator>(EnemyCar);
+	m_Registry.emplace<Cars>(m_enemy);
+	m_Registry.emplace<syre::Mesh>(m_enemy, "Car2.obj");
+	m_Registry.emplace<syre::Transform>(m_enemy, glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(90.f, 0.0f, 0.0f), glm::vec3(1.0f));
+	m_Registry.emplace<syre::Texture>(m_enemy, "Car2-Blue.png");
+	m_Registry.emplace<syre::PathAnimator>(m_enemy, syre::PathType::BEZIER);
+	auto& enemyCarPath = m_Registry.get<syre::PathAnimator>(m_enemy);
 
 	enemyCarPath.AddPoint(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //start point
 	enemyCarPath.AddPoint(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -509,6 +509,9 @@ void SceningTest::Update()
 
 	shaderComponent->Bind();
 	shaderComponent->SetUniform("u_CamPos", camComponent->GetPosition());
+	shaderComponent->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	shaderComponent->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+
 	auto renderView = m_Registry.view<syre::Mesh,syre::Transform,syre::Texture>();
 	for (auto entity : renderView)
 	{
