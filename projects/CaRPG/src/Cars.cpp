@@ -51,7 +51,14 @@ void Cars::PlayCard(int Position, int NewGear)
 	if (Hand[Position] == 0)
 	{
 		printf("NO2 played");
-		Gear += 3;
+		if (Gear + 3 > 6)
+		{
+			Gear = 6;
+		}
+		else
+		{
+			Gear += 3;
+		}
 		if (Action1 == -1)
 			Action1 = Hand[Position];
 		else
@@ -60,7 +67,7 @@ void Cars::PlayCard(int Position, int NewGear)
 	}
 	if (Hand[Position] == 1)
 	{
-		printf("Slipstream played");
+		printf("Drift");
 		Gear = NewGear;
 		if (Action1 == -1)
 			Action1 = Hand[Position];
@@ -70,7 +77,7 @@ void Cars::PlayCard(int Position, int NewGear)
 	}
 	if (Hand[Position] == 2)
 	{
-		printf("Drift");
+		printf("Slipstream played");
 		Gear = NewGear;
 		if (Action1 == -1)
 			Action1 = Hand[Position];

@@ -1,5 +1,8 @@
 #include "SceningTest.h"
 #include "Cars.h"
+#include "Obstacles.h"
+
+int start = 0;
 
 SceningTest::SceningTest(GLFWwindow* inWind)
 {
@@ -16,7 +19,7 @@ void SceningTest::Start()
 	entt::entity Car = m_Registry.create();
 	entt::entity EnemyCar = m_Registry.create();
 	entt::entity Track = m_Registry.create();
-
+	entt::entity Obstacle = m_Registry.create();
 	//cards
 	m_Card = m_Registry.create();
 
@@ -33,8 +36,12 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Transform>(Track, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(Track, "PossibleRoad.png");
 
+	m_Registry.emplace<Obstacles>(Obstacle);
+
 	m_Shader = shader;
 	m_PCar = Car;
+	m_Obstacle = Obstacle;
+	m_ECar = EnemyCar;
 	
 	m_Registry.emplace<Cars>(Car);
 	m_Registry.emplace<syre::Mesh>(Car, "Car2.obj");
@@ -434,17 +441,27 @@ void SceningTest::Start()
 	camComponent->LookAt(glm::vec3(0.0f)); // Look at center of the screen
 	camComponent->SetFovDegrees(100.0f); // Set an initial FOV
 
+	auto& obstacleComponent = m_Registry.get<Obstacles>(m_Obstacle);
+
+
 	lastFrame = glfwGetTime();
 }
 
 void SceningTest::Update()
 {
-	
 	thisFrame = glfwGetTime();
 	float deltaTime = thisFrame - lastFrame;
 	auto& camComponent = camera;
 	auto& shaderComponent = m_Registry.get<Shader::sptr>(m_Shader);
+	auto& obstacleComponent = m_Registry.get<Obstacles>(m_Obstacle);
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
+	auto& EnemyComponent = m_Registry.get<Cars>(m_ECar);
+	int temp;
+	if (start == 0)
+	{
+		start += 1;
+		obstacleComponent.Draw();
+	}
 	glm::vec3 camX = glm::cross(camComponent->GetForward(), camComponent->GetUp());
 	KeyEvents(deltaTime);
 	flatShader->Bind();
@@ -452,7 +469,6 @@ void SceningTest::Update()
 	flatShader->SetUniform("aspect", camera->GetAspect());
 	for (int i = 0; i <= 4; i++)
 	{
-		//Card slot 1
 		int cardVal = PlayerComponent.GetCard(i, true);
 		if (cardVal != -1)
 		{
@@ -464,7 +480,24 @@ void SceningTest::Update()
 	}
 	if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
 	{
+		obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear());
+		if (PlayerComponent.GetAction1() == 2 || PlayerComponent.GetAction2() == 2)
+		{
+			temp = PlayerComponent.GetGear();
+			PlayerComponent.ChangeGears(EnemyComponent.GetGear());
+			EnemyComponent.ChangeGears(temp);
+		}
+		if (EnemyComponent.GetAction1() == 2 || EnemyComponent.GetAction2() == 2)
+		{
+			temp = EnemyComponent.GetGear();
+			EnemyComponent.ChangeGears(PlayerComponent.GetGear());
+			PlayerComponent.ChangeGears(temp);
+		}
+		obstacleComponent.Draw();
+		//TODO: Change the Segment index and speed
 		PlayerComponent.ResetTurn();
+		EnemyComponent.ResetTurn();
+
 	}
 	auto pathView = m_Registry.view<syre::PathAnimator, syre::Transform>();
 	for (auto entity : pathView)
@@ -566,6 +599,8 @@ void SceningTest::KeyEvents(float delta)
 {
 	auto& camComponent = camera;
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
+	auto& EnemyComponent = m_Registry.get<Cars>(m_ECar);
+	int temp;
 	glm::vec3 curCamPos = camComponent->GetPosition();
 	glm::vec3 curCamFor = camComponent->GetForward();
 
@@ -611,11 +646,22 @@ void SceningTest::KeyEvents(float delta)
 		double* y = new double;
 
 		glfwGetCursorPos(window, x,y);
-		printf("Mouse at X %f Y %f\n", *x, *y);
+		//printf("Mouse at X %f Y %f\n", *x, *y);
 		for (float i = 0; i <= 5; i++)
 		{
-			if ((i * 165) +  429 <= *x && (i+1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i,true) != -1)
-				PlayerComponent.PlayCard(i, 0);
+			if ((i * 165) + 429 <= *x && (i + 1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
+			{
+				if (PlayerComponent.GetCard(i, true) == 1)
+				{
+					temp = PlayerComponent.GetGear();
+					PlayerComponent.PlayCard(i, EnemyComponent.GetGear());
+					EnemyComponent.ChangeGears(temp);
+				}
+				else
+				{
+					PlayerComponent.PlayCard(i, 0);
+				}
+			}
 		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)

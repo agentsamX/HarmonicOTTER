@@ -36,9 +36,9 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
             int curSeg = currentIndex / 3;
             if (maxSegment <= curSeg&&maxSegment!=0)
                 return;
-            distTravelled += delta*30.f ;
-            printf("CurSeg: %i\n", curSeg);
-            printf("CurDistance : %f\n", distTravelled);
+            distTravelled += delta*speed;
+            //printf("CurSeg: %i\n", curSeg);
+            //printf("CurDistance : %f\n", distTravelled);
             float t = 0.0f;
             for (int i = 0; i <= samplesPerSeg; ++i)
             {
@@ -66,7 +66,7 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
 
             curTrans.SetPosition(Bezier(points[currentIndex][0], points[handleIndex1][0], points[handleIndex2][0], points[nextIndex][0], t));
             curTrans.SetRotQuat(glm::slerp(glm::quat(glm::radians(points[currentIndex][1])), glm::quat(glm::radians(points[nextIndex][1])), t));
-            printf("t value: %f\n", t);
+            //printf("t value: %f\n", t);
 
             if (t >= 1.f)
             {
@@ -144,6 +144,16 @@ void syre::PathAnimator::Reset()
         nextIndex = 3;
     }
     isPlay = true;
+}
+
+void syre::PathAnimator::SetMaxSegment(int newSegemt)
+{
+    maxSegment += newSegemt;
+}
+
+void syre::PathAnimator::SetSpeed(int newSpeed)
+{
+    speed += newSpeed;
 }
 
 float syre::PathAnimator::InvLerp(float start, float end, float cur)

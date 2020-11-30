@@ -21,6 +21,8 @@ namespace syre
 		void Update(Transform& curTrans, float delta);
 		void SpeedControl();
 		void Reset();
+		void SetMaxSegment(int);
+		void SetSpeed(int);
 	private:
 		PathType pathType;
 		float InvLerp(float start, float end, float cur);
@@ -37,7 +39,8 @@ namespace syre
 		int handleIndex2 = 2;
 		int nextIndex = 1;
 		int stopPoint;
-		int maxSegment = 0;//putting 0 does not limit the segment
+		float speed= 30.f;
+		int maxSegment = 3;//putting 0 does not limit the segment
 	};
 }
 
