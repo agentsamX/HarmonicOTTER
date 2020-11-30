@@ -18,8 +18,8 @@ void SceningTest::Start()
 	entt::entity shader = m_Registry.create();
 	m_PCar = m_Registry.create();
 	m_enemy = m_Registry.create();
+	m_Obstacle = m_Registry.create();
 	entt::entity Track = m_Registry.create();
-	entt::entity Obstacle = m_Registry.create();
 	//cards
 	m_Card = m_Registry.create();
 
@@ -36,12 +36,9 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Transform>(Track, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(Track, "PossibleRoad.png");
 
-	m_Registry.emplace<Obstacles>(Obstacle);
+	m_Registry.emplace<Obstacles>(m_Obstacle);
 
 	m_Shader = shader;
-	m_PCar = Car;
-	m_Obstacle = Obstacle;
-	m_ECar = EnemyCar;
 	
 	m_Registry.emplace<Cars>(m_PCar);
 	m_Registry.emplace<syre::Mesh>(m_PCar, "Car2.obj");
@@ -455,7 +452,7 @@ void SceningTest::Update()
 	auto& shaderComponent = m_Registry.get<Shader::sptr>(m_Shader);
 	auto& obstacleComponent = m_Registry.get<Obstacles>(m_Obstacle);
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
-	auto& EnemyComponent = m_Registry.get<Cars>(m_ECar);
+	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
 	int temp;
 	if (start == 0)
 	{
@@ -602,7 +599,7 @@ void SceningTest::KeyEvents(float delta)
 {
 	auto& camComponent = camera;
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
-	auto& EnemyComponent = m_Registry.get<Cars>(m_ECar);
+	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
 	int temp;
 	glm::vec3 curCamPos = camComponent->GetPosition();
 	glm::vec3 curCamFor = camComponent->GetForward();
