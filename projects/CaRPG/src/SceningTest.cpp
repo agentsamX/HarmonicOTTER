@@ -27,13 +27,13 @@ void SceningTest::Start()
 	//cards
 	m_Card = m_Registry.create();
 
-	entt::entity morphTest = m_Registry.create();
+	/*entt::entity morphTest = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(morphTest);
 	m_Registry.emplace<syre::Texture>(morphTest, "Car2.png");
 	m_Registry.emplace<syre::Transform>(morphTest, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.0f), glm::vec3(1.0f));
 	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("morph01.obj");
 	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("morph02.obj");
-	
+	*/
 
 	//track and scenery
 	m_Registry.emplace<syre::Mesh>(Track, "Track1New.obj");
@@ -73,7 +73,7 @@ void SceningTest::Start()
 	entt::entity trackSigns = m_Registry.create();
 	m_Registry.emplace<syre::Mesh>(trackSigns, "SignsMap.obj");
 	m_Registry.emplace<syre::Transform>(trackSigns, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
-	//m_Registry.emplace<syre::Texture>(trackSigns, "Signs.png");
+	m_Registry.emplace<syre::Texture>(trackSigns, "Signs.png");
 
 	//sharp rocks
 	entt::entity trackSharpRocks = m_Registry.create();
@@ -98,6 +98,24 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(trackBush, "BushMap.obj");
 	m_Registry.emplace<syre::Transform>(trackBush, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackBush, "Bush.png");
+
+	entt::entity butterflies = m_Registry.create();
+	m_Registry.emplace<syre::MorphRenderer>(butterflies);
+	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyNeutral.obj");
+	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyDown.obj");
+	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyNeutral.obj");
+	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyUp.obj");
+
+	m_Registry.emplace<syre::Texture>(butterflies, "butterfly.png");
+	m_Registry.emplace<syre::TransformList>(butterflies);
+	m_Registry.get<syre::TransformList>(butterflies).SetDefaultRot(glm::vec3(90.0f, -70.0f, 180.0f));
+	m_Registry.get<syre::TransformList>(butterflies).SetDefaultSca(glm::vec3(0.2f));
+	m_Registry.get<syre::TransformList>(butterflies).AddPos(glm::vec3(0.0f, 0.0f, 0.0f));
+	m_Registry.get<syre::TransformList>(butterflies).AddPos(glm::vec3(3.0f, -70.0f, 1.0f));
+	m_Registry.get<syre::TransformList>(butterflies).AddPos(glm::vec3(35.0f, -97.f, 0.0f));
+	m_Registry.get<syre::TransformList>(butterflies).AddPos(glm::vec3(110.0f, -104.f, 0.0f));
+	m_Registry.get<syre::TransformList>(butterflies).AddPos(glm::vec3(153.0f, -205.f, 0.0f));
+
 
 
 
@@ -523,6 +541,13 @@ void SceningTest::Start()
 
 	auto& obstacleComponent = m_Registry.get<Obstacles>(m_Obstacle);
 
+	auto listView = m_Registry.view<syre::TransformList>();
+	for (auto entity : listView)
+	{
+		m_Registry.get<syre::TransformList>(entity).SetCamera(camera);
+	}
+
+
 
 	lastFrame = glfwGetTime();
 }
@@ -674,7 +699,17 @@ void SceningTest::Update()
 		renderView.get<syre::Texture>(entity).Bind();
 		renderView.get<syre::Mesh>(entity).Render();
 	}
+	auto listRenderView = m_Registry.view<syre::Mesh, syre::TransformList, syre::Texture>();
+	for (auto entity : listRenderView)
+	{
+		listRenderView.get<syre::Texture>(entity).Bind();
+		listRenderView.get<syre::TransformList>(entity).ListRender(shaderComponent, listRenderView.get<syre::Mesh>(entity));
+	}
+
 	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
+	morphShader->SetUniform("u_CamPos", camComponent->GetPosition());
+	morphShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	morphShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
 	morphShader->Bind();
 	for (auto entity : morphRenderView)
 	{
@@ -686,6 +721,14 @@ void SceningTest::Update()
 		morphShader->SetUniform("t", t);
 		morphRenderView.get<syre::Texture>(entity).Bind();
 		morphRenderView.get<syre::MorphRenderer>(entity).Render();
+	}
+	auto morphListRenderView = m_Registry.view<syre::MorphRenderer, syre::TransformList, syre::Texture>();
+	for (auto entity : morphListRenderView)
+	{
+		float t = morphListRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime);
+		morphShader->SetUniform("t", t);
+		morphListRenderView.get<syre::Texture>(entity).Bind();
+		morphListRenderView.get<syre::TransformList>(entity).ListRender(morphShader,morphListRenderView.get<syre::MorphRenderer>(entity));
 	}
 	if (!manualCamera)
 	{
