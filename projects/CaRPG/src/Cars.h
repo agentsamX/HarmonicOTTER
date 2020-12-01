@@ -20,7 +20,7 @@ public:
 	void SetBrk();
 	bool GetAcc();
 	bool GetBrake();
-	void PlayCard(int, int);
+	void PlayCard(int,int);
 	int GetAction1();
 	int GetAction2();
 	void IncreaseScore();

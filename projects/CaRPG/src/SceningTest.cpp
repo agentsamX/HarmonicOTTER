@@ -22,6 +22,7 @@ void SceningTest::Start()
 	entt::entity Track = m_Registry.create();
 	m_Hazard = m_Registry.create();
 	m_Gearbox = m_Registry.create();
+	m_GearboxLever = m_Registry.create();
 	m_Accelerometer = m_Registry.create();
 	//cards
 	m_Card = m_Registry.create();
@@ -47,9 +48,14 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Transform>(m_Gearbox, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Gearbox, "GearBoxNeutral.png");
 
+	m_Registry.emplace<syre::Mesh>(m_GearboxLever, "Lever.obj");
+	m_Registry.emplace<syre::Transform>(m_GearboxLever, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_GearboxLever, "GearboxLever.png");
+
 	m_Registry.emplace<syre::Mesh>(m_Accelerometer, "Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Accelerometer, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Accelerometer, "Accelerometer1.png");
+
 	
 	//trees
 	entt::entity trackTrees = m_Registry.create();
@@ -565,6 +571,25 @@ void SceningTest::Update()
 	accelerometerTextures[GerVal].Bind();
 	m_Registry.get<syre::Mesh>(m_Accelerometer).Render();
 	
+	if (lbutton_down == false)
+	{
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f));
+		m_Registry.get<syre::Texture>(m_GearboxLever).Bind();
+		m_Registry.get<syre::Mesh>(m_GearboxLever).Render();
+	}
+	if (lbutton_down == true)
+	{
+		double* x = new double;
+		double* y = new double;
+
+		glfwGetCursorPos(window, x, y);
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f - (*y * 0.0001)));
+		m_Registry.get<syre::Texture>(m_GearboxLever).Bind();
+		m_Registry.get<syre::Mesh>(m_GearboxLever).Render();
+	}
+
 
 	bool Accelerate = PlayerComponent.GetAcc();
 	bool Brake = PlayerComponent.GetBrake();
@@ -590,7 +615,6 @@ void SceningTest::Update()
 		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
 	}
 
-
 	if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
 	{
 		m_Registry.get<syre::PathAnimator>(m_PCar).Stop();
@@ -607,21 +631,22 @@ void SceningTest::Update()
 			PlayerComponent.IncreaseScore();
 		else
 			EnemyComponent.IncreaseScore();
-		if (PlayerComponent.GetAction1() == 2 || PlayerComponent.GetAction2() == 2)
-		{
-			temp = PlayerComponent.GetGear();
-			PlayerComponent.ChangeGears(EnemyComponent.GetGear());
-			EnemyComponent.ChangeGears(temp);
-		}
-		if (EnemyComponent.GetAction1() == 2 || EnemyComponent.GetAction2() == 2)
+		
+		obstacleComponent.Draw();
+		m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);
+		m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);
+		if (EnemyComponent.GetAction1() == 1 || EnemyComponent.GetAction2() == 1)
 		{
 			temp = EnemyComponent.GetGear();
 			EnemyComponent.ChangeGears(PlayerComponent.GetGear());
 			PlayerComponent.ChangeGears(temp);
 		}
-		obstacleComponent.Draw();
-		m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);
-		m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);
+		if (PlayerComponent.GetAction1() == 1 || PlayerComponent.GetAction2() == 1)
+		{
+			temp = PlayerComponent.GetGear();
+			PlayerComponent.ChangeGears(EnemyComponent.GetGear());
+			EnemyComponent.ChangeGears(temp);
+		}
 		PlayerComponent.ResetTurn();
 		EnemyComponent.ResetTurn();
 
@@ -777,34 +802,45 @@ void SceningTest::KeyEvents(float delta)
 		double* y = new double;
 
 		glfwGetCursorPos(window, x,y);
-		printf("Mouse at X %f Y %f\n", *x, *y);
-		for (float i = 0; i <= 5; i++)
+		if (*x >= 70 && *x <= 95 && *y <= 615 && *y >= 597)
 		{
-			if ((i * 165) + 429 <= *x && (i + 1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
+			lbutton_down = true;
+		}
+		printf("Mouse at X %f Y %f\n", *x, *y);
+		if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
+		{
+			for (float i = 0; i <= 5; i++)
 			{
-				if (PlayerComponent.GetCard(i, true) == 1)
+				if ((i * 165) + 429 <= *x && (i + 1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
 				{
-					temp = PlayerComponent.GetGear();
-					PlayerComponent.PlayCard(i, EnemyComponent.GetGear());
-					EnemyComponent.ChangeGears(temp);
+					if (PlayerComponent.GetCard(i, true) == 2)
+					{
+						temp = PlayerComponent.GetGear();
+						PlayerComponent.PlayCard(i, EnemyComponent.GetGear());
+						EnemyComponent.ChangeGears(temp);
+					}
+					else
+					{
+						PlayerComponent.PlayCard(i, 0);
+					}
+					Elapsedtime = 0;
 				}
-				else
-				{
-					PlayerComponent.PlayCard(i, 0);
-				}
+			}
+			if (*x >= 34 && *x <= 72 && *y <= 699 && *y >= 674)
+			{
+				PlayerComponent.SetBrk();
+				Elapsedtime = 0;
+			}
+			else if (*x >= 98 && *x <= 129 && *y <= 709 && *y >= 666)
+			{
+				PlayerComponent.SetAcc();
 				Elapsedtime = 0;
 			}
 		}
-		if (*x >= 34 && *x <= 72 && *y <= 699 && *y >= 674)
-		{
-			PlayerComponent.SetBrk();
-			Elapsedtime = 0;
-		}
-		else if (*x >= 98 && *x <= 129 && *y <= 709 && *y >= 666)
-		{
-			PlayerComponent.SetAcc();
-			Elapsedtime = 0;
-		}
+	}
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+	{
+		lbutton_down = false;
 	}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
 	{

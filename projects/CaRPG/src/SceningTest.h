@@ -19,6 +19,7 @@ private:
 	entt::entity m_Card;
 	entt::entity m_Hazard;
 	entt::entity m_Gearbox;
+	entt::entity m_GearboxLever;
 	entt::entity m_Accelerometer;
 
 	std::vector<syre::Texture> cardTextures;
@@ -30,4 +31,5 @@ private:
 	Shader::sptr morphShader;
 	bool manualCamera = false;
 	float Elapsedtime = 0;
+	bool lbutton_down = false;
 };

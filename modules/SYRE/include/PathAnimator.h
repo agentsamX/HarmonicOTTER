@@ -47,7 +47,7 @@ namespace syre
 		int nextIndex = 1;
 		int stopPoint;
 		float speed= 40.f;
-		int maxSegment = 0;//putting 0 does not limit the segment
+		int maxSegment = 2;//putting 0 does not limit the segment
 	};
 }
 

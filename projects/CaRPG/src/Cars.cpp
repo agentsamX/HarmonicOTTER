@@ -104,7 +104,6 @@ void Cars::PlayCard(int Position, int NewGear)
 	if (Hand[Position] == 1)
 	{
 		printf("Drift");
-		Gear = NewGear;
 		if (Action1 == -1)
 			Action1 = Hand[Position];
 		else
