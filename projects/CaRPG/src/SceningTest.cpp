@@ -31,13 +31,58 @@ void SceningTest::Start()
 	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("morph02.obj");
 	
 
-
+	//track and scenery
 	m_Registry.emplace<syre::Mesh>(Track, "Track1New.obj");
 	m_Registry.emplace<syre::Transform>(Track, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(Track, "PossibleRoad.png");
 
-	m_Registry.emplace<Obstacles>(m_Obstacle);
+	//trees
+	entt::entity trackTrees = m_Registry.create();
+	m_Registry.emplace<syre::Mesh>(trackTrees, "TreesMap.obj");
+	m_Registry.emplace<syre::Transform>(trackTrees, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Texture>(trackTrees, "Tree.png");
 
+	//terrain
+	entt::entity trackTerrain = m_Registry.create();
+	m_Registry.emplace<syre::Mesh>(trackTerrain, "TerrainMap.obj");
+	m_Registry.emplace<syre::Transform>(trackTerrain, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Texture>(trackTerrain, "Terrain.png");
+
+	//signs
+	entt::entity trackSigns = m_Registry.create();
+	m_Registry.emplace<syre::Mesh>(trackSigns, "SignsMap.obj");
+	m_Registry.emplace<syre::Transform>(trackSigns, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	//m_Registry.emplace<syre::Texture>(trackSigns, "Signs.png");
+
+	//sharp rocks
+	entt::entity trackSharpRocks = m_Registry.create();
+	m_Registry.emplace<syre::Mesh>(trackSharpRocks, "SharpRockMap.obj");
+	m_Registry.emplace<syre::Transform>(trackSharpRocks, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Texture>(trackSharpRocks, "SharpRock.png");
+
+	//round rocks
+	entt::entity trackRoundRocks = m_Registry.create();
+	m_Registry.emplace<syre::Mesh>(trackRoundRocks, "RoundRockMap.obj");
+	m_Registry.emplace<syre::Transform>(trackRoundRocks, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Texture>(trackRoundRocks, "RoundRock.png");
+
+	//flowers
+	entt::entity trackFlowers = m_Registry.create();
+	m_Registry.emplace<syre::Mesh>(trackFlowers, "FlowersMap.obj");
+	m_Registry.emplace<syre::Transform>(trackFlowers, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Texture>(trackFlowers, "Flower.png");
+
+	//bush
+	entt::entity trackBush = m_Registry.create();
+	m_Registry.emplace<syre::Mesh>(trackBush, "BushMap.obj");
+	m_Registry.emplace<syre::Transform>(trackBush, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Texture>(trackBush, "Bush.png");
+
+
+
+
+	m_Registry.emplace<Obstacles>(m_Obstacle);
+	
 	m_Shader = shader;
 	
 	m_Registry.emplace<Cars>(m_PCar);
@@ -547,7 +592,7 @@ void SceningTest::Update()
 	}
 	if (!manualCamera)
 	{
-		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 3.0f, 3.0f));
+		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
 	}
 	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition() - camComponent->GetPosition()));
 

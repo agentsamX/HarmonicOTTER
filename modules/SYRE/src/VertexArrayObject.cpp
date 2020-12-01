@@ -66,3 +66,10 @@ void VertexArrayObject::Render() const {
 	}
 	UnBind();
 }
+
+void VertexArrayObject::ClearVector()
+{
+	_vertexBuffers.clear();
+	_vertexCount = 0;
+
+}

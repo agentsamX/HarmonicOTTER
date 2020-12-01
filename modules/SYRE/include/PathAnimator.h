@@ -36,15 +36,18 @@ namespace syre
 		glm::vec3 startPoint;
 		std::vector<std::vector<glm::vec2>> bezierTable;//t value is x, total distance is z
 		bool isPlay = true;
+		bool hardStop = false;
+		bool looping = false;
 		float distTravelled = 0.f;
+		float lastT = 0.0f;
 		int samplesPerSeg = 20;
 		int currentIndex = 0;
 		int handleIndex1 = 1;
 		int handleIndex2 = 2;
 		int nextIndex = 1;
 		int stopPoint;
-		float speed= 30.f;
-		int maxSegment = 1;//putting 0 does not limit the segment
+		float speed= 40.f;
+		int maxSegment = 0;//putting 0 does not limit the segment
 	};
 }
 
