@@ -51,6 +51,10 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
                     }
                     float tSample = InvLerp(bezierTable[curSeg][i - 1].y, bezierTable[curSeg][i].y, distTravelled);
                     t = glm::mix(bezierTable[curSeg][i - 1].x, bezierTable[curSeg][i].x, tSample);
+                    if (t <= lastT)
+                    {
+                        t = lastT;
+                    }
                     break;
                 }
                 else if (bezierTable[curSeg][i].y == distTravelled)
@@ -74,6 +78,7 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
                 nextIndex += 3;
                 handleIndex1 += 3;
                 handleIndex2 += 3;
+                lastT = 0.0f;
                 t = 0.f;
 
                 if (nextIndex >= points.size())
@@ -82,7 +87,15 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
                     handleIndex1 = 1;
                     handleIndex2 = 2;
                     nextIndex = 3;
-                    isPlay = false;
+                    if (!looping)
+                    {
+                        isPlay = false;
+                        hardStop = true;
+                    }
+                    else
+                    {
+                        distTravelled = 0.0f;
+                    }
                 }
              
             }
@@ -116,11 +129,11 @@ void syre::PathAnimator::SpeedControl()
             }
             samples.push_back(glm::vec2(t, distTotal));
         }
-        for (int j = 0; j <= samplesPerSeg; ++j)
-        {
-            printf("t val : %f, dist : %f\n", samples[j].x, samples[j].y);
-            //prints values of the speed control table
-        }
+        //for (int j = 0; j <= samplesPerSeg; ++j)
+        //{
+        //    printf("t val : %f, dist : %f\n", samples[j].x, samples[j].y);
+        //    //prints values of the speed control table
+        //}
         
         bezierTable.push_back(samples);
     }
@@ -133,7 +146,8 @@ void syre::PathAnimator::Stop()
 
 void syre::PathAnimator::Resume()
 {
-    isPlay = true;
+    if(!hardStop)
+        isPlay = true;
 }
 
 void syre::PathAnimator::Reset()

@@ -29,6 +29,9 @@ void main() {
 	float distPlay= max(2.0,distance(playerPos,inPos));
 	float distEnemy =max(2.0,distance(enemyPos,inPos));
 
+	if(distPlay>200.f)
+		discard;
+
 	
 	vec3 textureColor = texture(textureSampler, UV).xyz;
 
@@ -56,8 +59,8 @@ void main() {
 	vec3 reflectDir = reflect(-lightDir, N);
 	float spec = pow(max(dot(camDir, reflectDir), 0.0), 4); // Shininess coefficient (can be a uniform)
 	vec3 specular = specularStrength * spec * lightColor; // Can also use a specular color
-
+	
 	vec3 result = (ambient + diffuse + specular);
-
-	frag_color = (texture(textureSampler, UV) * vec4(result, 1.0)) +vec4(1/distPlay,0.0f,1/distEnemy,0.0f);
+	
+	frag_color = (texture(textureSampler, UV)/(distPlay/10) *vec4(result,1.0)+vec4(1/distPlay,0.0f,1/distEnemy,0.0f));
 }

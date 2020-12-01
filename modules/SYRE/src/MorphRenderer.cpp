@@ -185,11 +185,13 @@ float syre::MorphRenderer::Update(float delta)
 		}
 		if (curFrame == Keys.size() - 1)
 		{
+			vao->ClearVector();
 			vao->AddVertexBuffer(Keys[curFrame].VBO, attribs);
 			vao->AddVertexBuffer(Keys[0].VBO, attribs2);
 		}
 		else
 		{
+			vao->ClearVector();
 			vao->AddVertexBuffer(Keys[curFrame].VBO, attribs);
 			vao->AddVertexBuffer(Keys[curFrame+1].VBO, attribs2);
 		}

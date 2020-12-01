@@ -125,6 +125,7 @@ public:
 	GLuint GetHandle() const { return _handle; }
 
 	void Render() const;
+	void ClearVector();
 	
 protected:
 	// Helper structure to store a buffer and the attributes
