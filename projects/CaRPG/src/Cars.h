@@ -18,9 +18,13 @@ public:
 	int GetGear();
 	void SetAcc();
 	void SetBrk();
+	bool GetAcc();
+	bool GetBrake();
 	void PlayCard(int, int);
 	int GetAction1();
 	int GetAction2();
+	void IncreaseScore();
+	int GetScore();
 	void ResetTurn();
 
 	//Hand interactions

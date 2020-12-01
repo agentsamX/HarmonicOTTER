@@ -13,7 +13,10 @@ out vec4 frag_color;
 
 
 void main() {
-	
+	if ( texture(textureSampler, UV).w == 0.0)
+	{
+		discard;
+	}
 	vec3 textureColor = texture(textureSampler, UV).xyz;
 	frag_color = texture(textureSampler, UV);
 }

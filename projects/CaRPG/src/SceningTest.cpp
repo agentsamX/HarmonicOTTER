@@ -20,6 +20,9 @@ void SceningTest::Start()
 	m_enemy = m_Registry.create();
 	m_Obstacle = m_Registry.create();
 	entt::entity Track = m_Registry.create();
+	m_Hazard = m_Registry.create();
+	m_Gearbox = m_Registry.create();
+	m_Accelerometer = m_Registry.create();
 	//cards
 	m_Card = m_Registry.create();
 
@@ -36,8 +39,20 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Transform>(Track, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(Track, "PossibleRoad.png");
 
-	m_Registry.emplace<Obstacles>(m_Obstacle);
+	m_Registry.emplace<syre::Mesh>(m_Hazard, "RoadHazard.obj");
+	m_Registry.emplace<syre::Transform>(m_Hazard, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Hazard, "Apex.png");
 
+	m_Registry.emplace<syre::Mesh>(m_Gearbox, "Gearbox.obj");
+	m_Registry.emplace<syre::Transform>(m_Gearbox, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Gearbox, "GearBoxNeutral.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Accelerometer, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Accelerometer, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Accelerometer, "Accelerometer1.png");
+	
+	m_Registry.emplace<Obstacles>(m_Obstacle);
+	
 	m_Shader = shader;
 	
 	m_Registry.emplace<Cars>(m_PCar);
@@ -376,6 +391,23 @@ void SceningTest::Start()
 	cardTextures.push_back(syre::Texture("Slipstream.png"));
 	cardTextures.push_back(syre::Texture("Muffler.png"));
 
+	hazardTextures.push_back(syre::Texture("Apex.png"));
+	hazardTextures.push_back(syre::Texture("Hairpin.png"));
+	hazardTextures.push_back(syre::Texture("Chicane.png"));
+	hazardTextures.push_back(syre::Texture("Rocks.png"));
+
+	gearboxTextures.push_back(syre::Texture("GearBoxNeutral.png"));
+	gearboxTextures.push_back(syre::Texture("GearBoxGasPressed.png"));
+	gearboxTextures.push_back(syre::Texture("GearBoxBrakePressed.png"));
+	
+	accelerometerTextures.push_back(syre::Texture("Accelerometer1.png"));
+	accelerometerTextures.push_back(syre::Texture("Accelerometer1.png"));
+	accelerometerTextures.push_back(syre::Texture("Accelerometer2.png"));
+	accelerometerTextures.push_back(syre::Texture("Accelerometer3.png"));
+	accelerometerTextures.push_back(syre::Texture("Accelerometer4.png"));
+	accelerometerTextures.push_back(syre::Texture("Accelerometer5.png"));
+	accelerometerTextures.push_back(syre::Texture("Accelerometer6.png"));
+
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
 	flatShader->LoadShaderPartFromFile("flatFrag.glsl", GL_FRAGMENT_SHADER);
@@ -462,19 +494,58 @@ void SceningTest::Update()
 	glm::vec3 camX = glm::cross(camComponent->GetForward(), camComponent->GetUp());
 	KeyEvents(deltaTime);
 	flatShader->Bind();
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.13f)));
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.115f)));
 	flatShader->SetUniform("aspect", camera->GetAspect());
 	for (int i = 0; i <= 4; i++)
 	{
 		int cardVal = PlayerComponent.GetCard(i, true);
 		if (cardVal != -1)
 		{
-			flatShader->SetUniform("offset", glm::vec2(-0.2f+i/3.8f, -.62f));
+			flatShader->SetUniform("offset", glm::vec2(-0.1f+i/4.2f, -.66f));
 			cardTextures[cardVal].Bind();
 			m_Registry.get<syre::Mesh>(m_Card).Render();
-		}
-		
+		}	
 	}
+
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.09f)));
+	flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
+	int ObsVal = obstacleComponent.GetObs();
+	hazardTextures[ObsVal].Bind();
+	m_Registry.get<syre::Mesh>(m_Hazard).Render();
+	
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.55f, -0.95f));
+	int GerVal = PlayerComponent.GetGear();
+	accelerometerTextures[GerVal].Bind();
+	m_Registry.get<syre::Mesh>(m_Accelerometer).Render();
+	
+
+	bool Accelerate = PlayerComponent.GetAcc();
+	bool Brake = PlayerComponent.GetBrake();
+	if (Accelerate == false && Brake == false)
+	{
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f));
+		gearboxTextures[0].Bind();
+		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
+	}
+	else if (Brake == true)
+	{
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f));
+		gearboxTextures[2].Bind();
+		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
+	}
+	else if (Accelerate == true)
+	{
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f));
+		gearboxTextures[1].Bind();
+		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
+	}
+
+
 	if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
 	{
 		m_Registry.get<syre::PathAnimator>(m_PCar).Stop();
@@ -487,7 +558,10 @@ void SceningTest::Update()
 	}
 	if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
 	{
-		obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear());
+		if (obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear()) == 1)
+			PlayerComponent.IncreaseScore();
+		else
+			EnemyComponent.IncreaseScore();
 		if (PlayerComponent.GetAction1() == 2 || PlayerComponent.GetAction2() == 2)
 		{
 			temp = PlayerComponent.GetGear();
@@ -501,10 +575,8 @@ void SceningTest::Update()
 			PlayerComponent.ChangeGears(temp);
 		}
 		obstacleComponent.Draw();
-		//TODO: Change the Segment index and speed
 		m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);
 		m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);
-
 		PlayerComponent.ResetTurn();
 		EnemyComponent.ResetTurn();
 
@@ -610,6 +682,7 @@ Camera::sptr& SceningTest::GetCam()
 
 void SceningTest::KeyEvents(float delta)
 {
+	Elapsedtime += delta;
 	auto& camComponent = camera;
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
@@ -653,13 +726,13 @@ void SceningTest::KeyEvents(float delta)
 	{
 		PlayerComponent.Draw();
 	}
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && Elapsedtime >= 0.5)
 	{
 		double* x = new double;
 		double* y = new double;
 
 		glfwGetCursorPos(window, x,y);
-		//printf("Mouse at X %f Y %f\n", *x, *y);
+		printf("Mouse at X %f Y %f\n", *x, *y);
 		for (float i = 0; i <= 5; i++)
 		{
 			if ((i * 165) + 429 <= *x && (i + 1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
@@ -674,7 +747,18 @@ void SceningTest::KeyEvents(float delta)
 				{
 					PlayerComponent.PlayCard(i, 0);
 				}
+				Elapsedtime = 0;
 			}
+		}
+		if (*x >= 34 && *x <= 72 && *y <= 699 && *y >= 674)
+		{
+			PlayerComponent.SetBrk();
+			Elapsedtime = 0;
+		}
+		else if (*x >= 98 && *x <= 129 && *y <= 709 && *y >= 666)
+		{
+			PlayerComponent.SetAcc();
+			Elapsedtime = 0;
 		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)

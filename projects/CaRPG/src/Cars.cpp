@@ -33,17 +33,53 @@ int Cars::GetGear()
 void Cars::SetAcc()
 {
 	if (!Accelerate)
+	{
 		Accelerate = true;
+		Brake = false;
+		if (Action1 == -1)
+			Action1 = 6;
+		else
+			Action2 = 6;
+	}
 	else
+	{
 		Accelerate = false;
+		Brake = false;
+	}
 }
 
 void Cars::SetBrk()
 {
 	if (!Brake)
+	{
 		Brake = true;
+		Accelerate = false;
+		if (Action1 == -1)
+			Action1 = 5;
+		else
+			Action2 = 5;
+	}
 	else
+	{
 		Brake = false;
+		Accelerate = false;
+	}
+}
+
+bool Cars::GetAcc()
+{
+	if (Accelerate == true)
+		return true;
+	else
+		return false;
+}
+
+bool Cars::GetBrake()
+{
+	if (Brake == true)
+		return true;
+	else
+		return false;
 }
 
 void Cars::PlayCard(int Position, int NewGear)
@@ -95,6 +131,16 @@ int Cars::GetAction1()
 int Cars::GetAction2()
 {
 	return Action2;
+}
+
+void Cars::IncreaseScore()
+{
+	CompletedObs += 1;
+}
+
+int Cars::GetScore()
+{
+	return CompletedObs;
 }
 
 void Cars::ResetTurn()

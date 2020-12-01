@@ -57,7 +57,7 @@ bool Obstacles::Resolve(int pGear, int oGear)
 	}
 	else if (CurObs == 1)
 	{
-		if (((pGear - Value) * (pGear - Value)) / (pGear - Value) <= ((oGear - Value) * (oGear - Value)) / (oGear - Value))
+		if (abs(pGear - Value) <= abs(oGear - Value))
 		{
 			return 1;
 		}
