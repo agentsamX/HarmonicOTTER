@@ -19,9 +19,13 @@ namespace syre
 		void AddPoint(glm::vec3 pos, glm::vec3 rot);
 		void AddPoint(std::vector<glm::vec3>& pos, std::vector<glm::vec3>& rot);
 		void Update(Transform& curTrans, float delta);
+		bool HitMax();
 		void SpeedControl();
+		void Stop();
+		void Resume();
 		void Reset();
 		void SetMaxSegment(int);
+		void IncrementSegment(int);
 		void SetSpeed(int);
 	private:
 		PathType pathType;
@@ -40,7 +44,7 @@ namespace syre
 		int nextIndex = 1;
 		int stopPoint;
 		float speed= 30.f;
-		int maxSegment = 3;//putting 0 does not limit the segment
+		int maxSegment = 1;//putting 0 does not limit the segment
 	};
 }
 

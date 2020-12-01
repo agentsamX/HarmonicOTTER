@@ -91,6 +91,12 @@ void syre::PathAnimator::Update(Transform& curTrans, float delta)
     }
 }
 
+bool syre::PathAnimator::HitMax()
+{
+    int curSeg = currentIndex / 3;
+    return maxSegment <= curSeg && maxSegment != 0;
+}
+
 void syre::PathAnimator::SpeedControl()
 {
     for (int i = 0; i < points.size()-3; i += 3)
@@ -101,10 +107,8 @@ void syre::PathAnimator::SpeedControl()
         {
             if (t == 0.0f)
             {
-                if (i == 0)
-                    distTotal = 0;
-                else
-                    distTotal = bezierTable.back().back().y;
+                if (i != 0)
+                  distTotal = bezierTable.back().back().y;
             }
             else
             {
@@ -112,14 +116,24 @@ void syre::PathAnimator::SpeedControl()
             }
             samples.push_back(glm::vec2(t, distTotal));
         }
-        /*for (int j = 0; j <= samplesPerSeg; ++j)
+        for (int j = 0; j <= samplesPerSeg; ++j)
         {
             printf("t val : %f, dist : %f\n", samples[j].x, samples[j].y);
             //prints values of the speed control table
-        }*/
+        }
         
         bezierTable.push_back(samples);
     }
+}
+
+void syre::PathAnimator::Stop()
+{
+    isPlay = false;
+}
+
+void syre::PathAnimator::Resume()
+{
+    isPlay = true;
 }
 
 void syre::PathAnimator::Reset()
@@ -149,6 +163,11 @@ void syre::PathAnimator::Reset()
 void syre::PathAnimator::SetMaxSegment(int newSegemt)
 {
     maxSegment += newSegemt;
+}
+
+void syre::PathAnimator::IncrementSegment(int inc)
+{
+    maxSegment += inc;
 }
 
 void syre::PathAnimator::SetSpeed(int newSpeed)

@@ -475,6 +475,16 @@ void SceningTest::Update()
 		}
 		
 	}
+	if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
+	{
+		m_Registry.get<syre::PathAnimator>(m_PCar).Stop();
+		m_Registry.get<syre::PathAnimator>(m_enemy).Stop();
+	}
+	else if (!(m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() && m_Registry.get<syre::PathAnimator>(m_enemy).HitMax()))
+	{
+		m_Registry.get<syre::PathAnimator>(m_PCar).Resume();
+		m_Registry.get<syre::PathAnimator>(m_enemy).Resume();
+	}
 	if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
 	{
 		obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear());
@@ -492,6 +502,9 @@ void SceningTest::Update()
 		}
 		obstacleComponent.Draw();
 		//TODO: Change the Segment index and speed
+		m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);
+		m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);
+
 		PlayerComponent.ResetTurn();
 		EnemyComponent.ResetTurn();
 
