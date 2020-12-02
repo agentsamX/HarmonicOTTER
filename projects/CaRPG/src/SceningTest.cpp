@@ -190,7 +190,7 @@ void SceningTest::Start()
 
 	//remove this if frequent crashes
 	m_Registry.emplace<syre::Mesh>(m_Particles1, "particleLol.obj");
-	m_Registry.emplace<syre::Texture>(m_Particles1, "Finish.png");
+	m_Registry.emplace<syre::Texture>(m_Particles1, "black.png");
 	m_Registry.emplace<syre::TransformList>(m_Particles1);
 	m_Registry.get<syre::TransformList>(m_Particles1).Particalize(0.05f, 0.6f);
 	m_Registry.get<syre::TransformList>(m_Particles1).SetDefaultSca(glm::vec3(0.1f));
