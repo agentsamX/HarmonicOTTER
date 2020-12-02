@@ -155,7 +155,8 @@ int main()
 	if (!initGLAD())
 		return 1;
 
-	glEnable(GL_DEBUG_OUTPUT);
+	//glEnable(GL_DEBUG_OUTPUT);
+	//turn off for build for gdw
 	glDebugMessageCallback(GlDebugMessage, nullptr);
 	//end of cg tutorial
 

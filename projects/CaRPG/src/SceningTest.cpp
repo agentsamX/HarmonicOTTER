@@ -26,6 +26,7 @@ void SceningTest::Start()
 	m_Accelerometer = m_Registry.create();
 	m_Needle = m_Registry.create();
 	m_Particles1 = m_Registry.create();
+	m_Particles2 = m_Registry.create();
 	//cards
 	m_Card = m_Registry.create();
 
@@ -186,7 +187,6 @@ void SceningTest::Start()
 
 	m_Registry.emplace<Obstacles>(m_Obstacle);
 	
-	m_Shader = shader;
 
 	//remove this if frequent crashes
 	m_Registry.emplace<syre::Mesh>(m_Particles1, "particleLol.obj");
@@ -194,6 +194,12 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::TransformList>(m_Particles1);
 	m_Registry.get<syre::TransformList>(m_Particles1).Particalize(0.05f, 0.6f);
 	m_Registry.get<syre::TransformList>(m_Particles1).SetDefaultSca(glm::vec3(0.1f));
+
+	m_Registry.emplace<syre::Mesh>(m_Particles2, "particleLol.obj");
+	m_Registry.emplace<syre::Texture>(m_Particles2, "black.png");
+	m_Registry.emplace<syre::TransformList>(m_Particles2);
+	m_Registry.get<syre::TransformList>(m_Particles2).Particalize(0.05f, 0.6f);
+	m_Registry.get<syre::TransformList>(m_Particles2).SetDefaultSca(glm::vec3(0.1f));
 
 	
 	m_Registry.emplace<Cars>(m_PCar);
@@ -557,13 +563,12 @@ void SceningTest::Start()
 
 
 
-	m_Registry.emplace<Shader::sptr>(shader);
-
-	auto& shaderComponent = m_Registry.get<Shader::sptr>(shader);
-	shaderComponent = Shader::Create();
-	shaderComponent->LoadShaderPartFromFile("vertex_shader.glsl", GL_VERTEX_SHADER);
-	shaderComponent->LoadShaderPartFromFile("frag_shader.glsl", GL_FRAGMENT_SHADER);
-	shaderComponent->Link();
+	
+	
+	basicShader = Shader::Create();
+	basicShader->LoadShaderPartFromFile("vertex_shader.glsl", GL_VERTEX_SHADER);
+	basicShader->LoadShaderPartFromFile("frag_shader.glsl", GL_FRAGMENT_SHADER);
+	basicShader->Link();
 
 	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 2.0f);
 	glm::vec3 lightCol = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -574,13 +579,13 @@ void SceningTest::Start()
 	float     shininess = 4.0f;
 	// These are our application / scene level uniforms that don't necessarily update
 	// every frame
-	shaderComponent->SetUniform("u_LightPos", lightPos);
-	shaderComponent->SetUniform("u_LightCol", lightCol);
-	shaderComponent->SetUniform("u_AmbientLightStrength", lightAmbientPow);
-	shaderComponent->SetUniform("u_SpecularLightStrength", lightSpecularPow);
-	shaderComponent->SetUniform("u_AmbientCol", ambientCol);
-	shaderComponent->SetUniform("u_AmbientStrength", ambientPow);
-	shaderComponent->SetUniform("u_Shininess", shininess);
+	basicShader->SetUniform("u_LightPos", lightPos);
+	basicShader->SetUniform("u_LightCol", lightCol);
+	basicShader->SetUniform("u_AmbientLightStrength", lightAmbientPow);
+	basicShader->SetUniform("u_SpecularLightStrength", lightSpecularPow);
+	basicShader->SetUniform("u_AmbientCol", ambientCol);
+	basicShader->SetUniform("u_AmbientStrength", ambientPow);
+	basicShader->SetUniform("u_Shininess", shininess);
 
 
 	morphShader = Shader::Create();
@@ -636,7 +641,6 @@ void SceningTest::Update()
 	thisFrame = glfwGetTime();
 	float deltaTime = thisFrame - lastFrame;
 	auto& camComponent = camera;
-	auto& shaderComponent = m_Registry.get<Shader::sptr>(m_Shader);
 	auto& obstacleComponent = m_Registry.get<Obstacles>(m_Obstacle);
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
@@ -970,18 +974,18 @@ void SceningTest::Update()
 	}
 
 
-	shaderComponent->Bind();
-	shaderComponent->SetUniform("u_CamPos", camComponent->GetPosition());
-	shaderComponent->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
-	shaderComponent->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	basicShader->Bind();
+	basicShader->SetUniform("u_CamPos", camComponent->GetPosition());
+	basicShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	basicShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
 
 	auto renderView = m_Registry.view<syre::Mesh,syre::Transform,syre::Texture>();
 	for (auto entity : renderView)
 	{
 		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
-		shaderComponent->SetUniformMatrix("u_ModelViewProjection", camComponent->GetViewProjection() * transform);
-		shaderComponent->SetUniformMatrix("u_Model", transform);
-		shaderComponent->SetUniformMatrix("u_ModelRotation", glm::mat3(transform));
+		basicShader->SetUniformMatrix("u_ModelViewProjection", camComponent->GetViewProjection() * transform);
+		basicShader->SetUniformMatrix("u_Model", transform);
+		basicShader->SetUniformMatrix("u_ModelRotation", glm::mat3(transform));
 		renderView.get<syre::Texture>(entity).Bind();
 		renderView.get<syre::Mesh>(entity).Render();
 	}
@@ -989,7 +993,7 @@ void SceningTest::Update()
 	for (auto entity : listRenderView)
 	{
 		listRenderView.get<syre::Texture>(entity).Bind();
-		listRenderView.get<syre::TransformList>(entity).ListRender(shaderComponent, listRenderView.get<syre::Mesh>(entity),deltaTime);
+		listRenderView.get<syre::TransformList>(entity).ListRender(basicShader, listRenderView.get<syre::Mesh>(entity),deltaTime);
 	}
 
 	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
@@ -1022,12 +1026,14 @@ void SceningTest::Update()
 	}
 	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition() - camComponent->GetPosition()));
 	m_Registry.get<syre::TransformList>(m_Particles1).UpdateCurPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	m_Registry.get<syre::TransformList>(m_Particles2).UpdateCurPos(m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+
 	lastFrame = thisFrame;
 }
 
 void SceningTest::ImGUIUpdate()
 {
-	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
+	//auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 		// Implementation new frame
 		/*ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
