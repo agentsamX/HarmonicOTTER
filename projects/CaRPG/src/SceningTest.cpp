@@ -24,6 +24,7 @@ void SceningTest::Start()
 	m_Gearbox = m_Registry.create();
 	m_GearboxLever = m_Registry.create();
 	m_Accelerometer = m_Registry.create();
+	m_Needle = m_Registry.create();
 	//cards
 	m_Card = m_Registry.create();
 
@@ -55,6 +56,48 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(m_Accelerometer, "Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Accelerometer, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Accelerometer, "Accelerometer1.png");
+
+	m_Registry.emplace<syre::MorphRenderer>(m_Needle);
+	m_Registry.emplace<syre::Transform>(m_Needle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Needle, "Finish.png");
+	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("NeedleLeft.obj");
+	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("Needle.obj");
+	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("NeedleRight.obj");
+
+	entt::entity start = m_Registry.create();
+	m_Registry.emplace<syre::MorphRenderer>(start);
+	m_Registry.emplace<syre::Transform>(start, glm::vec3(15.0f, -50.0f, 0.0f), glm::vec3(90.0f, 0.0f, 190.0f), glm::vec3(1.0f));
+	m_Registry.emplace<syre::Texture>(start, "START.png");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START1.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START1.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START2.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START3.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START4.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START5.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START6.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START7.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START8.obj");
+	
+
+	entt::entity finish = m_Registry.create();
+	m_Registry.emplace<syre::MorphRenderer>(finish);
+	m_Registry.emplace<syre::Transform>(finish, glm::vec3(-270.0f, -135.0f, 0.0f), glm::vec3(90.0f, 0.0f, 150.0f), glm::vec3(1.0f));
+	m_Registry.emplace<syre::Texture>(finish, "Finish.png");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH1.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH1.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH2.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH3.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH4.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH5.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH6.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH7.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH8.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH9.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH10.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH11.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH12.obj");
+
+
 
 	
 	//trees
@@ -115,6 +158,26 @@ void SceningTest::Start()
 	m_Registry.get<syre::TransformList>(butterflies).AddPos(glm::vec3(35.0f, -97.f, 0.0f));
 	m_Registry.get<syre::TransformList>(butterflies).AddPos(glm::vec3(110.0f, -104.f, 0.0f));
 	m_Registry.get<syre::TransformList>(butterflies).AddPos(glm::vec3(153.0f, -205.f, 0.0f));
+
+	entt::entity swayingTree = m_Registry.create();
+	m_Registry.emplace<syre::MorphRenderer>(swayingTree);
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying1.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying2.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying3.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying4.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying5.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying6.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying7.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying8.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying9.obj");
+
+	m_Registry.emplace<syre::Texture>(swayingTree, "Tree.png");
+	m_Registry.emplace<syre::TransformList>(swayingTree);
+	m_Registry.get<syre::TransformList>(swayingTree).SetDefaultRot(glm::vec3(90.0f, 0.0f, 0.0f));
+	m_Registry.get<syre::TransformList>(swayingTree).SetDefaultSca(glm::vec3(1.0f));
+	m_Registry.get<syre::TransformList>(swayingTree).AddPos(glm::vec3(-1.0f, -80.0f, 0.0f));
+
+
 
 
 
@@ -532,7 +595,14 @@ void SceningTest::Start()
 	morphShader->SetUniform("u_AmbientCol", ambientCol);
 	morphShader->SetUniform("u_AmbientStrength", ambientPow);
 	morphShader->SetUniform("u_Shininess", shininess);
-	
+
+
+	flatMorphShader = Shader::Create();
+	flatMorphShader->LoadShaderPartFromFile("flatMorphVert.glsl", GL_VERTEX_SHADER);
+	flatMorphShader->LoadShaderPartFromFile("flatFrag.glsl", GL_FRAGMENT_SHADER);
+	flatMorphShader->Link();
+
+
 	auto& camComponent = camera;
 	camComponent->SetPosition(glm::vec3(0, 3, 3)); // Set initial position
 	camComponent->SetUp(glm::vec3(0, 0, 1)); // Use a z-up coordinate system
@@ -581,6 +651,7 @@ void SceningTest::Update()
 		if (cardVal != -1)
 		{
 			flatShader->SetUniform("offset", glm::vec2(-0.1f+i/4.2f, -.66f));
+
 			cardTextures[cardVal].Bind();
 			m_Registry.get<syre::Mesh>(m_Card).Render();
 		}	
@@ -853,6 +924,13 @@ void SceningTest::Update()
 			printf("ENEMY WINS");
 		}
 	}
+	flatMorphShader->Bind();
+	flatMorphShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.12f)));
+	flatMorphShader->SetUniform("offset", glm::vec2(-0.55, -0.97f));
+	flatMorphShader->SetUniform("t", 0.0f);
+	m_Registry.get<syre::MorphRenderer>(m_Needle).ManualFrameSet(0);
+	m_Registry.get<syre::Texture>(m_Needle).Bind();
+	m_Registry.get<syre::MorphRenderer>(m_Needle).Render();
 	auto pathView = m_Registry.view<syre::PathAnimator, syre::Transform>();
 	for (auto entity : pathView)
 	{
