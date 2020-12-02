@@ -181,7 +181,9 @@ void syre::PathAnimator::SetMaxSegment(int newSegemt)
 
 void syre::PathAnimator::IncrementSegment(int inc)
 {
-    maxSegment += inc;
+    if(maxSegment<points.size()/3)
+        maxSegment += inc;
+  
 }
 
 void syre::PathAnimator::SetSpeed(int newSpeed, bool dir)

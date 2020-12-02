@@ -924,16 +924,19 @@ void SceningTest::Update()
 	}
 	else
 	{
-	m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);
-	m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);
+	m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);//needs changed
+	m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);//needs changed
 		if (PlayerComponent.GetScore() >= EnemyComponent.GetScore())
 		{
 			printf("PLAYER WINS");
-
+			m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(1.0, true);
+			m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(1.0, false);
 		}
 		else if (PlayerComponent.GetScore() < EnemyComponent.GetScore())
 		{
 			printf("ENEMY WINS");
+			m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(1.0, false);
+			m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(1.0, true);
 		}
 	}
 	flatMorphShader->Bind();
