@@ -20,6 +20,8 @@ namespace syre
 		void AddFrame(std::string fileName);
 		void Render();
 		float Update(float delta);
+		void ManualFrameSet(int frame);
+
 	private:
 		glm::vec3 Vector3Parser(std::string line, int offset);
 		glm::vec2 Vector2Parser(std::string line, int offset);
@@ -30,6 +32,9 @@ namespace syre
 		IndexBuffer::sptr ibo;
 		VertexArrayObject::sptr vao;
 		std::vector<Frame> Keys;
+		bool usingManual=false;
+		bool doesLoop = true;
+		bool playing = true;
 		float frameTime=0.5f;
 		float timer = 0.0f;
 		int curFrame = 0;

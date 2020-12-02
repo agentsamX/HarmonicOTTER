@@ -161,42 +161,54 @@ void syre::MorphRenderer::AddFrame(std::string fileName)
 }
 float syre::MorphRenderer::Update(float delta)
 {
-	if (Keys.size() == 0)
+	if (playing)
 	{
-		return -1;
-	}
-	timer += delta;
-	if (timer > frameTime)
-	{
-		timer = 0.0f;
-		curFrame++;
+		if (Keys.size() == 0)
+		{
+			return -1;
+		}
+		timer += delta;
+		if (timer > frameTime && !usingManual)
+		{
+			timer = 0.0f;
+			curFrame++;
 
-		std::vector<BufferAttribute>  attribs;
-		attribs.push_back(BufferAttribute(0, 3, GL_FLOAT, false, sizeof(float) * 8, NULL));
-		attribs.push_back(BufferAttribute(1, 2, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 3));
-		attribs.push_back(BufferAttribute(2, 3, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 5));
-		std::vector<BufferAttribute>  attribs2;
-		attribs2.push_back(BufferAttribute(3, 3, GL_FLOAT, false, sizeof(float) * 8, NULL));
-		attribs2.push_back(BufferAttribute(4, 2, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 3));
-		attribs2.push_back(BufferAttribute(5, 3, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 5));
-		if (curFrame == Keys.size())
-		{
-			curFrame = 0;
+			std::vector<BufferAttribute>  attribs;
+			attribs.push_back(BufferAttribute(0, 3, GL_FLOAT, false, sizeof(float) * 8, NULL));
+			attribs.push_back(BufferAttribute(1, 2, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 3));
+			attribs.push_back(BufferAttribute(2, 3, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 5));
+			std::vector<BufferAttribute>  attribs2;
+			attribs2.push_back(BufferAttribute(3, 3, GL_FLOAT, false, sizeof(float) * 8, NULL));
+			attribs2.push_back(BufferAttribute(4, 2, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 3));
+			attribs2.push_back(BufferAttribute(5, 3, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 5));
+			if (curFrame == Keys.size())
+			{
+				curFrame = 0;
+			}
+			if (curFrame == Keys.size() - 1 && doesLoop)
+			{
+				vao->ClearVector();
+				vao->AddVertexBuffer(Keys[curFrame].VBO, attribs);
+				vao->AddVertexBuffer(Keys[0].VBO, attribs2);
+			}
+			else if (curFrame == Keys.size())
+			{
+				vao->ClearVector();
+				vao->AddVertexBuffer(Keys[0].VBO, attribs);
+				vao->AddVertexBuffer(Keys[1].VBO, attribs2);
+				playing = false;
+			}
+			else
+			{
+				vao->ClearVector();
+				vao->AddVertexBuffer(Keys[curFrame].VBO, attribs);
+				vao->AddVertexBuffer(Keys[curFrame + 1].VBO, attribs2);
+			}
 		}
-		if (curFrame == Keys.size() - 1)
-		{
-			vao->ClearVector();
-			vao->AddVertexBuffer(Keys[curFrame].VBO, attribs);
-			vao->AddVertexBuffer(Keys[0].VBO, attribs2);
-		}
-		else
-		{
-			vao->ClearVector();
-			vao->AddVertexBuffer(Keys[curFrame].VBO, attribs);
-			vao->AddVertexBuffer(Keys[curFrame+1].VBO, attribs2);
-		}
+		return timer / frameTime;
 	}
-	return timer / frameTime;
+	else
+		return timer/frameTime;
 }
 void syre::MorphRenderer::Render()
 {
@@ -357,4 +369,23 @@ void syre::MorphRenderer::trim(std::string& s)
 {
 	ltrim(s);
 	rtrim(s);
+}
+
+void syre::MorphRenderer::ManualFrameSet(int frame)
+{
+	usingManual = true;
+	doesLoop = false;
+
+	std::vector<BufferAttribute>  attribs;
+	attribs.push_back(BufferAttribute(0, 3, GL_FLOAT, false, sizeof(float) * 8, NULL));
+	attribs.push_back(BufferAttribute(1, 2, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 3));
+	attribs.push_back(BufferAttribute(2, 3, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 5));
+	std::vector<BufferAttribute>  attribs2;
+	attribs2.push_back(BufferAttribute(3, 3, GL_FLOAT, false, sizeof(float) * 8, NULL));
+	attribs2.push_back(BufferAttribute(4, 2, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 3));
+	attribs2.push_back(BufferAttribute(5, 3, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 5));
+	
+	vao->ClearVector();
+	vao->AddVertexBuffer(Keys[frame].VBO, attribs);
+	vao->AddVertexBuffer(Keys[frame+1].VBO, attribs2);
 }
