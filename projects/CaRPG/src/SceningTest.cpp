@@ -25,6 +25,7 @@ void SceningTest::Start()
 	m_GearboxLever = m_Registry.create();
 	m_Accelerometer = m_Registry.create();
 	m_Needle = m_Registry.create();
+	m_Particles1 = m_Registry.create();
 	//cards
 	m_Card = m_Registry.create();
 
@@ -186,6 +187,14 @@ void SceningTest::Start()
 	m_Registry.emplace<Obstacles>(m_Obstacle);
 	
 	m_Shader = shader;
+
+	//remove this if frequent crashes
+	m_Registry.emplace<syre::Mesh>(m_Particles1, "particleLol.obj");
+	m_Registry.emplace<syre::Texture>(m_Particles1, "Finish.png");
+	m_Registry.emplace<syre::TransformList>(m_Particles1);
+	m_Registry.get<syre::TransformList>(m_Particles1).Particalize(0.05f, 0.6f);
+	m_Registry.get<syre::TransformList>(m_Particles1).SetDefaultSca(glm::vec3(0.1f));
+
 	
 	m_Registry.emplace<Cars>(m_PCar);
 	m_Registry.emplace<syre::Mesh>(m_PCar, "Car2.obj");
@@ -782,7 +791,7 @@ void SceningTest::Update()
 	for (auto entity : listRenderView)
 	{
 		listRenderView.get<syre::Texture>(entity).Bind();
-		listRenderView.get<syre::TransformList>(entity).ListRender(shaderComponent, listRenderView.get<syre::Mesh>(entity));
+		listRenderView.get<syre::TransformList>(entity).ListRender(shaderComponent, listRenderView.get<syre::Mesh>(entity),deltaTime);
 	}
 
 	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
@@ -814,7 +823,7 @@ void SceningTest::Update()
 		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
 	}
 	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition() - camComponent->GetPosition()));
-
+	m_Registry.get<syre::TransformList>(m_Particles1).UpdateCurPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	lastFrame = thisFrame;
 }
 
@@ -822,7 +831,7 @@ void SceningTest::ImGUIUpdate()
 {
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 		// Implementation new frame
-		ImGui_ImplOpenGL3_NewFrame();
+		/*ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		// ImGui context new frame
 		ImGui::NewFrame();
@@ -862,7 +871,7 @@ void SceningTest::ImGUIUpdate()
 			ImGui::RenderPlatformWindowsDefault();
 			// Restore our gl context
 			glfwMakeContextCurrent(window);
-		}
+		}*/
 	
 }
 

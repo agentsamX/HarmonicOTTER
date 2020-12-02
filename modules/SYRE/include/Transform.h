@@ -15,6 +15,7 @@ namespace syre
 		glm::vec3 GetPosition();
 		void SetPosition(glm::vec3 vecIn);
 		glm::vec3 GetRotation();
+		glm::vec3 GetScale();
 		void SetRotation(glm::vec3 rotIn);
 		void SetRotQuat(glm::quat quatIn);
 

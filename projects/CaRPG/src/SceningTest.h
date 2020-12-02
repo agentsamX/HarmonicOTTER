@@ -22,6 +22,7 @@ private:
 	entt::entity m_GearboxLever;
 	entt::entity m_Accelerometer;
 	entt::entity m_Needle;
+	entt::entity m_Particles1;
 
 	std::vector<syre::Texture> cardTextures;
 	std::vector<syre::Texture> hazardTextures;

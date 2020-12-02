@@ -49,6 +49,11 @@ glm::vec3 syre::Transform::GetRotation()
 	return glm::vec3(rotationEuler);
 }
 
+glm::vec3 syre::Transform::GetScale()
+{
+	return scale;
+}
+
 void syre::Transform::SetRotation(glm::vec3 rotIn)
 {
 	rotationEuler = rotIn;
