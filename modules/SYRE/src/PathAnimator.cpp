@@ -204,6 +204,11 @@ void syre::PathAnimator::SetSpeed(int newSpeed, bool dir)
     }
 }
 
+bool syre::PathAnimator::GetHardStop()
+{
+    return hardStop;
+}
+
 float syre::PathAnimator::InvLerp(float start, float end, float cur)
 {
     return abs(cur - start) / abs(end - start);

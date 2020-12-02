@@ -931,6 +931,12 @@ void SceningTest::Update()
 			printf("PLAYER WINS");
 			m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(1.0, true);
 			m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(1.0, false);
+			if (m_Registry.get<syre::PathAnimator>(m_PCar).GetHardStop())
+			{
+				//game is finished finished
+				m_Registry.get<syre::PathAnimator>(m_enemy).Stop();
+				//this is where we could go to next level
+			}
 		}
 		else if (PlayerComponent.GetScore() < EnemyComponent.GetScore())
 		{
