@@ -107,7 +107,7 @@ bool Obstacles::Resolve(int pGear, int oGear)
 			{
 				P1wins = 0;
 				P2wins = 0;
-				printf("CHICANE PLATER WIN\n");
+				printf("CHICANE PLAYER WIN\n");
 				printf("\n");
 				return 1;
 			}
