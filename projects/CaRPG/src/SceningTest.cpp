@@ -924,9 +924,12 @@ void SceningTest::Update()
 	}
 	else
 	{
+	m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);
+	m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);
 		if (PlayerComponent.GetScore() >= EnemyComponent.GetScore())
 		{
 			printf("PLAYER WINS");
+
 		}
 		else if (PlayerComponent.GetScore() < EnemyComponent.GetScore())
 		{

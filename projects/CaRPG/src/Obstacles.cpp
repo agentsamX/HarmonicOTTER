@@ -7,6 +7,8 @@ Obstacles::~Obstacles()
 }
 void Obstacles::Draw()
 {
+	if (Increment <= Deck.size()-1)
+	{
 		CurObs = Deck.at(Increment);
 		srand((unsigned)time(0));
 		Value = (rand() % 6 + 1);
@@ -32,14 +34,12 @@ void Obstacles::Draw()
 			printf("\n");
 			break;
 		}
-		if (Increment != Deck.size())
-		{
-			Increment++;
-		}
-		else
-		{
-			End = true;
-		}
+		Increment++;
+	}
+	else
+	{
+		End = true;
+	}
 }
 
 int Obstacles::GetObs()
