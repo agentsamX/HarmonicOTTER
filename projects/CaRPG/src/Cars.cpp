@@ -19,9 +19,9 @@ void Cars::ChangeGears(int NewGear)
 
 void Cars::ChangeGears()
 {
-	if (Accelerate)
+	if (Accelerate == true && Gear + 1 != 7)
 		Gear += 1;
-	if (Brake)
+	if (Brake == true && Gear - 1 != 0)
 		Gear -= 1;
 }
 
@@ -37,9 +37,9 @@ void Cars::SetAcc()
 		Accelerate = true;
 		Brake = false;
 		if (Action1 == -1)
-			Action1 = 6;
+			Action1 = -2;
 		else
-			Action2 = 6;
+			Action2 = -2;
 	}
 	else
 	{
@@ -55,9 +55,9 @@ void Cars::SetBrk()
 		Brake = true;
 		Accelerate = false;
 		if (Action1 == -1)
-			Action1 = 5;
+			Action1 = -3;
 		else
-			Action2 = 5;
+			Action2 = -3;
 	}
 	else
 	{
@@ -86,7 +86,6 @@ void Cars::PlayCard(int Position, int NewGear)
 {
 	if (Hand[Position] == 0)
 	{
-		printf("NO2 played");
 		if (Gear + 3 > 6)
 		{
 			Gear = 6;
@@ -103,7 +102,6 @@ void Cars::PlayCard(int Position, int NewGear)
 	}
 	if (Hand[Position] == 1)
 	{
-		printf("Drift");
 		if (Action1 == -1)
 			Action1 = Hand[Position];
 		else
@@ -112,7 +110,6 @@ void Cars::PlayCard(int Position, int NewGear)
 	}
 	if (Hand[Position] == 2)
 	{
-		printf("Slipstream played");
 		Gear = NewGear;
 		if (Action1 == -1)
 			Action1 = Hand[Position];
@@ -132,6 +129,14 @@ int Cars::GetAction2()
 	return Action2;
 }
 
+void Cars::SetAction(int action)
+{
+	if (Action1 == -1)
+		Action1 = action;
+	else
+		Action2 = action;
+}
+
 void Cars::IncreaseScore()
 {
 	CompletedObs += 1;
@@ -147,6 +152,12 @@ void Cars::ResetTurn()
 	Draw();
 	Action1 = -1;
 	Action2 = -1;
+}
+
+void Cars::ResetPed()
+{
+	Accelerate = false;
+	Brake = false;
 }
 
 void Cars::AddCard(int NewCard, bool object)
@@ -194,9 +205,9 @@ int Cars::GetCard(int Position, bool object)
 
 void Cars::Draw()
 {
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < Deck.size(); i++)
 	{
-		if (Hand[i] == -1)
+		if (Hand[i] == -1 && Increment < Deck.size())
 		{
 			Hand[i] = Deck.at(Increment);
 			Increment += 1;

@@ -184,9 +184,22 @@ void syre::PathAnimator::IncrementSegment(int inc)
     maxSegment += inc;
 }
 
-void syre::PathAnimator::SetSpeed(int newSpeed)
+void syre::PathAnimator::SetSpeed(int newSpeed, bool dir)
 {
-    speed += newSpeed;
+    if (dir == true)
+    {
+        if (speed + newSpeed <= 45.f)
+        {
+            speed += newSpeed;
+        }
+    }
+    if (dir == false)
+    {
+        if (speed - newSpeed >= 35.f)
+        {
+            speed -= newSpeed;
+        }
+    }
 }
 
 float syre::PathAnimator::InvLerp(float start, float end, float cur)

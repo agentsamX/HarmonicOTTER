@@ -561,7 +561,10 @@ void SceningTest::Update()
 	auto& obstacleComponent = m_Registry.get<Obstacles>(m_Obstacle);
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
-	int temp;
+	int temp = 0;
+	bool done = false;
+	bool Pemp;
+	bool Eemp;
 	if (start == 0)
 	{
 		start += 1;
@@ -609,10 +612,31 @@ void SceningTest::Update()
 		double* y = new double;
 
 		glfwGetCursorPos(window, x, y);
-		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
-		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f - (*y * 0.0001)));
-		m_Registry.get<syre::Texture>(m_GearboxLever).Bind();
-		m_Registry.get<syre::Mesh>(m_GearboxLever).Render();
+		if (-0.75f + 0.6f + (*y * -0.00104f) >= -0.79 && -0.75f + 0.6f + (*y * -0.00104f) <= -0.71)
+		{
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f + 0.6f + (*y * -0.00104f)));
+			m_Registry.get<syre::Texture>(m_GearboxLever).Bind();
+			m_Registry.get<syre::Mesh>(m_GearboxLever).Render();
+		}
+		else if (-0.75f + 0.6f + (*y * -0.00104f) <= -0.79 && PlayerComponent.GetBrake() == true)
+		{
+			PlayerComponent.SetAction(-4);
+			PlayerComponent.ChangeGears();
+			PlayerComponent.ResetPed();
+			lbutton_down = false;
+		}
+		else if (-0.75f + 0.6f + (*y * -0.00104f) >= -0.71 && PlayerComponent.GetAcc() == true)
+		{
+			PlayerComponent.SetAction(-5);
+			PlayerComponent.ChangeGears();
+			PlayerComponent.ResetPed();
+			lbutton_down = false;
+		}
+		else
+		{
+			lbutton_down = false;
+		}
 	}
 
 
@@ -650,31 +674,184 @@ void SceningTest::Update()
 		m_Registry.get<syre::PathAnimator>(m_PCar).Resume();
 		m_Registry.get<syre::PathAnimator>(m_enemy).Resume();
 	}
-	if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
+	if (obstacleComponent.GetEnd() != true)
 	{
-		if (obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear()) == 1)
-			PlayerComponent.IncreaseScore();
-		else
-			EnemyComponent.IncreaseScore();
-		
-		obstacleComponent.Draw();
-		m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);
-		m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);
-		if (EnemyComponent.GetAction1() == 1 || EnemyComponent.GetAction2() == 1)
+		if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
 		{
-			temp = EnemyComponent.GetGear();
-			EnemyComponent.ChangeGears(PlayerComponent.GetGear());
-			PlayerComponent.ChangeGears(temp);
-		}
-		if (PlayerComponent.GetAction1() == 1 || PlayerComponent.GetAction2() == 1)
-		{
-			temp = PlayerComponent.GetGear();
-			PlayerComponent.ChangeGears(EnemyComponent.GetGear());
-			EnemyComponent.ChangeGears(temp);
-		}
-		PlayerComponent.ResetTurn();
-		EnemyComponent.ResetTurn();
+			if (speedDemon == true)
+			{
+				for (int i = 0; i <= 5; i++)
+				{
+					if (EnemyComponent.GetCard(i, true) == 0)
+					{
+						EnemyComponent.PlayCard(i, 0);
+						break;
+					}
+				}
+				if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
+				{
+					EnemyComponent.SetAcc();
+					EnemyComponent.ChangeGears();
+				}
+				if (EnemyComponent.GetAction2() == -1)
+				{
+					if (EnemyComponent.GetAcc() == false)
+					{
+						EnemyComponent.SetAcc();
+					}
+					else if (EnemyComponent.GetAcc() == true)
+					{
+						EnemyComponent.ChangeGears();
+					}
+				}
+				if (EnemyComponent.GetGear() == 6)
+				{
+					speedDemon == false;
+				}
+			}
+			else if (speedDemon == false)
+			{
+				if (EnemyComponent.GetGear() == 1)
+				{
+					speedDemon = true;
+				}
+				EnemyComponent.SetBrk();
+				EnemyComponent.ChangeGears();
 
+			}
+		}
+		if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
+		{
+			for (int i = 0; i <= 5; i++)
+			{
+				if (PlayerComponent.GetCard(i, true) == -1)
+				{
+					temp += 1;
+				}
+				if (temp = 6)
+				{
+					Pemp = true;
+					temp = 0;
+				}
+			}
+			for (int i = 0; i <= 5; i++)
+			{
+				if (EnemyComponent.GetCard(i, true) == -1)
+				{
+					temp += 1;
+				}
+				if (temp = 6)
+				{
+					Eemp = true;
+					temp = 0;
+				}
+			}
+			if (obstacleComponent.GetObs() != 2)
+			{
+				if (obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear()) == 1)
+				{
+					PlayerComponent.IncreaseScore();
+					m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(0.25,true);
+					m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(0.25, false);
+					if (obstacleComponent.GetObs() == 3)
+					{
+						if (Eemp != true)
+						{
+							while (done != true)
+							{
+								srand((unsigned)time(0));
+								temp = (rand() % 5);
+								if (EnemyComponent.GetCard(temp, true) != -1)
+								{
+									EnemyComponent.RemoveCard(temp, true);
+									break;
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					EnemyComponent.IncreaseScore();
+					m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(0.25, false);
+					m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(0.25, true);
+					if (obstacleComponent.GetObs() == 3)
+					{
+						if (Pemp != true)
+						{
+							while (done != true)
+							{
+								srand((unsigned)time(0));
+								temp = (rand() % 5);
+
+								if (PlayerComponent.GetCard(temp, true) != -1)
+								{
+									PlayerComponent.RemoveCard(temp, true);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			if (EnemyComponent.GetAction1() == 1 || EnemyComponent.GetAction2() == 1)
+			{
+				temp = EnemyComponent.GetGear();
+				EnemyComponent.ChangeGears(PlayerComponent.GetGear());
+				PlayerComponent.ChangeGears(temp);
+			}
+			if (PlayerComponent.GetAction1() == 1 || PlayerComponent.GetAction2() == 1)
+			{
+				temp = PlayerComponent.GetGear();
+				PlayerComponent.ChangeGears(EnemyComponent.GetGear());
+				EnemyComponent.ChangeGears(temp);
+			}
+			if (obstacleComponent.GetObs() == 2)
+			{
+				obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear());
+				if (obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear() == true))
+				{
+					PlayerComponent.IncreaseScore();
+					m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(0.25, true);
+					m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(0.25, false);
+				}
+				else
+				{
+					EnemyComponent.IncreaseScore();
+					m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(0.25, false);
+					m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(0.25, true);
+				}
+			}
+			if (obstacleComponent.GetObs() != 2 && obstacleComponent.GetObs() != 3)
+			{
+				m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);
+				m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);
+			}
+			else
+			{
+				m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(1);
+				m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(1);
+			}
+			PlayerComponent.ResetTurn();
+			EnemyComponent.ResetTurn();
+			obstacleComponent.Draw();
+			if (obstacleComponent.GetObs() == 2)
+			{
+				PlayerComponent.SetAction(-6);
+				EnemyComponent.SetAction(-6);
+			}
+		}
+	}
+	else
+	{
+		if (PlayerComponent.GetScore() >= EnemyComponent.GetScore())
+		{
+			printf("PLAYER WINS");
+		}
+		else if (PlayerComponent.GetScore() < EnemyComponent.GetScore())
+		{
+			printf("ENEMY WINS");
+		}
 	}
 	auto pathView = m_Registry.view<syre::PathAnimator, syre::Transform>();
 	for (auto entity : pathView)
@@ -849,7 +1026,7 @@ void SceningTest::KeyEvents(float delta)
 		{
 			lbutton_down = true;
 		}
-		printf("Mouse at X %f Y %f\n", *x, *y);
+		//printf("Mouse at X %f Y %f\n", *x, *y);
 		if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
 		{
 			for (float i = 0; i <= 5; i++)

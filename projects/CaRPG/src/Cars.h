@@ -23,9 +23,11 @@ public:
 	void PlayCard(int,int);
 	int GetAction1();
 	int GetAction2();
+	void SetAction(int);
 	void IncreaseScore();
 	int GetScore();
 	void ResetTurn();
+	void ResetPed();
 
 	//Hand interactions
 	void AddCard(int, bool);
