@@ -80,7 +80,7 @@ public:
 			SetUniform(location, &value, 1);
 		}
 		else {
-			LOG_WARN("Ignoring uniform \"{}\"", name);
+			//LOG_WARN("Ignoring uniform \"{}\"", name);
 		}
 	}
 	template <typename T>
@@ -90,7 +90,7 @@ public:
 			SetUniformMatrix(location, &value, 1, transposed);
 		}
 		else {
-			LOG_WARN("Ignoring uniform \"{}\"", name);
+			//LOG_WARN("Ignoring uniform \"{}\"", name);
 		}
 	}
 	
