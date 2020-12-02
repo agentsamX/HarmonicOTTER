@@ -14,7 +14,6 @@ public:
 private:
 	void KeyEvents(float delta);
 	Camera::sptr camera;
-	entt::entity m_Shader;
 	entt::entity m_PCar;
 	entt::entity m_enemy;
 	entt::entity m_Obstacle;
@@ -25,12 +24,15 @@ private:
 	entt::entity m_Accelerometer;
 	entt::entity m_Needle;
 	entt::entity m_Particles1;
+	entt::entity m_Particles2;
+
 
 	std::vector<syre::Texture> cardTextures;
 	std::vector<syre::Texture> hazardTextures;
 	std::vector<syre::Texture> gearboxTextures;
 	std::vector<syre::Texture> accelerometerTextures;
 
+	Shader::sptr basicShader;
 	Shader::sptr flatShader;
 	Shader::sptr morphShader;
 	Shader::sptr flatMorphShader;
