@@ -26,7 +26,7 @@ namespace syre
 		void Reset();
 		void SetMaxSegment(int);
 		void IncrementSegment(int);
-		void SetSpeed(int);
+		void SetSpeed(int, bool);
 	private:
 		PathType pathType;
 		float InvLerp(float start, float end, float cur);

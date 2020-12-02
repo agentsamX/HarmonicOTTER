@@ -1,5 +1,7 @@
 #pragma once
 #include"SceneParent.h"
+#include <cstdlib>
+#include <ctime>
 class SceningTest:
 	public syre::SceneParent
 {
@@ -35,4 +37,5 @@ private:
 	bool manualCamera = false;
 	float Elapsedtime = 0;
 	bool lbutton_down = false;
+	bool speedDemon = true;
 };

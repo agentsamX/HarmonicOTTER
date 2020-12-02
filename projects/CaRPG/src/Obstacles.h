@@ -17,10 +17,13 @@ public:
 	int GetObs();
 	int GetValue();
 	bool Resolve(int,int);
+	bool GetEnd();
 private:
 	int Increment = 0;
 	int CurObs = -1;
 	int Value = 1;
-	int ChicaneTurns = 0;
-	std::vector <int> Deck = { 0,1,2,3 };
+	int P1wins = 0;
+	int P2wins = 0;
+	bool End = false;
+	std::vector <int> Deck = { 0,0,2,2,3,1,0,0,2,2,2,2,3,1,1,0,1,3,2,2,0,1 };
 };
