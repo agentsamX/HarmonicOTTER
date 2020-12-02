@@ -32,7 +32,7 @@ void Obstacles::Draw()
 			printf("\n");
 			break;
 		}
-		if (Increment + 1 < Deck.size())
+		if (Increment != Deck.size())
 		{
 			Increment++;
 		}
