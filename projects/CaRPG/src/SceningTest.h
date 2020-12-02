@@ -38,4 +38,5 @@ private:
 	float Elapsedtime = 0;
 	bool lbutton_down = false;
 	bool speedDemon = true;
+	bool showGear = false;
 };

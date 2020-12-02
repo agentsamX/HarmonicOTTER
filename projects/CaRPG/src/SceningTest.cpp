@@ -773,7 +773,7 @@ void SceningTest::Update()
 					EnemyComponent.SetAcc();
 					EnemyComponent.ChangeGears();
 				}
-				if (EnemyComponent.GetAction2() == -1)
+				else if (EnemyComponent.GetAction2() == -1)
 				{
 					if (EnemyComponent.GetAcc() == false)
 					{
@@ -786,7 +786,7 @@ void SceningTest::Update()
 				}
 				if (EnemyComponent.GetGear() == 6)
 				{
-					speedDemon == false;
+					speedDemon = false;
 				}
 			}
 			else if (speedDemon == false)
@@ -800,6 +800,15 @@ void SceningTest::Update()
 
 			}
 		}
+		if (showGear == false)
+		{
+			showGear = true;
+			printf("The enemy's gear level is : ");
+			printf("%i", EnemyComponent.GetGear());
+			printf("\n");
+			printf("\n");
+		}
+
 		if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
 		{
 			for (int i = 0; i <= 5; i++)
@@ -915,6 +924,7 @@ void SceningTest::Update()
 			PlayerComponent.ResetTurn();
 			EnemyComponent.ResetTurn();
 			obstacleComponent.Draw();
+			showGear = false;
 			if (obstacleComponent.GetObs() == 2)
 			{
 				PlayerComponent.SetAction(-6);
