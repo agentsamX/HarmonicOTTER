@@ -389,3 +389,8 @@ void syre::MorphRenderer::ManualFrameSet(int frame)
 	vao->AddVertexBuffer(Keys[frame].VBO, attribs);
 	vao->AddVertexBuffer(Keys[frame+1].VBO, attribs2);
 }
+
+float syre::MorphRenderer::GetT()
+{
+	return timer / frameTime;
+}

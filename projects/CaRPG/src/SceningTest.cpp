@@ -29,6 +29,8 @@ void SceningTest::Start()
 	m_Particles2 = m_Registry.create();*/
 	//cards
 	m_Card = m_Registry.create();
+	m_TransparentBlack = m_Registry.create();
+
 
 	/*entt::entity morphTest = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(morphTest);
@@ -65,6 +67,12 @@ void SceningTest::Start()
 	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("NeedleLeft.obj");
 	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("Needle.obj");
 	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("NeedleRight.obj");
+
+	m_Registry.emplace<syre::Mesh>(m_TransparentBlack, "RoadHazard.obj");
+	m_Registry.emplace<syre::Transform>(m_TransparentBlack, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_TransparentBlack, "TransparentBlack.png");
+	
+
 
 	entt::entity start = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(start);
@@ -1045,6 +1053,8 @@ int SceningTest::PausedUpdate()
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
 	KeyEvents(deltaTime);
+
+	
 	
 
 	basicShader->Bind();
@@ -1075,7 +1085,7 @@ int SceningTest::PausedUpdate()
 	morphShader->Bind();
 	for (auto entity : morphRenderView)
 	{
-		float t = morphRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime);
+		float t = morphRenderView.get<syre::MorphRenderer>(entity).GetT();
 		glm::mat4 transform = morphRenderView.get<syre::Transform>(entity).GetModelMat();
 		morphShader->SetUniformMatrix("u_ModelViewProjection", camComponent->GetViewProjection() * transform);
 		morphShader->SetUniformMatrix("u_Model", transform);
@@ -1087,7 +1097,7 @@ int SceningTest::PausedUpdate()
 	auto morphListRenderView = m_Registry.view<syre::MorphRenderer, syre::TransformList, syre::Texture>();
 	for (auto entity : morphListRenderView)
 	{
-		float t = morphListRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime);
+		float t = morphListRenderView.get<syre::MorphRenderer>(entity).GetT();
 		morphShader->SetUniform("t", t);
 		morphListRenderView.get<syre::Texture>(entity).Bind();
 		morphListRenderView.get<syre::TransformList>(entity).ListRender(morphShader, morphListRenderView.get<syre::MorphRenderer>(entity));
@@ -1098,6 +1108,13 @@ int SceningTest::PausedUpdate()
 		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
 	}
 	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition() - camComponent->GetPosition()));
+
+	flatShader->Bind();
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(4.0f), glm::vec3(1.2f)));
+	flatShader->SetUniform("offset", glm::vec2(0.0, 0.0f));
+	flatShader->SetUniform("aspect", camera->GetAspect());
+	m_Registry.get<syre::Texture>(m_TransparentBlack).Bind();
+	m_Registry.get<syre::Mesh>(m_TransparentBlack).Render();
 
 	lastFrame = thisFrame;
 	return 0;
@@ -1161,9 +1178,14 @@ void SceningTest::KeyEvents(float delta)
 {
 	if (isPaused)
 	{
-		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE)
+		{
+			escRelease = true;
+		}
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS&&escRelease)
 		{
 			isPaused = false;
+			escRelease = false;
 		}
 	}
 	else
@@ -1212,9 +1234,14 @@ void SceningTest::KeyEvents(float delta)
 		{
 			PlayerComponent.Draw();
 		}
-		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE)
+		{
+			escRelease = true;
+		}
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS&&escRelease)
 		{
 			isPaused = true;
+			escRelease = false;
 		}
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && Elapsedtime >= 0.5)
 		{

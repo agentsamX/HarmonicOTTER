@@ -21,6 +21,7 @@ namespace syre
 		void Render();
 		float Update(float delta);
 		void ManualFrameSet(int frame);
+		float GetT();
 
 	private:
 		glm::vec3 Vector3Parser(std::string line, int offset);

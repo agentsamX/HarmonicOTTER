@@ -26,6 +26,7 @@ private:
 	entt::entity m_Needle;
 	entt::entity m_Particles1;
 	entt::entity m_Particles2;
+	entt::entity m_TransparentBlack;
 
 
 	std::vector<syre::Texture> cardTextures;
@@ -43,4 +44,5 @@ private:
 	bool speedDemon = true;
 	bool showGear = false;
 	bool isPaused = false;
+	bool escRelease = false;
 };

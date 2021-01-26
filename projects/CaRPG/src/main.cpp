@@ -160,6 +160,8 @@ int main()
 	//turn off for build for gdw
 	glDebugMessageCallback(GlDebugMessage, nullptr);
 	//end of cg tutorial
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	std::vector<syre::SceneParent*> scenes;
 	scenes.push_back(new MenuScreen(window));
