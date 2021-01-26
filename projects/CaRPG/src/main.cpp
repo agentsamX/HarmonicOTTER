@@ -6,6 +6,7 @@
 
 #include "SceneParent.h"
 #include "SceningTest.h"
+#include "MenuScreen.h"
 
 //taken from CG tutorials
 extern "C" {
@@ -161,10 +162,10 @@ int main()
 	//end of cg tutorial
 
 	std::vector<syre::SceneParent*> scenes;
-	scenes.push_back(new syre::SceneParent);
+	scenes.push_back(new MenuScreen(window));
 	scenes.push_back(new SceningTest(window));
 	
-	syre::SceneParent* curScene = scenes[1];
+	syre::SceneParent* curScene = scenes[0];
 	
 	glEnable(GL_DEPTH_TEST);
 
@@ -189,7 +190,7 @@ int main()
 	GLFWcursor* cursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 	glfwSetCursor(window, cursor);
 	*/
-
+	int returned = 0;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -197,12 +198,30 @@ int main()
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		returned = curScene->Update();
+		if (returned != 0)
+		{
+			if(returned==1)
+			{
+				curScene = scenes[1];
 
-		curScene->Update();
+				curScene->Start();
+				camera = curScene->GetCam();
+				GlfwWindowResizedCallback(window, 1280, 720);
+				curScene->Update();
+			}
+			else if (returned == 2)
+			{
+				break;
+			}
+			
+
+		}
 		curScene->ImGUIUpdate();
 		glfwSwapBuffers(window);
 	}
 
+	glfwTerminate();
 	ShutdownImGui();
 	return 0;
 } 

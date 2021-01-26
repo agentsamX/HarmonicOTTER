@@ -21,7 +21,7 @@ namespace syre {
 		SceneParent();
 		~SceneParent();
 		virtual void Start();
-		virtual void Update();
+		virtual int Update();
 		virtual void ImGUIUpdate();
 		GLFWwindow* window;
 		virtual Camera::sptr& GetCam();

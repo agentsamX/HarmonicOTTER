@@ -10,8 +10,9 @@ syre::SceneParent::~SceneParent()
 void syre::SceneParent::Start()
 {
 }
-void syre::SceneParent::Update()
+int syre::SceneParent::Update()
 {
+    return 0;
 }
 
 void syre::SceneParent::ImGUIUpdate()

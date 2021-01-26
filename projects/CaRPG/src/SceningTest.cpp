@@ -25,8 +25,8 @@ void SceningTest::Start()
 	m_GearboxLever = m_Registry.create();
 	m_Accelerometer = m_Registry.create();
 	m_Needle = m_Registry.create();
-	m_Particles1 = m_Registry.create();
-	m_Particles2 = m_Registry.create();
+	/*m_Particles1 = m_Registry.create();
+	m_Particles2 = m_Registry.create();*/
 	//cards
 	m_Card = m_Registry.create();
 
@@ -189,7 +189,7 @@ void SceningTest::Start()
 	
 
 	//remove this if frequent crashes
-	m_Registry.emplace<syre::Mesh>(m_Particles1, "particleLol.obj");
+	/*m_Registry.emplace<syre::Mesh>(m_Particles1, "particleLol.obj");
 	m_Registry.emplace<syre::Texture>(m_Particles1, "black.png");
 	m_Registry.emplace<syre::TransformList>(m_Particles1);
 	m_Registry.get<syre::TransformList>(m_Particles1).Particalize(0.05f, 0.6f);
@@ -199,7 +199,7 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Texture>(m_Particles2, "black.png");
 	m_Registry.emplace<syre::TransformList>(m_Particles2);
 	m_Registry.get<syre::TransformList>(m_Particles2).Particalize(0.05f, 0.6f);
-	m_Registry.get<syre::TransformList>(m_Particles2).SetDefaultSca(glm::vec3(0.1f));
+	m_Registry.get<syre::TransformList>(m_Particles2).SetDefaultSca(glm::vec3(0.1f));*/
 
 	
 	m_Registry.emplace<Cars>(m_PCar);
@@ -636,8 +636,12 @@ void SceningTest::Start()
 	lastFrame = glfwGetTime();
 }
 
-void SceningTest::Update()
+int SceningTest::Update()
 {
+	if (isPaused)
+	{
+		return PausedUpdate();
+	}
 	thisFrame = glfwGetTime();
 	float deltaTime = thisFrame - lastFrame;
 	auto& camComponent = camera;
@@ -1025,10 +1029,78 @@ void SceningTest::Update()
 		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
 	}
 	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition() - camComponent->GetPosition()));
-	m_Registry.get<syre::TransformList>(m_Particles1).UpdateCurPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
-	m_Registry.get<syre::TransformList>(m_Particles2).UpdateCurPos(m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	/*m_Registry.get<syre::TransformList>(m_Particles1).UpdateCurPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	m_Registry.get<syre::TransformList>(m_Particles2).UpdateCurPos(m_Registry.get<syre::Transform>(m_enemy).GetPosition());*/
 
 	lastFrame = thisFrame;
+	return 0;
+}
+
+int SceningTest::PausedUpdate()
+{
+	thisFrame = glfwGetTime();
+	float deltaTime = thisFrame - lastFrame;
+	auto& camComponent = camera;
+	auto& obstacleComponent = m_Registry.get<Obstacles>(m_Obstacle);
+	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
+	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
+	KeyEvents(deltaTime);
+	
+
+	basicShader->Bind();
+	basicShader->SetUniform("u_CamPos", camComponent->GetPosition());
+	basicShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	basicShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+
+	auto renderView = m_Registry.view<syre::Mesh, syre::Transform, syre::Texture>();
+	for (auto entity : renderView)
+	{
+		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
+		basicShader->SetUniformMatrix("u_ModelViewProjection", camComponent->GetViewProjection() * transform);
+		basicShader->SetUniformMatrix("u_Model", transform);
+		basicShader->SetUniformMatrix("u_ModelRotation", glm::mat3(transform));
+		renderView.get<syre::Texture>(entity).Bind();
+		renderView.get<syre::Mesh>(entity).Render();
+	}
+	auto listRenderView = m_Registry.view<syre::Mesh, syre::TransformList, syre::Texture>();
+	for (auto entity : listRenderView)
+	{
+		listRenderView.get<syre::Texture>(entity).Bind();
+		listRenderView.get<syre::TransformList>(entity).ListRender(basicShader, listRenderView.get<syre::Mesh>(entity), deltaTime);
+	}
+	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
+	morphShader->SetUniform("u_CamPos", camComponent->GetPosition());
+	morphShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	morphShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	morphShader->Bind();
+	for (auto entity : morphRenderView)
+	{
+		float t = morphRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime);
+		glm::mat4 transform = morphRenderView.get<syre::Transform>(entity).GetModelMat();
+		morphShader->SetUniformMatrix("u_ModelViewProjection", camComponent->GetViewProjection() * transform);
+		morphShader->SetUniformMatrix("u_Model", transform);
+		morphShader->SetUniformMatrix("u_ModelRotation", glm::mat3(transform));
+		morphShader->SetUniform("t", t);
+		morphRenderView.get<syre::Texture>(entity).Bind();
+		morphRenderView.get<syre::MorphRenderer>(entity).Render();
+	}
+	auto morphListRenderView = m_Registry.view<syre::MorphRenderer, syre::TransformList, syre::Texture>();
+	for (auto entity : morphListRenderView)
+	{
+		float t = morphListRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime);
+		morphShader->SetUniform("t", t);
+		morphListRenderView.get<syre::Texture>(entity).Bind();
+		morphListRenderView.get<syre::TransformList>(entity).ListRender(morphShader, morphListRenderView.get<syre::MorphRenderer>(entity));
+	}
+
+	if (!manualCamera)
+	{
+		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
+	}
+	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition() - camComponent->GetPosition()));
+
+	lastFrame = thisFrame;
+	return 0;
 }
 
 void SceningTest::ImGUIUpdate()
@@ -1087,100 +1159,114 @@ Camera::sptr& SceningTest::GetCam()
 
 void SceningTest::KeyEvents(float delta)
 {
-	Elapsedtime += delta;
-	auto& camComponent = camera;
-	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
-	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
-	int temp;
-	glm::vec3 curCamPos = camComponent->GetPosition();
-	glm::vec3 curCamFor = camComponent->GetForward();
-
-	if (glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
+	if (isPaused)
 	{
-		curCamPos.x += 10.f * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		curCamPos.x -= 10.f * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		curCamPos.y -= 10.f * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		curCamPos.y += 10.f * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-	{
-		curCamFor.x += 0.1f * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-	{
-		curCamFor.x -= 0.1f * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-	{
-		curCamFor.y -= 0.1f * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-	{
-		curCamFor.y += 0.1f * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-	{
-		PlayerComponent.Draw();
-	}
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && Elapsedtime >= 0.5)
-	{
-		double* x = new double;
-		double* y = new double;
-
-		glfwGetCursorPos(window, x,y);
-		if (*x >= 70 && *x <= 95 && *y <= 615 && *y >= 597)
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		{
-			lbutton_down = true;
+			isPaused = false;
 		}
-		//printf("Mouse at X %f Y %f\n", *x, *y);
-		if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
+	}
+	else
+	{
+		Elapsedtime += delta;
+		auto& camComponent = camera;
+		auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
+		auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
+		int temp;
+		glm::vec3 curCamPos = camComponent->GetPosition();
+		glm::vec3 curCamFor = camComponent->GetForward();
+
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		{
-			for (float i = 0; i <= 5; i++)
+			curCamPos.x += 10.f * delta;
+		}
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		{
+			curCamPos.x -= 10.f * delta;
+		}
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		{
+			curCamPos.y -= 10.f * delta;
+		}
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		{
+			curCamPos.y += 10.f * delta;
+		}
+		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		{
+			curCamFor.x += 0.1f * delta;
+		}
+		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		{
+			curCamFor.x -= 0.1f * delta;
+		}
+		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		{
+			curCamFor.y -= 0.1f * delta;
+		}
+		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		{
+			curCamFor.y += 0.1f * delta;
+		}
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		{
+			PlayerComponent.Draw();
+		}
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		{
+			isPaused = true;
+		}
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && Elapsedtime >= 0.5)
+		{
+			double* x = new double;
+			double* y = new double;
+
+			glfwGetCursorPos(window, x, y);
+			if (*x >= 70 && *x <= 95 && *y <= 615 && *y >= 597)
 			{
-				if ((i * 165) + 429 <= *x && (i + 1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
+				lbutton_down = true;
+			}
+			//printf("Mouse at X %f Y %f\n", *x, *y);
+			if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
+			{
+				for (float i = 0; i <= 5; i++)
 				{
-					if (PlayerComponent.GetCard(i, true) == 2)
+					if ((i * 165) + 429 <= *x && (i + 1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
 					{
-						temp = PlayerComponent.GetGear();
-						PlayerComponent.PlayCard(i, EnemyComponent.GetGear());
-						EnemyComponent.ChangeGears(temp);
+						if (PlayerComponent.GetCard(i, true) == 2)
+						{
+							temp = PlayerComponent.GetGear();
+							PlayerComponent.PlayCard(i, EnemyComponent.GetGear());
+							EnemyComponent.ChangeGears(temp);
+						}
+						else
+						{
+							PlayerComponent.PlayCard(i, 0);
+						}
+						Elapsedtime = 0;
 					}
-					else
-					{
-						PlayerComponent.PlayCard(i, 0);
-					}
+				}
+				if (*x >= 34 && *x <= 72 && *y <= 699 && *y >= 674)
+				{
+					PlayerComponent.SetBrk();
+					Elapsedtime = 0;
+				}
+				else if (*x >= 98 && *x <= 129 && *y <= 709 && *y >= 666)
+				{
+					PlayerComponent.SetAcc();
 					Elapsedtime = 0;
 				}
 			}
-			if (*x >= 34 && *x <= 72 && *y <= 699 && *y >= 674)
-			{
-				PlayerComponent.SetBrk();
-				Elapsedtime = 0;
-			}
-			else if (*x >= 98 && *x <= 129 && *y <= 709 && *y >= 666)
-			{
-				PlayerComponent.SetAcc();
-				Elapsedtime = 0;
-			}
 		}
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+		{
+			lbutton_down = false;
+		}
+		if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+		{
+			m_Registry.get<syre::PathAnimator>(m_PCar).Reset();
+		}
+		camComponent->SetPosition(curCamPos);
 	}
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
-	{
-		lbutton_down = false;
-	}
-	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
-	{
-		m_Registry.get<syre::PathAnimator>(m_PCar).Reset();
-	}
-	camComponent->SetPosition(curCamPos);
 }
 

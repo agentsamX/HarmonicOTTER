@@ -8,7 +8,8 @@ class SceningTest:
 public:
 	SceningTest(GLFWwindow* inWind);
 	void Start();
-	void Update();
+	int Update();
+	int PausedUpdate();
 	void ImGUIUpdate();
 	Camera::sptr& GetCam();
 private:
@@ -41,4 +42,5 @@ private:
 	bool lbutton_down = false;
 	bool speedDemon = true;
 	bool showGear = false;
+	bool isPaused = false;
 };

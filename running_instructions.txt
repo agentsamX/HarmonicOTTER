@@ -1,0 +1,4 @@
+To run the demo first run premake_build.bat
+If running the program from inside VS please change the configuration to release at the top, otherwise you can use the executable in the bin folder
+The game may crash unexpectedly near the beginning and this error is being looked into. It seems to be random however and the game is 100% playable.
+Please read the CaRPGInstructions.txt document within the zipped folder.
