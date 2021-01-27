@@ -11,4 +11,7 @@ public:
 	int Update();
 	void ImGUIUpdate();
 	Camera::sptr& GetCam();
+private:
+	Shader::sptr flatShader;
+	entt::entity m_MenuImage;
 };

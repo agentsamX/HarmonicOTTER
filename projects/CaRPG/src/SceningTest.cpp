@@ -833,7 +833,7 @@ int SceningTest::Update()
 				{
 					temp += 1;
 				}
-				if (temp = 6)
+				if (temp == 6)//changed from = to ==
 				{
 					Pemp = true;
 					temp = 0;
@@ -845,7 +845,7 @@ int SceningTest::Update()
 				{
 					temp += 1;
 				}
-				if (temp = 6)
+				if (temp == 6)//changed from = to ==
 				{
 					Eemp = true;
 					temp = 0;
