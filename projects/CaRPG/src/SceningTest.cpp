@@ -658,8 +658,8 @@ int SceningTest::Update()
 	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
 	int temp = 0;
 	bool done = false;
-	bool Pemp;
-	bool Eemp;
+	bool Pemp = false;
+	bool Eemp=false;
 	if (start == 0)
 	{
 		start += 1;
