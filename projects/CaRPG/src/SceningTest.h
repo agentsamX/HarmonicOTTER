@@ -13,7 +13,7 @@ public:
 	void ImGUIUpdate();
 	Camera::sptr& GetCam();
 private:
-	void KeyEvents(float delta);
+	int KeyEvents(float delta);
 	Camera::sptr camera;
 	entt::entity m_PCar;
 	entt::entity m_enemy;
@@ -27,6 +27,7 @@ private:
 	entt::entity m_Particles1;
 	entt::entity m_Particles2;
 	entt::entity m_TransparentBlack;
+	entt::entity m_PauseMenu;
 
 
 	std::vector<syre::Texture> cardTextures;

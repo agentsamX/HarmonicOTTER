@@ -30,6 +30,7 @@ void SceningTest::Start()
 	//cards
 	m_Card = m_Registry.create();
 	m_TransparentBlack = m_Registry.create();
+	m_PauseMenu = m_Registry.create();
 
 
 	/*entt::entity morphTest = m_Registry.create();
@@ -71,6 +72,10 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(m_TransparentBlack, "RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_TransparentBlack, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_TransparentBlack, "TransparentBlack.png");
+
+	m_Registry.emplace<syre::Mesh>(m_PauseMenu, "RoadHazard.obj");
+	m_Registry.emplace<syre::Transform>(m_PauseMenu, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_PauseMenu, "PauseMenu.png");
 	
 
 
@@ -640,7 +645,6 @@ void SceningTest::Start()
 	}
 
 
-
 	lastFrame = glfwGetTime();
 }
 
@@ -827,6 +831,7 @@ int SceningTest::Update()
 
 		if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
 		{
+			/// harry i changed the bit below, what did it do lol
 			for (int i = 0; i <= 5; i++)
 			{
 				if (PlayerComponent.GetCard(i, true) == -1)
@@ -1052,7 +1057,7 @@ int SceningTest::PausedUpdate()
 	auto& obstacleComponent = m_Registry.get<Obstacles>(m_Obstacle);
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
-	KeyEvents(deltaTime);
+	int returning = KeyEvents(deltaTime);
 
 	
 	
@@ -1110,14 +1115,21 @@ int SceningTest::PausedUpdate()
 	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition() - camComponent->GetPosition()));
 
 	flatShader->Bind();
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(4.0f), glm::vec3(1.2f)));
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+	flatShader->SetUniform("offset", glm::vec2(0.0, 0.0f));
+	flatShader->SetUniform("aspect", camera->GetAspect());
+	m_Registry.get<syre::Texture>(m_PauseMenu).Bind();
+	m_Registry.get<syre::Mesh>(m_PauseMenu).Render();
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(1.2f)));
 	flatShader->SetUniform("offset", glm::vec2(0.0, 0.0f));
 	flatShader->SetUniform("aspect", camera->GetAspect());
 	m_Registry.get<syre::Texture>(m_TransparentBlack).Bind();
 	m_Registry.get<syre::Mesh>(m_TransparentBlack).Render();
 
+
 	lastFrame = thisFrame;
-	return 0;
+	return returning;
 }
 
 void SceningTest::ImGUIUpdate()
@@ -1174,10 +1186,16 @@ Camera::sptr& SceningTest::GetCam()
 	return camera;
 }
 
-void SceningTest::KeyEvents(float delta)
+int SceningTest::KeyEvents(float delta)
 {
 	if (isPaused)
-	{
+	{	
+		double* x = new double;
+		double* y = new double;
+
+		glfwGetCursorPos(window, x, y);
+		//printf("Mouse at X %f Y %f\n", *x, *y);
+
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE)
 		{
 			escRelease = true;
@@ -1187,6 +1205,29 @@ void SceningTest::KeyEvents(float delta)
 			isPaused = false;
 			escRelease = false;
 		}
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		{
+			if (552.0f < *x && *x < 729.0f)
+			{
+				if (323.0f < *y && *y < 367.0f)
+				{
+					isPaused = false;
+				}
+				else if (374.0f < *y && *y < 417.0f)
+				{
+					m_Registry.clear();
+					return -1;
+				}
+				else if (425.0f < *y && *y < 474.0f)
+				{
+					m_Registry.clear();
+
+					return -2;
+				}
+			}
+		}
+
+		return 0;
 	}
 	else
 	{
@@ -1294,6 +1335,7 @@ void SceningTest::KeyEvents(float delta)
 			m_Registry.get<syre::PathAnimator>(m_PCar).Reset();
 		}
 		camComponent->SetPosition(curCamPos);
+		return 0;
 	}
 }
 

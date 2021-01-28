@@ -1,11 +1,11 @@
-#include "MenuScreen.h"
+#include "MidGameMenu.h"
 
-MenuScreen::MenuScreen(GLFWwindow* inWind)
+MidGameMenu::MidGameMenu(GLFWwindow* inWind)
 {
 	window = inWind;
 }
 
-void MenuScreen::Start()
+void MidGameMenu::Start()
 {
 	camera = Camera::Create();
 	auto& camComponent = camera;
@@ -15,9 +15,9 @@ void MenuScreen::Start()
 	camComponent->SetFovDegrees(100.0f); // Set an initial FOV
 
 	m_MenuImage = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(m_MenuImage, "Menu_Plane.obj");
+	m_Registry.emplace<syre::Mesh>(m_MenuImage, "RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_MenuImage, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-	m_Registry.emplace<syre::Texture>(m_MenuImage, "MenuMod.png");
+	m_Registry.emplace<syre::Texture>(m_MenuImage, "MidGameMenu.png");
 
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
@@ -25,12 +25,12 @@ void MenuScreen::Start()
 	flatShader->Link();
 }
 
-int MenuScreen::Update()
+int MidGameMenu::Update()
 {
 	flatShader->Bind();
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(-0.68f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.3f, -0.15f));
-	flatShader->SetUniform("aspect", camera->GetAspect());
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
+	flatShader->SetUniform("offset", glm::vec2(0.0f, 0.0f));
+	flatShader->SetUniform("aspect", 1.0f);//this is atypical
 	m_Registry.get<syre::Texture>(m_MenuImage).Bind();
 	m_Registry.get<syre::Mesh>(m_MenuImage).Render();
 
@@ -38,31 +38,24 @@ int MenuScreen::Update()
 	double* y = new double;
 
 	glfwGetCursorPos(window, x, y);
-	//printf("Mouse at X %f Y %f\n", *x, *y);
+	printf("Mouse at X %f Y %f\n", *x, *y);
 
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	if (47.0f < *x && *x < 347.f)
 	{
-		if (153.0f < *x && *x < 330.f)
+		if (84.0f < *x && *x < 168.0f)
 		{
-			if (266.0f < *y && *y < 333.0f)
-			{
-				return 1;
-			}
-			else if (570.0f < *y &&*y< 638.0f)
-			{
-				return -2;
-			}
+			return 1;
 		}
 	}
 
 	return 0;
 }
 
-void MenuScreen::ImGUIUpdate()
+void MidGameMenu::ImGUIUpdate()
 {
 }
 
-Camera::sptr& MenuScreen::GetCam()
+Camera::sptr& MidGameMenu::GetCam()
 {
 	// TODO: insert return statement here
 	return camera;

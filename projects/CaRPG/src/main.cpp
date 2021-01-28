@@ -7,6 +7,7 @@
 #include "SceneParent.h"
 #include "SceningTest.h"
 #include "MenuScreen.h"
+#include "MidGameMenu.h"
 
 //taken from CG tutorials
 extern "C" {
@@ -166,6 +167,7 @@ int main()
 	std::vector<syre::SceneParent*> scenes;
 	scenes.push_back(new MenuScreen(window));
 	scenes.push_back(new SceningTest(window));
+	scenes.push_back(new MidGameMenu(window));
 	
 	syre::SceneParent* curScene = scenes[0];
 	
@@ -203,6 +205,7 @@ int main()
 		returned = curScene->Update();
 		if (returned != 0)
 		{
+
 			if(returned==1)
 			{
 				curScene = scenes[1];
@@ -212,9 +215,18 @@ int main()
 				GlfwWindowResizedCallback(window, 1280, 720);
 				curScene->Update();
 			}
-			else if (returned == 2)
+			else if (returned == -2)
 			{
 				break;
+			}
+			else if (returned == -1)
+			{
+				curScene = scenes[2];
+
+				curScene->Start();
+				camera = curScene->GetCam();
+				GlfwWindowResizedCallback(window, 1280, 720);
+				curScene->Update();
 			}
 			
 
