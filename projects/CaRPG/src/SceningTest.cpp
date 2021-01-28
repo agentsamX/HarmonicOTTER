@@ -1215,13 +1215,10 @@ int SceningTest::KeyEvents(float delta)
 				}
 				else if (374.0f < *y && *y < 417.0f)
 				{
-					m_Registry.clear();
 					return -1;
 				}
 				else if (425.0f < *y && *y < 474.0f)
 				{
-					m_Registry.clear();
-
 					return -2;
 				}
 			}

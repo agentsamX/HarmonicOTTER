@@ -38,13 +38,16 @@ int MidGameMenu::Update()
 	double* y = new double;
 
 	glfwGetCursorPos(window, x, y);
-	printf("Mouse at X %f Y %f\n", *x, *y);
-
-	if (47.0f < *x && *x < 347.f)
+	//printf("Mouse at X %f Y %f\n", *x, *y);
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
-		if (84.0f < *x && *x < 168.0f)
+		if (47.0f < *x && *x < 347.f)
 		{
-			return 1;
+			if (84.0f < *y && *y < 168.0f)
+			{
+
+				return 1;
+			}
 		}
 	}
 

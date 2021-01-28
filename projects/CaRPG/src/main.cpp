@@ -166,8 +166,8 @@ int main()
 
 	std::vector<syre::SceneParent*> scenes;
 	scenes.push_back(new MenuScreen(window));
-	scenes.push_back(new SceningTest(window));
 	scenes.push_back(new MidGameMenu(window));
+	scenes.push_back(new SceningTest(window));
 	
 	syre::SceneParent* curScene = scenes[0];
 	
@@ -208,7 +208,9 @@ int main()
 
 			if(returned==1)
 			{
-				curScene = scenes[1];
+				scenes.pop_back();
+				scenes.push_back(new SceningTest(window));
+				curScene = scenes[2];
 
 				curScene->Start();
 				camera = curScene->GetCam();
@@ -221,7 +223,7 @@ int main()
 			}
 			else if (returned == -1)
 			{
-				curScene = scenes[2];
+				curScene = scenes[1];
 
 				curScene->Start();
 				camera = curScene->GetCam();
