@@ -5,9 +5,8 @@
 #include <GLM/glm.hpp>
 
 #include "SceneParent.h"
-#include "SceningTest.h"
-#include "MenuScreen.h"
-#include "MidGameMenu.h"
+#include "ICGAssignment1.h";
+
 
 //taken from CG tutorials
 extern "C" {
@@ -165,9 +164,7 @@ int main()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	std::vector<syre::SceneParent*> scenes;
-	scenes.push_back(new MenuScreen(window));
-	scenes.push_back(new MidGameMenu(window));
-	scenes.push_back(new SceningTest(window));
+	scenes.push_back(new ICGAssignment1(window));
 	
 	syre::SceneParent* curScene = scenes[0];
 	
@@ -206,32 +203,6 @@ int main()
 		if (returned != 0)
 		{
 
-			if(returned==1)
-			{
-				delete scenes[scenes.size() - 1];
-				scenes.pop_back();
-				scenes.push_back(new SceningTest(window));
-				curScene = scenes[2];
-
-				curScene->Start();
-				camera = curScene->GetCam();
-				GlfwWindowResizedCallback(window, 1280, 720);
-				curScene->Update();
-			}
-			else if (returned == -2)
-			{
-				break;
-			}
-			else if (returned == -1)
-			{
-				curScene = scenes[1];
-
-				curScene->Start();
-				camera = curScene->GetCam();
-				GlfwWindowResizedCallback(window, 1280, 720);
-				curScene->Update();
-			}
-			
 
 		}
 		curScene->ImGUIUpdate();

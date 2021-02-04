@@ -91,7 +91,6 @@ ProjIncludes = {
 	"dependencies/gzip",
 	"dependencies/tinyGLTF",
 	"dependencies/json",
-	
 }
 
 -- These are all the default dependencies that require linking
@@ -105,15 +104,13 @@ Dependencies = {
 	"dependencies/gzip/zlib.lib",
 	"tinyGLTF",
 }
-
 DependenciesDebug = {
-	
+
 	"dependencies/fmod/lib/fmodstudioL_vc.lib",
 	"dependencies/fmod/lib/fmodL_vc.lib",
 }
 
 DependenciesRelease = {
-	
 	"dependencies/fmod/lib/fmodstudio_vc.lib",
 	"dependencies/fmod/lib/fmod_vc.lib",
 }
@@ -123,12 +120,6 @@ DependenciesRelease = {
 -- We will append our modules to this list
 ProjLinks = { }
 for k, v in pairs(Dependencies) do ProjLinks[k] = v end
-
-ProjDebugLinks = { }
-for k, v in pairs(DependenciesDebug) do ProjDebugLinks[k] = v end
-
-ProjReleaseLinks = { }
-for k, v in pairs(DependenciesRelease) do ProjDebugLinks[k] = v end
 
 -- This function handles creating the default project for a module, if no premake folder is given
 -- @param folderName The path to the module, as collected from os.matchdirs
@@ -141,12 +132,6 @@ function CreateDefaultModule(folderName)
     -- We make a list of what to link against, since we don't want to modify Dependencies or the ProjLinks
     local linkList = {}
     for k, v in pairs(Dependencies) do table.insert(linkList, v) end
-
-    local linkListDebug = {}
-    for k, v in pairs(DependenciesDebug) do table.insert(linkListDebug, v) end
-
-    local linkListRelease = {}
-    for k, v in pairs(DependenciesRelease) do table.insert(linkListRelease, v) end
 
     -- We'll look for any libs the module may have
     local libs = os.matchfiles(folderName .. "/libs/*.lib")
@@ -191,9 +176,6 @@ function CreateDefaultModule(folderName)
 		-- Defines what directories we want to include
 		includedirs(ProjIncludes)
 
-		configuration "vs"
-	    	buildoptions { "/bigobj" }
-
 	    filter "system:windows"
 	        systemversion "latest"
 
@@ -205,13 +187,9 @@ function CreateDefaultModule(folderName)
 	        runtime "Debug"
 	        symbols "on"
 
-	    	links(linkListDebug)
-
 	    filter "configurations:Release"
 	        runtime "Release"
 	        optimize "on"
-
-	    	links(linkListRelease)
         
 end
 
@@ -356,8 +334,6 @@ function AddProjects(groupName, folders)
 			-- Link to the dependencies and modules
 			links(ProjLinks)
 
-		    buildoptions { "/bigobj" }
-
 			-- This filters for our windows builds
 			filter "system:windows"
 				systemversion "latest"
@@ -373,14 +349,10 @@ function AddProjects(groupName, folders)
 				runtime "Debug"
 				symbols "on"
 
-				links(ProjLinksDebug)
-
 			-- Filters for release configuration
 			filter "configurations:Release"
 				runtime "Release"
 				optimize "on"
-
-				links(ProjLinksRelease)
 	end
 
 end

@@ -1058,7 +1058,10 @@ int SceningTest::PausedUpdate()
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
 	int returning = KeyEvents(deltaTime);
-
+	if (returning == -1)
+	{
+		return -1;
+	}
 	
 	
 
@@ -1215,6 +1218,7 @@ int SceningTest::KeyEvents(float delta)
 				}
 				else if (374.0f < *y && *y < 417.0f)
 				{
+					m_Registry.clear();
 					return -1;
 				}
 				else if (425.0f < *y && *y < 474.0f)
