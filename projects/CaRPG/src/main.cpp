@@ -157,6 +157,8 @@ int main()
 	if (!initGLAD())
 		return 1;
 
+	Framebuffer::InitFullscreenQuad();
+
 	//glEnable(GL_DEBUG_OUTPUT);
 	//turn off for build for gdw
 	glDebugMessageCallback(GlDebugMessage, nullptr);

@@ -2,27 +2,28 @@
 
 void PostEffect::Init(unsigned width, unsigned height)
 {
-	//Set up framebuffers
-	int index = int(_buffers.size());
-	_buffers.push_back(new Framebuffer());
-	_buffers[index]->AddColorTarget(GL_RGBA8);
-	_buffers[index]->AddDepthTarget();
-	_buffers[index]->Init(width, height);
+	if (!_shaders.size() > 0)
+	{
 
-	index = int(_shaders.size());
+		int index = int(_buffers.size());
+		_buffers.push_back(new Framebuffer());
+		_buffers[index]->AddColorTarget(GL_RGBA8);
+		_buffers[index]->AddDepthTarget();
+		_buffers[index]->Init(width, height);
+	}
+	
 	_shaders.push_back(Shader::Create());
-	_shaders[index]->LoadShaderPartFromFile("shaders/passthrough_vert.glsl", GL_VERTEX_SHADER);
-	_shaders[index]->LoadShaderPartFromFile("shaders/passthrough_frag.glsl", GL_FRAGMENT_SHADER);
-	_shaders[index]->Link();
-
-
+	_shaders[_shaders.size() - 1]->LoadShaderPartFromFile("shaders/passthrough_vert.glsl", GL_VERTEX_SHADER);
+	_shaders[_shaders.size() - 1]->LoadShaderPartFromFile("shaders/passthrough_frag.glsl", GL_FRAGMENT_SHADER);
+	_shaders[_shaders.size() - 1]->Link();
+	
 }
 
 void PostEffect::ApplyEffect(PostEffect* previousBuffer)
 {
-	BindShader(0);
+	BindShader(_shaders.size() - 1);
 
-	previousBuffer->BindColorAsTexture(0,0,0);
+	previousBuffer->BindColorAsTexture(0, 0, 0);
 
 	_buffers[0]->RenderToFSQ();
 
@@ -34,8 +35,7 @@ void PostEffect::ApplyEffect(PostEffect* previousBuffer)
 
 void PostEffect::DrawToScreen()
 {
-
-	BindShader(0);
+	BindShader(_shaders.size() - 1);
 
 	BindColorAsTexture(0, 0, 0);
 
@@ -85,7 +85,6 @@ void PostEffect::BindBuffer(int index)
 void PostEffect::UnBindBuffer()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
-
 }
 
 void PostEffect::BindColorAsTexture(int index, int colorBuffer, int textureSlot)

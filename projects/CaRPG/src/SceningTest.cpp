@@ -11,6 +11,35 @@ SceningTest::SceningTest(GLFWwindow* inWind)
 
 void SceningTest::Start()
 {
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+
+	rampTex = Texture2D::LoadFromFile("tinyRamp.png");
+
+	sceneBuff = m_Registry.create();
+	cocoBuff = m_Registry.create();
+	m_Registry.emplace<PostEffect>(sceneBuff);
+	m_Registry.emplace<CubeCoCoEffect>(cocoBuff);
+	m_Registry.get<PostEffect>(sceneBuff).Init(width, height);
+	m_Registry.get<CubeCoCoEffect>(cocoBuff).Init(width, height);
+
+	cubes.push_back(LUT3D("cubes/Neutral-512.cube"));
+	cubes.push_back(LUT3D("cubes/Cool.cube"));
+	cubes.push_back(LUT3D("cubes/Warm.cube"));
+	cubes.push_back(LUT3D("cubes/Darken-512.cube"));
+
+	AudioEngine& engine = AudioEngine::Instance();
+	engine.Init();
+	engine.LoadBank("Master");
+	engine.LoadBank("Master.strings");
+	engine.LoadBus("MusicBus", "{a5b53ded-d7b3-4e6b-a920-0b241ef6f268}");
+
+	//play event
+	AudioEvent& music = engine.CreateEventW("BG_MUSIC", "{b56cb9d2-1d47-4099-b80e-7d257b99a823}");
+	music.Play();
+
+
+
 
 	camera = Camera::Create();
 	std::string fileName = "monkey.obj";
@@ -156,7 +185,7 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(trackBush, "BushMap.obj");
 	m_Registry.emplace<syre::Transform>(trackBush, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackBush, "Bush.png");
-
+	
 	entt::entity butterflies = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(butterflies);
 	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyNeutral.obj");
@@ -650,6 +679,25 @@ void SceningTest::Start()
 
 int SceningTest::Update()
 {
+	PostEffect* framebuffer = &m_Registry.get<PostEffect>(sceneBuff);
+	CubeCoCoEffect* colorCorrect = &m_Registry.get<CubeCoCoEffect>(cocoBuff);
+
+	
+
+	framebuffer->Clear();
+	colorCorrect->Clear();
+
+	AudioEngine& engine = AudioEngine::Instance();
+
+	AudioEvent& music = engine.GetEvent("BG_MUSIC");
+	AudioBus& musicBus = engine.GetBus("MusicBus");
+
+	//get ref listener
+	AudioListener& listener = engine.GetListener();
+	listener.SetPosition(glm::vec3(5, 0, 0));
+
+	engine.Update();
+
 	if (isPaused)
 	{
 		return PausedUpdate();
@@ -990,11 +1038,23 @@ int SceningTest::Update()
 		m_Registry.get<syre::PathAnimator>(entity).Update(transform, deltaTime);
 	}
 
+	//framebuffer bound
+	framebuffer->BindBuffer(0);
+	rampTex->Bind(20);
 
+	
 	basicShader->Bind();
 	basicShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	basicShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	basicShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	basicShader->SetUniform("u_SpecularStrength", specularOn ? 0.7f : 0.0f);
+	basicShader->SetUniform("u_AmbientStrength", ambientOn ? 0.3f : 0.0f);
+	basicShader->SetUniform("u_DiffuseStrength", diffuseOn ? 1.0f : 0.0f);
+	basicShader->SetUniform("u_CarEmissive", carLighting ? 1 : 0);
+	basicShader->SetUniform("u_RampingSpec", rampOnSpec ? 1 : 0);
+	basicShader->SetUniform("u_RampingDiff", rampOnDiff ? 1 : 0);
+
+
 
 	auto renderView = m_Registry.view<syre::Mesh,syre::Transform,syre::Texture>();
 	for (auto entity : renderView)
@@ -1014,10 +1074,20 @@ int SceningTest::Update()
 	}
 
 	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
+	morphShader->Bind();
+
 	morphShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	morphShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	morphShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
-	morphShader->Bind();
+	morphShader->SetUniform("u_SpecularStrength", specularOn ? 0.7f : 0.0f);
+	morphShader->SetUniform("u_AmbientStrength", ambientOn ? 0.3f : 0.0f);
+	morphShader->SetUniform("u_DiffuseStrength", diffuseOn ? 1.0f : 0.0f);
+	morphShader->SetUniform("u_CarEmissive", carLighting ? 1 : 0);
+	morphShader->SetUniform("u_RampingSpec", rampOnSpec ? 1 : 0);
+	morphShader->SetUniform("u_RampingDiff", rampOnDiff ? 1 : 0);
+
+
+
 	for (auto entity : morphRenderView)
 	{
 		float t = morphRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime);
@@ -1037,6 +1107,15 @@ int SceningTest::Update()
 		morphListRenderView.get<syre::Texture>(entity).Bind();
 		morphListRenderView.get<syre::TransformList>(entity).ListRender(morphShader,morphListRenderView.get<syre::MorphRenderer>(entity));
 	}
+
+	framebuffer->UnBindBuffer();
+
+	cubes[activeCube].bind(30);
+
+	colorCorrect->ApplyEffect(framebuffer);
+
+	colorCorrect->DrawToScreen();
+
 	if (!manualCamera)
 	{
 		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
@@ -1139,16 +1218,27 @@ void SceningTest::ImGUIUpdate()
 {
 	//auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 		// Implementation new frame
-		/*ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		// ImGui context new frame
 		ImGui::NewFrame();
 
 		if (ImGui::Begin("Debug")) {
 			// Render our GUI stuff
+			ImGui::SliderInt("Active CoCo Effect", &activeCube, 0, cubes.size() - 1);
+			ImGui::Text("0 is Neutral, 1 is Cool, 2 is Warm, 3 is Custom");
+			ImGui::Checkbox("Ambient Lighting", &ambientOn);
+			ImGui::Checkbox("Diffuse Lighting", &diffuseOn);
+			ImGui::Checkbox("Specular Lighting", &specularOn);
+			ImGui::Checkbox("Emissive Car Lighting", &carLighting);
+			ImGui::Checkbox("Specular Ramping", &rampOnSpec);
+			ImGui::Checkbox("Diffuse Ramping", &rampOnDiff);
+
+
 			
 
-			auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
+
+			/*auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
 			auto& camComponent = camera;
 			glm::vec3 camPos = camComponent->GetPosition();
 			if (ImGui::Button(manualCamera?"Auto Camera": "Manual Camera"))
@@ -1159,9 +1249,10 @@ void SceningTest::ImGUIUpdate()
 			{
 				ImGui::SliderFloat3("Camera Position", &camPos.x,-200.f, 200.f);
 			}
-			camComponent->SetPosition(camPos);
-			ImGui::End();
+			camComponent->SetPosition(camPos);*/
+			
 		}
+		ImGui::End();
 
 		// Make sure ImGui knows how big our window is
 		ImGuiIO& io = ImGui::GetIO();
@@ -1179,7 +1270,7 @@ void SceningTest::ImGUIUpdate()
 			ImGui::RenderPlatformWindowsDefault();
 			// Restore our gl context
 			glfwMakeContextCurrent(window);
-		}*/
+		}
 	
 }
 

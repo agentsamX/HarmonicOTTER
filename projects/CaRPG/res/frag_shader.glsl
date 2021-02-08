@@ -1,4 +1,4 @@
-#version 410
+#version 420
 
 layout(location = 0) in vec3 inPos;
 layout(location = 3) in vec3 inColor;
@@ -8,9 +8,17 @@ layout(location = 1) in vec2 UV;
 
 uniform sampler2D textureSampler;
 
+uniform layout(binding =20) sampler2D rampTex;
+
 uniform vec3  u_AmbientCol;
 uniform float u_AmbientStrength;
 uniform float u_SpecularStrength;
+uniform float u_DiffuseStrength;
+
+uniform int u_CarEmissive;
+
+uniform int u_RampingSpec;
+uniform int u_RampingDiff;
 
 
 uniform vec3  u_LightPos;
@@ -45,8 +53,9 @@ void main() {
 	vec3 N = normalize(inNormal);
 	vec3 lightDir = normalize(u_LightPos - inPos);
 	
-	float dif = max(dot(N, lightDir), 0.0);
-	vec3 diffuse = dif * textureColor;//inColor;// add diffuse intensity
+	float dif =u_RampingDiff==1?texture(rampTex,vec2(max(dot(N, lightDir), 0.0),0.5)).r: max(dot(N, lightDir), 0.0);
+	float diffuseStrength=u_DiffuseStrength;
+	vec3 diffuse = dif * textureColor*diffuseStrength;//inColor;// add diffuse intensity
 
 	//Attenuation
 	float dist = length(u_LightPos - inPos);
@@ -57,10 +66,10 @@ void main() {
 	float specularStrength = u_SpecularStrength; // this can be a uniform
 	vec3 camDir = normalize(u_CamPos - inPos);
 	vec3 reflectDir = reflect(-lightDir, N);
-	float spec = pow(max(dot(camDir, reflectDir), 0.0), 4); // Shininess coefficient (can be a uniform)
-	vec3 specular = specularStrength * spec * lightColor; // Can also use a specular color
+	float spec = u_RampingSpec==1?texture(rampTex,vec2(pow(max(dot(camDir, reflectDir), 0.0), 4),0.5)).r:pow(max(dot(camDir, reflectDir), 0.0), 4); // Shininess coefficient (can be a uniform)
+	vec3 specular = specularStrength * spec* lightColor; // Can also use a specular color
 	
 	vec3 result = (ambient + diffuse + specular);
 	
-	frag_color = (texture(textureSampler, UV)/(distPlay/10) *vec4(result,1.0)+vec4(1/distPlay,0.0f,1/distEnemy,0.0f));
+	frag_color = u_CarEmissive==1?(texture(textureSampler, UV)/(distPlay/10) *vec4(result,1.0)+vec4(1/distPlay,0.0f,1/distEnemy,0.0f)):(texture(textureSampler, UV)*vec4(result,1.0));
 }
