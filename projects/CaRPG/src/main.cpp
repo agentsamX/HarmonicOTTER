@@ -157,6 +157,8 @@ int main()
 	if (!initGLAD())
 		return 1;
 
+	Framebuffer::InitFullscreenQuad();
+
 	//glEnable(GL_DEBUG_OUTPUT);
 	//turn off for build for gdw
 	glDebugMessageCallback(GlDebugMessage, nullptr);
@@ -208,6 +210,7 @@ int main()
 
 			if(returned==1)
 			{
+				delete scenes[scenes.size() - 1];
 				scenes.pop_back();
 				scenes.push_back(new SceningTest(window));
 				curScene = scenes[2];
