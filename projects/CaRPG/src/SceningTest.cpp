@@ -29,14 +29,24 @@ void SceningTest::Start()
 	cubes.push_back(LUT3D("cubes/Darken-512.cube"));
 
 	AudioEngine& engine = AudioEngine::Instance();
-	engine.Init();
-	engine.LoadBank("Master");
-	engine.LoadBank("Master.strings");
-	engine.LoadBus("MusicBus", "{a5b53ded-d7b3-4e6b-a920-0b241ef6f268}");
+	
 
 	//play event
-	AudioEvent& music = engine.CreateEventW("BG_MUSIC", "{b56cb9d2-1d47-4099-b80e-7d257b99a823}");
-	music.Play();
+	AudioEvent& oldMusic = engine.GetEvent("Menu Music");
+	oldMusic.Stop();
+
+	AudioEvent& newMusic = engine.CreateEventW("Ambient", "{18c986e1-88b0-45ce-82c7-567d3447f2e8}");
+	newMusic.Play();
+
+	AudioEvent& slipstream = engine.CreateEventW("Slipstream", "{50d08bc6-b9f1-4411-906f-69506bd36f13}");
+	AudioEvent& drift = engine.CreateEventW("Drift", "{3eb39553-5d08-456c-998b-822942c1f860}");
+	AudioEvent& multiNitro = engine.CreateEventW("MultiNitro", "{6d8f789b-95db-4007-bd66-f26c1f377b3c}");
+
+	slipstream.StopImmediately();
+	drift.StopImmediately();
+	multiNitro.StopImmediately();
+
+
 
 
 
@@ -689,9 +699,10 @@ int SceningTest::Update()
 
 	AudioEngine& engine = AudioEngine::Instance();
 
-	AudioEvent& music = engine.GetEvent("BG_MUSIC");
-	AudioBus& musicBus = engine.GetBus("MusicBus");
+	AudioEvent& ambient = engine.GetEvent("Ambient");
+	AudioBus& musicBus = engine.GetBus("Music");
 
+	
 	//get ref listener
 	AudioListener& listener = engine.GetListener();
 	listener.SetPosition(glm::vec3(5, 0, 0));
@@ -1222,6 +1233,10 @@ void SceningTest::ImGUIUpdate()
 		ImGui_ImplGlfw_NewFrame();
 		// ImGui context new frame
 		ImGui::NewFrame();
+		AudioEngine& audio = AudioEngine::Instance();
+		int pauseStatus = audio.GetGlobalParameterValue("IsPaused");
+		float sfxVol = audio.GetGlobalParameterValue("SFXVolume");
+		float musVol = audio.GetGlobalParameterValue("MusicVolume");
 
 		if (ImGui::Begin("Debug")) {
 			// Render our GUI stuff
@@ -1233,6 +1248,11 @@ void SceningTest::ImGUIUpdate()
 			ImGui::Checkbox("Emissive Car Lighting", &carLighting);
 			ImGui::Checkbox("Specular Ramping", &rampOnSpec);
 			ImGui::Checkbox("Diffuse Ramping", &rampOnDiff);
+			//ImGui::SliderInt("IsPaused", &pauseStatus, 0, 1);
+			ImGui::SliderFloat("Effects Volume", &sfxVol, 0.f, 1.f);
+			ImGui::SliderFloat("Music Volume", &musVol, 0.f, 1.f);
+
+
 
 
 			
@@ -1253,6 +1273,10 @@ void SceningTest::ImGUIUpdate()
 			
 		}
 		ImGui::End();
+		audio.SetGlobalParameter("IsPaused",pauseStatus);
+		audio.SetGlobalParameter("SFXVolume", sfxVol);
+		audio.SetGlobalParameter("MusicVolume", musVol);
+
 
 		// Make sure ImGui knows how big our window is
 		ImGuiIO& io = ImGui::GetIO();
@@ -1282,6 +1306,7 @@ Camera::sptr& SceningTest::GetCam()
 
 int SceningTest::KeyEvents(float delta)
 {
+
 	if (isPaused)
 	{	
 		double* x = new double;
@@ -1298,6 +1323,7 @@ int SceningTest::KeyEvents(float delta)
 		{
 			isPaused = false;
 			escRelease = false;
+
 		}
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
@@ -1375,6 +1401,7 @@ int SceningTest::KeyEvents(float delta)
 		{
 			isPaused = true;
 			escRelease = false;
+
 		}
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && Elapsedtime >= 0.5)
 		{

@@ -186,6 +186,12 @@ int main()
 
 	InitImGui();
 
+	AudioEngine& engine = AudioEngine::Instance();
+	engine.Init();
+	engine.LoadBank("Master");
+	engine.LoadBank("Master.strings");
+	engine.LoadBus("Music", "{65daa684-95d9-408f-b23f-d587e44e016b}");
+
 	curScene->Start();
 
 	camera = curScene->GetCam();
