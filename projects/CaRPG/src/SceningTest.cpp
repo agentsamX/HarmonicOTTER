@@ -25,6 +25,11 @@ void SceningTest::Start()
 	m_GearboxLever = m_Registry.create();
 	m_Accelerometer = m_Registry.create();
 	m_Needle = m_Registry.create();
+	m_PGears = m_Registry.create();
+	m_EGears = m_Registry.create();
+	m_AccRect = m_Registry.create();
+	m_Pneedle = m_Registry.create();
+	m_Eneedle = m_Registry.create();
 	/*m_Particles1 = m_Registry.create();
 	m_Particles2 = m_Registry.create();*/
 	//cards
@@ -57,11 +62,11 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(m_GearboxLever, "Lever.obj");
 	m_Registry.emplace<syre::Transform>(m_GearboxLever, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_GearboxLever, "GearboxLever.png");
-
+	
 	m_Registry.emplace<syre::Mesh>(m_Accelerometer, "Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Accelerometer, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Accelerometer, "Accelerometer1.png");
-
+	m_Registry.emplace<syre::Texture>(m_Accelerometer, "Accelerometer.png");
+	
 	m_Registry.emplace<syre::MorphRenderer>(m_Needle);
 	m_Registry.emplace<syre::Transform>(m_Needle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Needle, "Finish.png");
@@ -76,6 +81,26 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(m_PauseMenu, "RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_PauseMenu, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_PauseMenu, "PauseMenu.png");
+
+	m_Registry.emplace<syre::Mesh>(m_PGears, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_PGears, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_PGears, "PauseMenu.png");
+
+	m_Registry.emplace<syre::Mesh>(m_AccRect, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_AccRect, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_AccRect, "Accelerometer_rec.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Pneedle, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Pneedle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Pneedle, "Pneedle1.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Eneedle, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Eneedle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Eneedle, "Eneedle1.png");
+
+	m_Registry.emplace<syre::Mesh>(m_EGears, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_EGears, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_EGears, "PauseMenu.png");
 	
 
 
@@ -560,13 +585,39 @@ void SceningTest::Start()
 	gearboxTextures.push_back(syre::Texture("GearBoxGasPressed.png"));
 	gearboxTextures.push_back(syre::Texture("GearBoxBrakePressed.png"));
 	
-	accelerometerTextures.push_back(syre::Texture("Accelerometer1.png"));
-	accelerometerTextures.push_back(syre::Texture("Accelerometer1.png"));
-	accelerometerTextures.push_back(syre::Texture("Accelerometer2.png"));
-	accelerometerTextures.push_back(syre::Texture("Accelerometer3.png"));
-	accelerometerTextures.push_back(syre::Texture("Accelerometer4.png"));
-	accelerometerTextures.push_back(syre::Texture("Accelerometer5.png"));
-	accelerometerTextures.push_back(syre::Texture("Accelerometer6.png"));
+	//accelerometerTexture.push_back(syre::Texture("Accelerometer.png"));
+
+	pGearTextures.push_back(syre::Texture("P1.png"));
+	pGearTextures.push_back(syre::Texture("P1.png"));
+	pGearTextures.push_back(syre::Texture("P2.png"));
+	pGearTextures.push_back(syre::Texture("P3.png"));
+	pGearTextures.push_back(syre::Texture("P4.png"));
+	pGearTextures.push_back(syre::Texture("P5.png"));
+	pGearTextures.push_back(syre::Texture("P6.png"));
+
+	eGearTextures.push_back(syre::Texture("E1.png"));
+	eGearTextures.push_back(syre::Texture("E1.png"));
+	eGearTextures.push_back(syre::Texture("E2.png"));
+	eGearTextures.push_back(syre::Texture("E3.png"));
+	eGearTextures.push_back(syre::Texture("E4.png"));
+	eGearTextures.push_back(syre::Texture("E5.png"));
+	eGearTextures.push_back(syre::Texture("E6.png"));
+
+	eneedleTextures.push_back(syre::Texture("Eneedle1.png"));
+	eneedleTextures.push_back(syre::Texture("Eneedle1.png"));
+	eneedleTextures.push_back(syre::Texture("Eneedle2.png"));
+	eneedleTextures.push_back(syre::Texture("Eneedle3.png"));
+	eneedleTextures.push_back(syre::Texture("Eneedle4.png"));
+	eneedleTextures.push_back(syre::Texture("Eneedle5.png"));
+	eneedleTextures.push_back(syre::Texture("Eneedle6.png"));
+
+	pneedleTextures.push_back(syre::Texture("Pneedle1.png"));
+	pneedleTextures.push_back(syre::Texture("Pneedle1.png"));
+	pneedleTextures.push_back(syre::Texture("Pneedle2.png"));
+	pneedleTextures.push_back(syre::Texture("Pneedle3.png"));
+	pneedleTextures.push_back(syre::Texture("Pneedle4.png"));
+	pneedleTextures.push_back(syre::Texture("Pneedle5.png"));
+	pneedleTextures.push_back(syre::Texture("Pneedle6.png"));
 
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
@@ -648,6 +699,7 @@ void SceningTest::Start()
 	lastFrame = glfwGetTime();
 }
 
+
 int SceningTest::Update()
 {
 	if (isPaused)
@@ -686,17 +738,42 @@ int SceningTest::Update()
 		}	
 	}
 
-
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.09f)));
 	flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
 	int ObsVal = obstacleComponent.GetObs();
 	hazardTextures[ObsVal].Bind();
 	m_Registry.get<syre::Mesh>(m_Hazard).Render();
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.0325f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.52f, -0.95f));
+	int GerValP = PlayerComponent.GetGear();
+	pGearTextures[GerValP].Bind();
+	m_Registry.get<syre::Mesh>(m_PGears).Render();
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.0325f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.95f));
+	int GerValE = EnemyComponent.GetGear();
+	eGearTextures[GerValE].Bind();
+	m_Registry.get<syre::Mesh>(m_EGears).Render();
+	
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.04f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.50f, -0.96f));
+	m_Registry.get<syre::Texture>(m_AccRect).Bind();
+	m_Registry.get<syre::Mesh>(m_AccRect).Render();
 	
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.55f, -0.95f));
-	int GerVal = PlayerComponent.GetGear();
-	accelerometerTextures[GerVal].Bind();
+	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
+	pneedleTextures[GerValP].Bind();
+	m_Registry.get<syre::Mesh>(m_Pneedle).Render();
+	
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
+	eneedleTextures[GerValE].Bind();
+	m_Registry.get<syre::Mesh>(m_Eneedle).Render();
+	
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
+	m_Registry.get<syre::Texture>(m_Accelerometer).Bind();
 	m_Registry.get<syre::Mesh>(m_Accelerometer).Render();
 	
 	if (lbutton_down == false)

@@ -28,12 +28,21 @@ private:
 	entt::entity m_Particles2;
 	entt::entity m_TransparentBlack;
 	entt::entity m_PauseMenu;
+	entt::entity m_PGears;
+	entt::entity m_EGears;
+	entt::entity m_AccRect;
+	entt::entity m_Eneedle;
+	entt::entity m_Pneedle;
 
 
 	std::vector<syre::Texture> cardTextures;
 	std::vector<syre::Texture> hazardTextures;
 	std::vector<syre::Texture> gearboxTextures;
-	std::vector<syre::Texture> accelerometerTextures;
+	//std::vector<syre::Texture> accelerometerTexture;
+	std::vector<syre::Texture> pGearTextures;
+	std::vector<syre::Texture> eGearTextures;
+	std::vector<syre::Texture> pneedleTextures;
+	std::vector<syre::Texture> eneedleTextures;
 
 	Shader::sptr basicShader;
 	Shader::sptr flatShader;
