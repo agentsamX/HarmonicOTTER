@@ -11,6 +11,45 @@ SceningTest::SceningTest(GLFWwindow* inWind)
 
 void SceningTest::Start()
 {
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+
+	rampTex = Texture2D::LoadFromFile("tinyRamp.png");
+
+	sceneBuff = m_Registry.create();
+	cocoBuff = m_Registry.create();
+	m_Registry.emplace<PostEffect>(sceneBuff);
+	m_Registry.emplace<CubeCoCoEffect>(cocoBuff);
+	m_Registry.get<PostEffect>(sceneBuff).Init(width, height);
+	m_Registry.get<CubeCoCoEffect>(cocoBuff).Init(width, height);
+
+	cubes.push_back(LUT3D("cubes/Neutral-512.cube"));
+	cubes.push_back(LUT3D("cubes/Cool.cube"));
+	cubes.push_back(LUT3D("cubes/Warm.cube"));
+	cubes.push_back(LUT3D("cubes/Darken-512.cube"));
+
+	AudioEngine& engine = AudioEngine::Instance();
+	
+
+	//play event
+	AudioEvent& oldMusic = engine.GetEvent("Menu Music");
+	oldMusic.Stop();
+
+	AudioEvent& newMusic = engine.CreateEventW("Ambient", "{18c986e1-88b0-45ce-82c7-567d3447f2e8}");
+	newMusic.Play();
+
+	AudioEvent& slipstream = engine.CreateEventW("Slipstream", "{50d08bc6-b9f1-4411-906f-69506bd36f13}");
+	AudioEvent& drift = engine.CreateEventW("Drift", "{3eb39553-5d08-456c-998b-822942c1f860}");
+	AudioEvent& multiNitro = engine.CreateEventW("MultiNitro", "{6d8f789b-95db-4007-bd66-f26c1f377b3c}");
+
+	slipstream.StopImmediately();
+	drift.StopImmediately();
+	multiNitro.StopImmediately();
+
+
+
+
+
 
 	camera = Camera::Create();
 	std::string fileName = "monkey.obj";
@@ -181,7 +220,7 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(trackBush, "BushMap.obj");
 	m_Registry.emplace<syre::Transform>(trackBush, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackBush, "Bush.png");
-
+	
 	entt::entity butterflies = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(butterflies);
 	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyNeutral.obj");
@@ -702,6 +741,26 @@ void SceningTest::Start()
 
 int SceningTest::Update()
 {
+	PostEffect* framebuffer = &m_Registry.get<PostEffect>(sceneBuff);
+	CubeCoCoEffect* colorCorrect = &m_Registry.get<CubeCoCoEffect>(cocoBuff);
+
+	
+
+	framebuffer->Clear();
+	colorCorrect->Clear();
+
+	AudioEngine& engine = AudioEngine::Instance();
+
+	AudioEvent& ambient = engine.GetEvent("Ambient");
+	AudioBus& musicBus = engine.GetBus("Music");
+
+	
+	//get ref listener
+	AudioListener& listener = engine.GetListener();
+	listener.SetPosition(glm::vec3(5, 0, 0));
+
+	engine.Update();
+
 	if (isPaused)
 	{
 		return PausedUpdate();
@@ -1067,11 +1126,23 @@ int SceningTest::Update()
 		m_Registry.get<syre::PathAnimator>(entity).Update(transform, deltaTime);
 	}
 
+	//framebuffer bound
+	framebuffer->BindBuffer(0);
+	rampTex->Bind(20);
 
+	
 	basicShader->Bind();
 	basicShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	basicShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	basicShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	basicShader->SetUniform("u_SpecularStrength", specularOn ? 0.7f : 0.0f);
+	basicShader->SetUniform("u_AmbientStrength", ambientOn ? 0.3f : 0.0f);
+	basicShader->SetUniform("u_DiffuseStrength", diffuseOn ? 1.0f : 0.0f);
+	basicShader->SetUniform("u_CarEmissive", carLighting ? 1 : 0);
+	basicShader->SetUniform("u_RampingSpec", rampOnSpec ? 1 : 0);
+	basicShader->SetUniform("u_RampingDiff", rampOnDiff ? 1 : 0);
+
+
 
 	auto renderView = m_Registry.view<syre::Mesh,syre::Transform,syre::Texture>();
 	for (auto entity : renderView)
@@ -1091,10 +1162,20 @@ int SceningTest::Update()
 	}
 
 	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
+	morphShader->Bind();
+
 	morphShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	morphShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	morphShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
-	morphShader->Bind();
+	morphShader->SetUniform("u_SpecularStrength", specularOn ? 0.7f : 0.0f);
+	morphShader->SetUniform("u_AmbientStrength", ambientOn ? 0.3f : 0.0f);
+	morphShader->SetUniform("u_DiffuseStrength", diffuseOn ? 1.0f : 0.0f);
+	morphShader->SetUniform("u_CarEmissive", carLighting ? 1 : 0);
+	morphShader->SetUniform("u_RampingSpec", rampOnSpec ? 1 : 0);
+	morphShader->SetUniform("u_RampingDiff", rampOnDiff ? 1 : 0);
+
+
+
 	for (auto entity : morphRenderView)
 	{
 		float t = morphRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime);
@@ -1114,6 +1195,15 @@ int SceningTest::Update()
 		morphListRenderView.get<syre::Texture>(entity).Bind();
 		morphListRenderView.get<syre::TransformList>(entity).ListRender(morphShader,morphListRenderView.get<syre::MorphRenderer>(entity));
 	}
+
+	framebuffer->UnBindBuffer();
+
+	cubes[activeCube].bind(30);
+
+	colorCorrect->ApplyEffect(framebuffer);
+
+	colorCorrect->DrawToScreen();
+
 	if (!manualCamera)
 	{
 		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
@@ -1135,7 +1225,10 @@ int SceningTest::PausedUpdate()
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
 	int returning = KeyEvents(deltaTime);
-
+	if (returning == -1)
+	{
+		return -1;
+	}
 	
 	
 
@@ -1213,16 +1306,36 @@ void SceningTest::ImGUIUpdate()
 {
 	//auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 		// Implementation new frame
-		/*ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		// ImGui context new frame
 		ImGui::NewFrame();
+		AudioEngine& audio = AudioEngine::Instance();
+		int pauseStatus = audio.GetGlobalParameterValue("IsPaused");
+		float sfxVol = audio.GetGlobalParameterValue("SFXVolume");
+		float musVol = audio.GetGlobalParameterValue("MusicVolume");
 
 		if (ImGui::Begin("Debug")) {
 			// Render our GUI stuff
+			ImGui::SliderInt("Active CoCo Effect", &activeCube, 0, cubes.size() - 1);
+			ImGui::Text("0 is Neutral, 1 is Cool, 2 is Warm, 3 is Custom");
+			ImGui::Checkbox("Ambient Lighting", &ambientOn);
+			ImGui::Checkbox("Diffuse Lighting", &diffuseOn);
+			ImGui::Checkbox("Specular Lighting", &specularOn);
+			ImGui::Checkbox("Emissive Car Lighting", &carLighting);
+			ImGui::Checkbox("Specular Ramping", &rampOnSpec);
+			ImGui::Checkbox("Diffuse Ramping", &rampOnDiff);
+			//ImGui::SliderInt("IsPaused", &pauseStatus, 0, 1);
+			ImGui::SliderFloat("Effects Volume", &sfxVol, 0.f, 1.f);
+			ImGui::SliderFloat("Music Volume", &musVol, 0.f, 1.f);
+
+
+
+
 			
 
-			auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
+
+			/*auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
 			auto& camComponent = camera;
 			glm::vec3 camPos = camComponent->GetPosition();
 			if (ImGui::Button(manualCamera?"Auto Camera": "Manual Camera"))
@@ -1233,9 +1346,14 @@ void SceningTest::ImGUIUpdate()
 			{
 				ImGui::SliderFloat3("Camera Position", &camPos.x,-200.f, 200.f);
 			}
-			camComponent->SetPosition(camPos);
-			ImGui::End();
+			camComponent->SetPosition(camPos);*/
+			
 		}
+		ImGui::End();
+		audio.SetGlobalParameter("IsPaused",pauseStatus);
+		audio.SetGlobalParameter("SFXVolume", sfxVol);
+		audio.SetGlobalParameter("MusicVolume", musVol);
+
 
 		// Make sure ImGui knows how big our window is
 		ImGuiIO& io = ImGui::GetIO();
@@ -1253,7 +1371,7 @@ void SceningTest::ImGUIUpdate()
 			ImGui::RenderPlatformWindowsDefault();
 			// Restore our gl context
 			glfwMakeContextCurrent(window);
-		}*/
+		}
 	
 }
 
@@ -1265,6 +1383,7 @@ Camera::sptr& SceningTest::GetCam()
 
 int SceningTest::KeyEvents(float delta)
 {
+
 	if (isPaused)
 	{	
 		double* x = new double;
@@ -1281,6 +1400,7 @@ int SceningTest::KeyEvents(float delta)
 		{
 			isPaused = false;
 			escRelease = false;
+
 		}
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
@@ -1292,6 +1412,7 @@ int SceningTest::KeyEvents(float delta)
 				}
 				else if (374.0f < *y && *y < 417.0f)
 				{
+					m_Registry.clear();
 					return -1;
 				}
 				else if (425.0f < *y && *y < 474.0f)
@@ -1357,6 +1478,7 @@ int SceningTest::KeyEvents(float delta)
 		{
 			isPaused = true;
 			escRelease = false;
+
 		}
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && Elapsedtime >= 0.5)
 		{

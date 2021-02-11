@@ -1,5 +1,8 @@
 #pragma once
 #include"SceneParent.h"
+#include "AudioEngine.h"
+#include "Graphics/Post/CubeCoCoEffect.h"
+#include "Graphics/LUT.h"
 #include <cstdlib>
 #include <ctime>
 class SceningTest:
@@ -44,6 +47,11 @@ private:
 	std::vector<syre::Texture> pneedleTextures;
 	std::vector<syre::Texture> eneedleTextures;
 
+	entt::entity sceneBuff;
+	entt::entity cocoBuff;
+
+	std::vector<LUT3D> cubes;
+
 	Shader::sptr basicShader;
 	Shader::sptr flatShader;
 	Shader::sptr morphShader;
@@ -55,4 +63,14 @@ private:
 	bool showGear = false;
 	bool isPaused = false;
 	bool escRelease = false;
+	bool ambientOn = true;
+	bool specularOn = true;
+	bool diffuseOn = true;
+	bool carLighting = true;
+	bool rampOnSpec = false;
+	bool rampOnDiff = false;
+
+	Texture2D::sptr rampTex;
+
+	int activeCube = 0;
 };
