@@ -158,6 +158,8 @@ int main()
 	if (!initGLAD())
 		return 1;
 
+	Framebuffer::InitFullscreenQuad();
+
 	//glEnable(GL_DEBUG_OUTPUT);
 	//turn off for build for gdw
 	glDebugMessageCallback(GlDebugMessage, nullptr);
@@ -185,6 +187,12 @@ int main()
 
 	InitImGui();
 
+	AudioEngine& engine = AudioEngine::Instance();
+	engine.Init();
+	engine.LoadBank("Master");
+	engine.LoadBank("Master.strings");
+	engine.LoadBus("Music", "{65daa684-95d9-408f-b23f-d587e44e016b}");
+
 	curScene->Start();
 
 	camera = curScene->GetCam();
@@ -209,6 +217,7 @@ int main()
 
 			if(returned==1)
 			{
+				delete scenes[scenes.size() - 1];
 				scenes.pop_back();
 				scenes.push_back(new Scene2(window)); //////////////////////
 				curScene = scenes[2];

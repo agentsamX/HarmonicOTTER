@@ -84,6 +84,8 @@ bool Cars::GetBrake()
 
 void Cars::PlayCard(int Position, int NewGear)
 {
+	AudioEngine& audio = AudioEngine::Instance();
+
 	if (Hand[Position] == 0)
 	{
 		if (Gear + 3 > 6)
@@ -99,6 +101,9 @@ void Cars::PlayCard(int Position, int NewGear)
 		else
 			Action2 = Hand[Position];
 		RemoveCard(Position, true);
+		audio.GetEvent("MultiNitro").Restart();
+
+
 	}
 	if (Hand[Position] == 1)
 	{
@@ -107,6 +112,8 @@ void Cars::PlayCard(int Position, int NewGear)
 		else
 			Action2 = Hand[Position];
 		RemoveCard(Position, true);
+		audio.GetEvent("Drift").Restart();
+
 	}
 	if (Hand[Position] == 2)
 	{
@@ -116,6 +123,9 @@ void Cars::PlayCard(int Position, int NewGear)
 		else
 			Action2 = Hand[Position];
 		RemoveCard(Position, true);
+		audio.GetEvent("Slipstream").Restart();
+
+
 	}
 }
 

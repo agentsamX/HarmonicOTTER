@@ -23,10 +23,22 @@ void MenuScreen::Start()
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
 	flatShader->LoadShaderPartFromFile("flatFrag.glsl", GL_FRAGMENT_SHADER);
 	flatShader->Link();
+
+	AudioEngine& engine = AudioEngine::Instance();
+
+	AudioEvent& music = engine.CreateEventW("Menu Music", "{aefe09ea-1546-4ae9-9982-bf60713fdd02}");
+	music.Play();
+
 }
 
 int MenuScreen::Update()
 {
+	AudioEngine& engine = AudioEngine::Instance();
+
+	AudioEvent& music = engine.GetEvent("Menu Music");
+	AudioBus& musicBus = engine.GetBus("Music");
+	engine.Update();
+
 	flatShader->Bind();
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(-0.68f)));
 	flatShader->SetUniform("offset", glm::vec2(-0.3f, -0.15f));

@@ -11,6 +11,45 @@ SceningTest::SceningTest(GLFWwindow* inWind)
 
 void SceningTest::Start()
 {
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+
+	rampTex = Texture2D::LoadFromFile("tinyRamp.png");
+
+	sceneBuff = m_Registry.create();
+	cocoBuff = m_Registry.create();
+	m_Registry.emplace<PostEffect>(sceneBuff);
+	m_Registry.emplace<CubeCoCoEffect>(cocoBuff);
+	m_Registry.get<PostEffect>(sceneBuff).Init(width, height);
+	m_Registry.get<CubeCoCoEffect>(cocoBuff).Init(width, height);
+
+	cubes.push_back(LUT3D("cubes/Neutral-512.cube"));
+	cubes.push_back(LUT3D("cubes/Cool.cube"));
+	cubes.push_back(LUT3D("cubes/Warm.cube"));
+	cubes.push_back(LUT3D("cubes/Darken-512.cube"));
+
+	AudioEngine& engine = AudioEngine::Instance();
+	
+
+	//play event
+	AudioEvent& oldMusic = engine.GetEvent("Menu Music");
+	oldMusic.Stop();
+
+	AudioEvent& newMusic = engine.CreateEventW("Ambient", "{18c986e1-88b0-45ce-82c7-567d3447f2e8}");
+	newMusic.Play();
+
+	AudioEvent& slipstream = engine.CreateEventW("Slipstream", "{50d08bc6-b9f1-4411-906f-69506bd36f13}");
+	AudioEvent& drift = engine.CreateEventW("Drift", "{3eb39553-5d08-456c-998b-822942c1f860}");
+	AudioEvent& multiNitro = engine.CreateEventW("MultiNitro", "{6d8f789b-95db-4007-bd66-f26c1f377b3c}");
+
+	slipstream.StopImmediately();
+	drift.StopImmediately();
+	multiNitro.StopImmediately();
+
+
+
+
+
 
 	camera = Camera::Create();
 	std::string fileName = "monkey.obj";
@@ -25,6 +64,11 @@ void SceningTest::Start()
 	m_GearboxLever = m_Registry.create();
 	m_Accelerometer = m_Registry.create();
 	m_Needle = m_Registry.create();
+	m_PGears = m_Registry.create();
+	m_EGears = m_Registry.create();
+	m_AccRect = m_Registry.create();
+	m_Pneedle = m_Registry.create();
+	m_Eneedle = m_Registry.create();
 	/*m_Particles1 = m_Registry.create();
 	m_Particles2 = m_Registry.create();*/
 	//cards
@@ -57,11 +101,11 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(m_GearboxLever, "Lever.obj");
 	m_Registry.emplace<syre::Transform>(m_GearboxLever, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_GearboxLever, "GearboxLever.png");
-
+	
 	m_Registry.emplace<syre::Mesh>(m_Accelerometer, "Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Accelerometer, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Accelerometer, "Accelerometer1.png");
-
+	m_Registry.emplace<syre::Texture>(m_Accelerometer, "Accelerometer.png");
+	
 	m_Registry.emplace<syre::MorphRenderer>(m_Needle);
 	m_Registry.emplace<syre::Transform>(m_Needle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Needle, "Finish.png");
@@ -76,6 +120,26 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(m_PauseMenu, "RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_PauseMenu, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_PauseMenu, "PauseMenu.png");
+
+	m_Registry.emplace<syre::Mesh>(m_PGears, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_PGears, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_PGears, "PauseMenu.png");
+
+	m_Registry.emplace<syre::Mesh>(m_AccRect, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_AccRect, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_AccRect, "Accelerometer_rec.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Pneedle, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Pneedle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Pneedle, "Pneedle1.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Eneedle, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Eneedle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Eneedle, "Eneedle1.png");
+
+	m_Registry.emplace<syre::Mesh>(m_EGears, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_EGears, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_EGears, "PauseMenu.png");
 	
 
 
@@ -156,7 +220,7 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(trackBush, "BushMap.obj");
 	m_Registry.emplace<syre::Transform>(trackBush, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackBush, "Bush.png");
-
+	
 	entt::entity butterflies = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(butterflies);
 	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyNeutral.obj");
@@ -560,13 +624,39 @@ void SceningTest::Start()
 	gearboxTextures.push_back(syre::Texture("GearBoxGasPressed.png"));
 	gearboxTextures.push_back(syre::Texture("GearBoxBrakePressed.png"));
 	
-	accelerometerTextures.push_back(syre::Texture("Accelerometer1.png"));
-	accelerometerTextures.push_back(syre::Texture("Accelerometer1.png"));
-	accelerometerTextures.push_back(syre::Texture("Accelerometer2.png"));
-	accelerometerTextures.push_back(syre::Texture("Accelerometer3.png"));
-	accelerometerTextures.push_back(syre::Texture("Accelerometer4.png"));
-	accelerometerTextures.push_back(syre::Texture("Accelerometer5.png"));
-	accelerometerTextures.push_back(syre::Texture("Accelerometer6.png"));
+	//accelerometerTexture.push_back(syre::Texture("Accelerometer.png"));
+
+	pGearTextures.push_back(syre::Texture("P1.png"));
+	pGearTextures.push_back(syre::Texture("P1.png"));
+	pGearTextures.push_back(syre::Texture("P2.png"));
+	pGearTextures.push_back(syre::Texture("P3.png"));
+	pGearTextures.push_back(syre::Texture("P4.png"));
+	pGearTextures.push_back(syre::Texture("P5.png"));
+	pGearTextures.push_back(syre::Texture("P6.png"));
+
+	eGearTextures.push_back(syre::Texture("E1.png"));
+	eGearTextures.push_back(syre::Texture("E1.png"));
+	eGearTextures.push_back(syre::Texture("E2.png"));
+	eGearTextures.push_back(syre::Texture("E3.png"));
+	eGearTextures.push_back(syre::Texture("E4.png"));
+	eGearTextures.push_back(syre::Texture("E5.png"));
+	eGearTextures.push_back(syre::Texture("E6.png"));
+
+	eneedleTextures.push_back(syre::Texture("Eneedle1.png"));
+	eneedleTextures.push_back(syre::Texture("Eneedle1.png"));
+	eneedleTextures.push_back(syre::Texture("Eneedle2.png"));
+	eneedleTextures.push_back(syre::Texture("Eneedle3.png"));
+	eneedleTextures.push_back(syre::Texture("Eneedle4.png"));
+	eneedleTextures.push_back(syre::Texture("Eneedle5.png"));
+	eneedleTextures.push_back(syre::Texture("Eneedle6.png"));
+
+	pneedleTextures.push_back(syre::Texture("Pneedle1.png"));
+	pneedleTextures.push_back(syre::Texture("Pneedle1.png"));
+	pneedleTextures.push_back(syre::Texture("Pneedle2.png"));
+	pneedleTextures.push_back(syre::Texture("Pneedle3.png"));
+	pneedleTextures.push_back(syre::Texture("Pneedle4.png"));
+	pneedleTextures.push_back(syre::Texture("Pneedle5.png"));
+	pneedleTextures.push_back(syre::Texture("Pneedle6.png"));
 
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
@@ -648,8 +738,29 @@ void SceningTest::Start()
 	lastFrame = glfwGetTime();
 }
 
+
 int SceningTest::Update()
 {
+	PostEffect* framebuffer = &m_Registry.get<PostEffect>(sceneBuff);
+	CubeCoCoEffect* colorCorrect = &m_Registry.get<CubeCoCoEffect>(cocoBuff);
+
+	
+
+	framebuffer->Clear();
+	colorCorrect->Clear();
+
+	AudioEngine& engine = AudioEngine::Instance();
+
+	AudioEvent& ambient = engine.GetEvent("Ambient");
+	AudioBus& musicBus = engine.GetBus("Music");
+
+	
+	//get ref listener
+	AudioListener& listener = engine.GetListener();
+	listener.SetPosition(glm::vec3(5, 0, 0));
+
+	engine.Update();
+
 	if (isPaused)
 	{
 		return PausedUpdate();
@@ -686,17 +797,42 @@ int SceningTest::Update()
 		}	
 	}
 
-
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.09f)));
 	flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
 	int ObsVal = obstacleComponent.GetObs();
 	hazardTextures[ObsVal].Bind();
 	m_Registry.get<syre::Mesh>(m_Hazard).Render();
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.0325f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.52f, -0.95f));
+	int GerValP = PlayerComponent.GetGear();
+	pGearTextures[GerValP].Bind();
+	m_Registry.get<syre::Mesh>(m_PGears).Render();
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.0325f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.95f));
+	int GerValE = EnemyComponent.GetGear();
+	eGearTextures[GerValE].Bind();
+	m_Registry.get<syre::Mesh>(m_EGears).Render();
+	
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.04f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.50f, -0.96f));
+	m_Registry.get<syre::Texture>(m_AccRect).Bind();
+	m_Registry.get<syre::Mesh>(m_AccRect).Render();
 	
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.55f, -0.95f));
-	int GerVal = PlayerComponent.GetGear();
-	accelerometerTextures[GerVal].Bind();
+	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
+	pneedleTextures[GerValP].Bind();
+	m_Registry.get<syre::Mesh>(m_Pneedle).Render();
+	
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
+	eneedleTextures[GerValE].Bind();
+	m_Registry.get<syre::Mesh>(m_Eneedle).Render();
+	
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
+	m_Registry.get<syre::Texture>(m_Accelerometer).Bind();
 	m_Registry.get<syre::Mesh>(m_Accelerometer).Render();
 	
 	if (lbutton_down == false)
@@ -990,11 +1126,23 @@ int SceningTest::Update()
 		m_Registry.get<syre::PathAnimator>(entity).Update(transform, deltaTime);
 	}
 
+	//framebuffer bound
+	framebuffer->BindBuffer(0);
+	rampTex->Bind(20);
 
+	
 	basicShader->Bind();
 	basicShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	basicShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	basicShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	basicShader->SetUniform("u_SpecularStrength", specularOn ? 0.7f : 0.0f);
+	basicShader->SetUniform("u_AmbientStrength", ambientOn ? 0.3f : 0.0f);
+	basicShader->SetUniform("u_DiffuseStrength", diffuseOn ? 1.0f : 0.0f);
+	basicShader->SetUniform("u_CarEmissive", carLighting ? 1 : 0);
+	basicShader->SetUniform("u_RampingSpec", rampOnSpec ? 1 : 0);
+	basicShader->SetUniform("u_RampingDiff", rampOnDiff ? 1 : 0);
+
+
 
 	auto renderView = m_Registry.view<syre::Mesh,syre::Transform,syre::Texture>();
 	for (auto entity : renderView)
@@ -1014,10 +1162,20 @@ int SceningTest::Update()
 	}
 
 	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
+	morphShader->Bind();
+
 	morphShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	morphShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	morphShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
-	morphShader->Bind();
+	morphShader->SetUniform("u_SpecularStrength", specularOn ? 0.7f : 0.0f);
+	morphShader->SetUniform("u_AmbientStrength", ambientOn ? 0.3f : 0.0f);
+	morphShader->SetUniform("u_DiffuseStrength", diffuseOn ? 1.0f : 0.0f);
+	morphShader->SetUniform("u_CarEmissive", carLighting ? 1 : 0);
+	morphShader->SetUniform("u_RampingSpec", rampOnSpec ? 1 : 0);
+	morphShader->SetUniform("u_RampingDiff", rampOnDiff ? 1 : 0);
+
+
+
 	for (auto entity : morphRenderView)
 	{
 		float t = morphRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime);
@@ -1037,6 +1195,15 @@ int SceningTest::Update()
 		morphListRenderView.get<syre::Texture>(entity).Bind();
 		morphListRenderView.get<syre::TransformList>(entity).ListRender(morphShader,morphListRenderView.get<syre::MorphRenderer>(entity));
 	}
+
+	framebuffer->UnBindBuffer();
+
+	cubes[activeCube].bind(30);
+
+	colorCorrect->ApplyEffect(framebuffer);
+
+	colorCorrect->DrawToScreen();
+
 	if (!manualCamera)
 	{
 		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
@@ -1058,7 +1225,10 @@ int SceningTest::PausedUpdate()
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
 	int returning = KeyEvents(deltaTime);
-
+	if (returning == -1)
+	{
+		return -1;
+	}
 	
 	
 
@@ -1136,16 +1306,36 @@ void SceningTest::ImGUIUpdate()
 {
 	//auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 		// Implementation new frame
-		/*ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		// ImGui context new frame
 		ImGui::NewFrame();
+		AudioEngine& audio = AudioEngine::Instance();
+		int pauseStatus = audio.GetGlobalParameterValue("IsPaused");
+		float sfxVol = audio.GetGlobalParameterValue("SFXVolume");
+		float musVol = audio.GetGlobalParameterValue("MusicVolume");
 
 		if (ImGui::Begin("Debug")) {
 			// Render our GUI stuff
+			ImGui::SliderInt("Active CoCo Effect", &activeCube, 0, cubes.size() - 1);
+			ImGui::Text("0 is Neutral, 1 is Cool, 2 is Warm, 3 is Custom");
+			ImGui::Checkbox("Ambient Lighting", &ambientOn);
+			ImGui::Checkbox("Diffuse Lighting", &diffuseOn);
+			ImGui::Checkbox("Specular Lighting", &specularOn);
+			ImGui::Checkbox("Emissive Car Lighting", &carLighting);
+			ImGui::Checkbox("Specular Ramping", &rampOnSpec);
+			ImGui::Checkbox("Diffuse Ramping", &rampOnDiff);
+			//ImGui::SliderInt("IsPaused", &pauseStatus, 0, 1);
+			ImGui::SliderFloat("Effects Volume", &sfxVol, 0.f, 1.f);
+			ImGui::SliderFloat("Music Volume", &musVol, 0.f, 1.f);
+
+
+
+
 			
 
-			auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
+
+			/*auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
 			auto& camComponent = camera;
 			glm::vec3 camPos = camComponent->GetPosition();
 			if (ImGui::Button(manualCamera?"Auto Camera": "Manual Camera"))
@@ -1156,9 +1346,14 @@ void SceningTest::ImGUIUpdate()
 			{
 				ImGui::SliderFloat3("Camera Position", &camPos.x,-200.f, 200.f);
 			}
-			camComponent->SetPosition(camPos);
-			ImGui::End();
+			camComponent->SetPosition(camPos);*/
+			
 		}
+		ImGui::End();
+		audio.SetGlobalParameter("IsPaused",pauseStatus);
+		audio.SetGlobalParameter("SFXVolume", sfxVol);
+		audio.SetGlobalParameter("MusicVolume", musVol);
+
 
 		// Make sure ImGui knows how big our window is
 		ImGuiIO& io = ImGui::GetIO();
@@ -1176,7 +1371,7 @@ void SceningTest::ImGUIUpdate()
 			ImGui::RenderPlatformWindowsDefault();
 			// Restore our gl context
 			glfwMakeContextCurrent(window);
-		}*/
+		}
 	
 }
 
@@ -1188,6 +1383,7 @@ Camera::sptr& SceningTest::GetCam()
 
 int SceningTest::KeyEvents(float delta)
 {
+
 	if (isPaused)
 	{	
 		double* x = new double;
@@ -1204,6 +1400,7 @@ int SceningTest::KeyEvents(float delta)
 		{
 			isPaused = false;
 			escRelease = false;
+
 		}
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
@@ -1215,6 +1412,7 @@ int SceningTest::KeyEvents(float delta)
 				}
 				else if (374.0f < *y && *y < 417.0f)
 				{
+					m_Registry.clear();
 					return -1;
 				}
 				else if (425.0f < *y && *y < 474.0f)
@@ -1280,6 +1478,7 @@ int SceningTest::KeyEvents(float delta)
 		{
 			isPaused = true;
 			escRelease = false;
+
 		}
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && Elapsedtime >= 0.5)
 		{
