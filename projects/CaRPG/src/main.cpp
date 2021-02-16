@@ -8,6 +8,7 @@
 #include "SceningTest.h"
 #include "MenuScreen.h"
 #include "MidGameMenu.h"
+#include "Scene2.h"
 
 //taken from CG tutorials
 extern "C" {
@@ -164,10 +165,10 @@ int main()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	std::vector<syre::SceneParent*> scenes;
+	std::vector<syre::SceneParent*> scenes;////////////
 	scenes.push_back(new MenuScreen(window));
 	scenes.push_back(new MidGameMenu(window));
-	scenes.push_back(new SceningTest(window));
+	scenes.push_back(new Scene2(window));//////////////////////
 	
 	syre::SceneParent* curScene = scenes[0];
 	
@@ -209,7 +210,7 @@ int main()
 			if(returned==1)
 			{
 				scenes.pop_back();
-				scenes.push_back(new SceningTest(window));
+				scenes.push_back(new Scene2(window)); //////////////////////
 				curScene = scenes[2];
 
 				curScene->Start();
