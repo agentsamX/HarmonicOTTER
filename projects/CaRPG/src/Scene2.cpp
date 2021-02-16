@@ -2,7 +2,7 @@
 #include "Cars.h"
 #include "Obstacles.h"
 
-int start = 0;
+int start1 = 0;
 
 Scene2::Scene2(GLFWwindow* inWind)
 {
