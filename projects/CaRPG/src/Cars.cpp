@@ -5,6 +5,8 @@ Cars::Cars()
 {
 	Accelerate = false;
 	Brake = false;
+	Quick = false;
+	Sabo = false;
 	Gear = 1;
 }
 
@@ -20,9 +22,35 @@ void Cars::ChangeGears(int NewGear)
 void Cars::ChangeGears()
 {
 	if (Accelerate == true && Gear + 1 != 7)
-		Gear += 1;
+	{
+		if (Quick == false)
+		{
+			Gear += 1;
+		}
+		else if (Gear + 2 > 6)
+		{
+			Gear = 6;
+		}
+		else
+		{
+			Gear += 2;
+		}
+	}
 	if (Brake == true && Gear - 1 != 0)
-		Gear -= 1;
+	{
+		if (Quick == false)
+		{
+			Gear -= 1;
+		}
+		else if (Gear - 2 < 0)
+		{
+			Gear = 0;
+		}
+		else
+		{
+			Gear -= 2;
+		}
+	}
 }
 
 int Cars::GetGear()
@@ -82,6 +110,19 @@ bool Cars::GetBrake()
 		return false;
 }
 
+bool Cars::GetSabo()
+{
+	return Sabo;
+}
+
+void Cars::SetSabo()
+{
+	if (Sabo == false)
+		Sabo = true;
+	else if (Sabo == true)
+		Sabo = false;
+}
+
 void Cars::PlayCard(int Position, int NewGear)
 {
 	AudioEngine& audio = AudioEngine::Instance();
@@ -127,6 +168,36 @@ void Cars::PlayCard(int Position, int NewGear)
 
 
 	}
+	if (Hand[Position] == 3)
+	{
+		Gear = 1;
+		if (Action1 == -1)
+			Action1 = Hand[Position];
+		else
+			Action2 = Hand[Position];
+		RemoveCard(Position, true);
+	}
+	if (Hand[Position] == 4)
+	{
+		Quick = true;
+		if (Turns != 0)
+		{
+			Turns = 0;
+		}
+		if (Action1 == -1)
+			Action1 = Hand[Position];
+		else
+			Action2 = Hand[Position];
+		RemoveCard(Position, true);
+	}
+	if (Hand[Position] == 5)
+	{
+		if (Action1 == -1)
+			Action1 = Hand[Position];
+		else
+			Action2 = Hand[Position];
+		RemoveCard(Position, true);
+	}
 }
 
 int Cars::GetAction1()
@@ -162,6 +233,24 @@ void Cars::ResetTurn()
 	Draw();
 	Action1 = -1;
 	Action2 = -1;
+	if (Turns == 2 && Quick == true)
+	{
+		Turns = 0;
+		Quick == false;
+	}
+	else if (Quick == true)
+	{
+		Turns += 1;
+	}
+	if (Turns2 == 1 && Sabo == true)
+	{
+		Turns2 = 0;
+		Sabo = false;
+	}
+	else if (Sabo == true)
+	{
+		Turns2 += 1;
+	}
 }
 
 void Cars::ResetPed()

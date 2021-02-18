@@ -11,7 +11,9 @@ public:
 	// 0 is NO2
 	// 1 is Drift
 	// 2 is Slipstream
-	// 3 is Muffler
+	// 3 is E Brake
+	// 4 is Quick shift
+	// 5 is Sabotage
 	Cars();
 	~Cars();
 	void ChangeGears(int);
@@ -21,6 +23,8 @@ public:
 	void SetBrk();
 	bool GetAcc();
 	bool GetBrake();
+	bool GetSabo();
+	void SetSabo();
 	void PlayCard(int,int);
 	int GetAction1();
 	int GetAction2();
@@ -41,10 +45,14 @@ public:
 private:
 	bool Accelerate;
 	bool Brake;
+	bool Quick;
+	bool Sabo;
 	int Gear;
 	int Increment = 0;
 	int Action1 = -1;
 	int Action2 = -1;
+	int Turns = 0;
+	int Turns2 = 0;
 	int CompletedObs = 0;
 	int Hand[5] = {0,1,0,2,2};
 	std::vector <int> Deck = {1,2,2,0,0};

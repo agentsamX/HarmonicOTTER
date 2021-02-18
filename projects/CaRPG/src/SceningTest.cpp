@@ -912,49 +912,58 @@ int SceningTest::Update()
 	}
 	if (obstacleComponent.GetEnd() != true)
 	{
-		if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
+		if (EnemyComponent.GetSabo() == false)
 		{
-			if (speedDemon == true)
+			if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
 			{
-				for (int i = 0; i <= 5; i++)
+				if (speedDemon == true)
 				{
-					if (EnemyComponent.GetCard(i, true) == 0)
+					for (int i = 0; i <= 5; i++)
 					{
-						EnemyComponent.PlayCard(i, 0);
-						break;
+						if (EnemyComponent.GetCard(i, true) == 0)
+						{
+							EnemyComponent.PlayCard(i, 0);
+							break;
+						}
 					}
-				}
-				if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
-				{
-					EnemyComponent.SetAcc();
-					EnemyComponent.ChangeGears();
-				}
-				else if (EnemyComponent.GetAction2() == -1)
-				{
-					if (EnemyComponent.GetAcc() == false)
+					if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
 					{
 						EnemyComponent.SetAcc();
-					}
-					else if (EnemyComponent.GetAcc() == true)
-					{
 						EnemyComponent.ChangeGears();
 					}
+					else if (EnemyComponent.GetAction2() == -1)
+					{
+						if (EnemyComponent.GetAcc() == false)
+						{
+							EnemyComponent.SetAcc();
+						}
+						else if (EnemyComponent.GetAcc() == true)
+						{
+							EnemyComponent.ChangeGears();
+						}
+					}
+					if (EnemyComponent.GetGear() == 6)
+					{
+						speedDemon = false;
+					}
 				}
-				if (EnemyComponent.GetGear() == 6)
+				else if (speedDemon == false)
 				{
-					speedDemon = false;
-				}
-			}
-			else if (speedDemon == false)
-			{
-				if (EnemyComponent.GetGear() == 1)
-				{
-					speedDemon = true;
-				}
-				EnemyComponent.SetBrk();
-				EnemyComponent.ChangeGears();
+					if (EnemyComponent.GetGear() == 1)
+					{
+						speedDemon = true;
+					}
+					EnemyComponent.SetBrk();
+					EnemyComponent.ChangeGears();
 
+				}
 			}
+		}
+		else if (EnemyComponent.GetSabo() == true)
+		{
+			EnemyComponent.ChangeGears(1);
+			EnemyComponent.SetAction(-4);
+			EnemyComponent.SetAction(-4);
 		}
 		if (showGear == false)
 		{
@@ -1505,6 +1514,11 @@ int SceningTest::KeyEvents(float delta)
 						}
 						else
 						{
+							PlayerComponent.PlayCard(i, 0);
+						}
+						if (PlayerComponent.GetCard(i, true) == 5)
+						{
+							EnemyComponent.SetSabo();
 							PlayerComponent.PlayCard(i, 0);
 						}
 						Elapsedtime = 0;
