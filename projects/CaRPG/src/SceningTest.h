@@ -36,7 +36,9 @@ private:
 	entt::entity m_AccRect;
 	entt::entity m_Eneedle;
 	entt::entity m_Pneedle;
-
+	entt::entity m_HBox;
+	entt::entity m_Htex;
+	entt::entity m_Hnumber;
 
 	std::vector<syre::Texture> cardTextures;
 	std::vector<syre::Texture> hazardTextures;
@@ -46,6 +48,8 @@ private:
 	std::vector<syre::Texture> eGearTextures;
 	std::vector<syre::Texture> pneedleTextures;
 	std::vector<syre::Texture> eneedleTextures;
+	std::vector<syre::Texture> htexTextures;
+	std::vector<syre::Texture> hnumberTextures;
 
 	entt::entity sceneBuff;
 	entt::entity cocoBuff;
@@ -59,6 +63,7 @@ private:
 	bool manualCamera = false;
 	float Elapsedtime = 0;
 	bool lbutton_down = false;
+	bool helptog = true;
 	bool speedDemon = true;
 	bool showGear = false;
 	bool isPaused = false;

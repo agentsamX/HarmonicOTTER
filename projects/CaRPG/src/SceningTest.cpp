@@ -69,6 +69,9 @@ void SceningTest::Start()
 	m_AccRect = m_Registry.create();
 	m_Pneedle = m_Registry.create();
 	m_Eneedle = m_Registry.create();
+	m_HBox = m_Registry.create();
+	m_Htex = m_Registry.create();
+	m_Hnumber = m_Registry.create();
 	/*m_Particles1 = m_Registry.create();
 	m_Particles2 = m_Registry.create();*/
 	//cards
@@ -141,6 +144,17 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Transform>(m_EGears, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_EGears, "PauseMenu.png");
 	
+	m_Registry.emplace<syre::Mesh>(m_HBox, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_HBox, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_HBox, "HUD_Info_box.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Htex, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Htex, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Htex, "Hairpin_HUD.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Hnumber, "Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Hnumber, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Hnumber, "O1.png");
 
 
 	entt::entity start = m_Registry.create();
@@ -658,6 +672,19 @@ void SceningTest::Start()
 	pneedleTextures.push_back(syre::Texture("Pneedle5.png"));
 	pneedleTextures.push_back(syre::Texture("Pneedle6.png"));
 
+	hnumberTextures.push_back(syre::Texture("O1.png"));
+	hnumberTextures.push_back(syre::Texture("O1.png"));
+	hnumberTextures.push_back(syre::Texture("O2.png"));
+	hnumberTextures.push_back(syre::Texture("O3.png"));
+	hnumberTextures.push_back(syre::Texture("O4.png"));
+	hnumberTextures.push_back(syre::Texture("O5.png"));
+	hnumberTextures.push_back(syre::Texture("O6.png"));
+
+	htexTextures.push_back(syre::Texture("Apex_HUD.png"));
+	htexTextures.push_back(syre::Texture("Hairpin_HUD.png"));
+	htexTextures.push_back(syre::Texture("Chicane_HUD.png"));
+	htexTextures.push_back(syre::Texture("Rocks_HUD.png"));
+
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
 	flatShader->LoadShaderPartFromFile("flatFrag.glsl", GL_FRAGMENT_SHADER);
@@ -834,6 +861,25 @@ int SceningTest::Update()
 	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
 	m_Registry.get<syre::Texture>(m_Accelerometer).Bind();
 	m_Registry.get<syre::Mesh>(m_Accelerometer).Render();
+
+	if (helptog == true)
+	{
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
+		flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
+		int obs = obstacleComponent.GetObs();
+		htexTextures[obs].Bind();
+		m_Registry.get<syre::Mesh>(m_Htex).Render();
+
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
+		flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
+		int value = obstacleComponent.GetValue();
+		hnumberTextures[value].Bind();
+		m_Registry.get<syre::Mesh>(m_Hnumber).Render();
+
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
+		flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
+		m_Registry.get<syre::Mesh>(m_HBox).Render();
+	}
 	
 	if (lbutton_down == false)
 	{
