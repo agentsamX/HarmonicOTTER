@@ -170,7 +170,7 @@ int main()
 	std::vector<syre::SceneParent*> scenes;////////////
 	scenes.push_back(new MenuScreen(window));
 	scenes.push_back(new MidGameMenu(window));
-	scenes.push_back(new Scene2(window));//////////////////////
+	scenes.push_back(new SceningTest(window));//////////////////////
 	
 	syre::SceneParent* curScene = scenes[0];
 	
@@ -219,7 +219,7 @@ int main()
 			{
 				delete scenes[scenes.size() - 1];
 				scenes.pop_back();
-				scenes.push_back(new Scene2(window)); //////////////////////
+				scenes.push_back(new SceningTest(window)); //////////////////////
 				curScene = scenes[2];
 
 				curScene->Start();

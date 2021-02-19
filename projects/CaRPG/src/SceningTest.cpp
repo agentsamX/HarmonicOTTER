@@ -864,20 +864,21 @@ int SceningTest::Update()
 
 	if (helptog == true)
 	{
-		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
-		flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.28f, 0.1f, 1.0f)));
+		flatShader->SetUniform("offset", glm::vec2(0.57, 0.7f));
 		int obs = obstacleComponent.GetObs();
 		htexTextures[obs].Bind();
 		m_Registry.get<syre::Mesh>(m_Htex).Render();
 
-		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
-		flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.28f,0.1f,1.0f)));
+		flatShader->SetUniform("offset", glm::vec2(0.54, 0.7f));
 		int value = obstacleComponent.GetValue();
 		hnumberTextures[value].Bind();
 		m_Registry.get<syre::Mesh>(m_Hnumber).Render();
 
-		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
-		flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.25f,0.1f,1.0f)));
+		flatShader->SetUniform("offset", glm::vec2(0.55, 0.7f));
+		m_Registry.get<syre::Texture>(m_HBox).Bind();
 		m_Registry.get<syre::Mesh>(m_HBox).Render();
 	}
 	
@@ -1545,12 +1546,18 @@ int SceningTest::KeyEvents(float delta)
 			{
 				lbutton_down = true;
 			}
-			//printf("Mouse at X %f Y %f\n", *x, *y);
+			/*
+			printf("Mouse at X ");
+			printf("%f", *x);
+			printf("\n");
+			printf("Mouse at Y ");
+			printf("%f", *y);
+			*/
 			if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
 			{
 				for (float i = 0; i <= 5; i++)
 				{
-					if ((i * 165) + 429 <= *x && (i + 1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
+					if ((i * 165.5) + 429 <= *x && (i + 1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
 					{
 						if (PlayerComponent.GetCard(i, true) == 2)
 						{
@@ -1578,6 +1585,21 @@ int SceningTest::KeyEvents(float delta)
 				else if (*x >= 98 && *x <= 129 && *y <= 709 && *y >= 666)
 				{
 					PlayerComponent.SetAcc();
+					Elapsedtime = 0;
+				}
+			}
+			if (*x >= 1157 && *x <= 1278 && *y <= 132 && *y >= 10)
+			{
+				if (helptog == true)
+				{
+					helptog = false;
+					printf("Off");
+					Elapsedtime = 0;
+				}
+				else if (helptog == false)
+				{
+					helptog = true;
+					printf("On");
 					Elapsedtime = 0;
 				}
 			}
