@@ -629,7 +629,6 @@ void Scene2::Start()
 	cardTextures.push_back(syre::Texture("NO2.png"));
 	cardTextures.push_back(syre::Texture("Drift.png"));
 	cardTextures.push_back(syre::Texture("Slipstream.png"));
-	cardTextures.push_back(syre::Texture("Muffler.png"));
 	cardTextures.push_back(syre::Texture("EBrake.png"));
 	cardTextures.push_back(syre::Texture("QuickShift.png"));
 	cardTextures.push_back(syre::Texture("Sabotage.png"));

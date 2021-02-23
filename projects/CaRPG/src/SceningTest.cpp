@@ -14,7 +14,7 @@ void SceningTest::Start()
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);
 
-	rampTex = Texture2D::LoadFromFile("tinyRamp.png");
+	rampTex = Texture2D::LoadFromFile("images/tinyRamp.png");
 
 	sceneBuff = m_Registry.create();
 	cocoBuff = m_Registry.create();
@@ -89,160 +89,160 @@ void SceningTest::Start()
 	*/
 
 	//track and scenery
-	m_Registry.emplace<syre::Mesh>(Track, "Track1New.obj");
+	m_Registry.emplace<syre::Mesh>(Track, "objects/Track1New.obj");
 	m_Registry.emplace<syre::Transform>(Track, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
-	m_Registry.emplace<syre::Texture>(Track, "PossibleRoad.png");
+	m_Registry.emplace<syre::Texture>(Track, "images/PossibleRoad.png");
 
-	m_Registry.emplace<syre::Mesh>(m_Hazard, "RoadHazard.obj");
+	m_Registry.emplace<syre::Mesh>(m_Hazard, "objects/RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_Hazard, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Hazard, "Apex.png");
+	m_Registry.emplace<syre::Texture>(m_Hazard, "images/Apex.png");
 
-	m_Registry.emplace<syre::Mesh>(m_Gearbox, "Gearbox.obj");
+	m_Registry.emplace<syre::Mesh>(m_Gearbox, "objects/Gearbox.obj");
 	m_Registry.emplace<syre::Transform>(m_Gearbox, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Gearbox, "GearBoxNeutral.png");
+	m_Registry.emplace<syre::Texture>(m_Gearbox, "images/GearBoxNeutral.png");
 
-	m_Registry.emplace<syre::Mesh>(m_GearboxLever, "Lever.obj");
+	m_Registry.emplace<syre::Mesh>(m_GearboxLever, "objects/Lever.obj");
 	m_Registry.emplace<syre::Transform>(m_GearboxLever, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_GearboxLever, "GearboxLever.png");
+	m_Registry.emplace<syre::Texture>(m_GearboxLever, "images/GearboxLever.png");
 	
-	m_Registry.emplace<syre::Mesh>(m_Accelerometer, "Accelerometer.obj");
+	m_Registry.emplace<syre::Mesh>(m_Accelerometer, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Accelerometer, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Accelerometer, "Accelerometer.png");
+	m_Registry.emplace<syre::Texture>(m_Accelerometer, "images/Accelerometer.png");
 	
 	m_Registry.emplace<syre::MorphRenderer>(m_Needle);
 	m_Registry.emplace<syre::Transform>(m_Needle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Needle, "Finish.png");
-	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("NeedleLeft.obj");
-	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("Needle.obj");
-	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("NeedleRight.obj");
+	m_Registry.emplace<syre::Texture>(m_Needle, "images/Finish.png");
+	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("objects/NeedleLeft.obj");
+	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("objects/Needle.obj");
+	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("objects/NeedleRight.obj");
 
-	m_Registry.emplace<syre::Mesh>(m_TransparentBlack, "RoadHazard.obj");
+	m_Registry.emplace<syre::Mesh>(m_TransparentBlack, "objects/RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_TransparentBlack, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_TransparentBlack, "TransparentBlack.png");
+	m_Registry.emplace<syre::Texture>(m_TransparentBlack, "images/TransparentBlack.png");
 
-	m_Registry.emplace<syre::Mesh>(m_PauseMenu, "RoadHazard.obj");
+	m_Registry.emplace<syre::Mesh>(m_PauseMenu, "objects/RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_PauseMenu, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_PauseMenu, "PauseMenu.png");
+	m_Registry.emplace<syre::Texture>(m_PauseMenu, "images/PauseMenu.png");
 
-	m_Registry.emplace<syre::Mesh>(m_PGears, "Accelerometer.obj");
+	m_Registry.emplace<syre::Mesh>(m_PGears, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_PGears, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_PGears, "PauseMenu.png");
+	m_Registry.emplace<syre::Texture>(m_PGears, "images/PauseMenu.png");
 
-	m_Registry.emplace<syre::Mesh>(m_AccRect, "Accelerometer.obj");
+	m_Registry.emplace<syre::Mesh>(m_AccRect, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_AccRect, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_AccRect, "Accelerometer_rec.png");
+	m_Registry.emplace<syre::Texture>(m_AccRect, "images/Accelerometer_rec.png");
 
-	m_Registry.emplace<syre::Mesh>(m_Pneedle, "Accelerometer.obj");
+	m_Registry.emplace<syre::Mesh>(m_Pneedle, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Pneedle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Pneedle, "Pneedle1.png");
+	m_Registry.emplace<syre::Texture>(m_Pneedle, "images/Pneedle1.png");
 
-	m_Registry.emplace<syre::Mesh>(m_Eneedle, "Accelerometer.obj");
+	m_Registry.emplace<syre::Mesh>(m_Eneedle, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Eneedle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Eneedle, "Eneedle1.png");
+	m_Registry.emplace<syre::Texture>(m_Eneedle, "images/Eneedle1.png");
 
-	m_Registry.emplace<syre::Mesh>(m_EGears, "Accelerometer.obj");
+	m_Registry.emplace<syre::Mesh>(m_EGears, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_EGears, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_EGears, "PauseMenu.png");
+	m_Registry.emplace<syre::Texture>(m_EGears, "images/PauseMenu.png");
 	
-	m_Registry.emplace<syre::Mesh>(m_HBox, "Accelerometer.obj");
+	m_Registry.emplace<syre::Mesh>(m_HBox, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_HBox, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_HBox, "HUD_Info_box.png");
+	m_Registry.emplace<syre::Texture>(m_HBox, "images/HUD_Info_box.png");
 
-	m_Registry.emplace<syre::Mesh>(m_Htex, "Accelerometer.obj");
+	m_Registry.emplace<syre::Mesh>(m_Htex, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Htex, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Htex, "Hairpin_HUD.png");
+	m_Registry.emplace<syre::Texture>(m_Htex, "images/Hairpin_HUD.png");
 
-	m_Registry.emplace<syre::Mesh>(m_Hnumber, "Accelerometer.obj");
+	m_Registry.emplace<syre::Mesh>(m_Hnumber, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Hnumber, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Hnumber, "O1.png");
+	m_Registry.emplace<syre::Texture>(m_Hnumber, "images/O1.png");
 
 
 	entt::entity start = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(start);
 	m_Registry.emplace<syre::Transform>(start, glm::vec3(15.0f, -50.0f, 0.0f), glm::vec3(90.0f, 0.0f, 190.0f), glm::vec3(1.0f));
-	m_Registry.emplace<syre::Texture>(start, "START.png");
-	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START1.obj");
-	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START1.obj");
-	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START2.obj");
-	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START3.obj");
-	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START4.obj");
-	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START5.obj");
-	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START6.obj");
-	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START7.obj");
-	m_Registry.get<syre::MorphRenderer>(start).AddFrame("START8.obj");
+	m_Registry.emplace<syre::Texture>(start, "images/START.png");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START1.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START1.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START2.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START3.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START4.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START5.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START6.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START7.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START8.obj");
 	
 
 	entt::entity finish = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(finish);
 	m_Registry.emplace<syre::Transform>(finish, glm::vec3(-270.0f, -135.0f, 0.0f), glm::vec3(90.0f, 0.0f, 150.0f), glm::vec3(1.0f));
-	m_Registry.emplace<syre::Texture>(finish, "Finish.png");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH1.obj");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH1.obj");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH2.obj");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH3.obj");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH4.obj");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH5.obj");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH6.obj");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH7.obj");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH8.obj");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH9.obj");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH10.obj");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH11.obj");
-	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("FINISH12.obj");
+	m_Registry.emplace<syre::Texture>(finish, "images/Finish.png");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH1.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH1.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH2.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH3.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH4.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH5.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH6.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH7.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH8.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH9.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH10.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH11.obj");
+	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH12.obj");
 
 
 
 	
 	//trees
 	entt::entity trackTrees = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackTrees, "TreesMap.obj");
+	m_Registry.emplace<syre::Mesh>(trackTrees, "objects/TreesMap.obj");
 	m_Registry.emplace<syre::Transform>(trackTrees, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
-	m_Registry.emplace<syre::Texture>(trackTrees, "Tree.png");
+	m_Registry.emplace<syre::Texture>(trackTrees, "images/Tree.png");
 
 	//terrain
 	entt::entity trackTerrain = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackTerrain, "TerrainMap.obj");
+	m_Registry.emplace<syre::Mesh>(trackTerrain, "objects/TerrainMap.obj");
 	m_Registry.emplace<syre::Transform>(trackTerrain, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
-	m_Registry.emplace<syre::Texture>(trackTerrain, "Terrain.png");
+	m_Registry.emplace<syre::Texture>(trackTerrain, "images/Terrain.png");
 
 	//signs
 	entt::entity trackSigns = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackSigns, "SignsMap.obj");
+	m_Registry.emplace<syre::Mesh>(trackSigns, "objects/SignsMap.obj");
 	m_Registry.emplace<syre::Transform>(trackSigns, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
-	m_Registry.emplace<syre::Texture>(trackSigns, "Signs.png");
+	m_Registry.emplace<syre::Texture>(trackSigns, "images/Signs.png");
 
 	//sharp rocks
 	entt::entity trackSharpRocks = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackSharpRocks, "SharpRockMap.obj");
+	m_Registry.emplace<syre::Mesh>(trackSharpRocks, "objects/SharpRockMap.obj");
 	m_Registry.emplace<syre::Transform>(trackSharpRocks, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
-	m_Registry.emplace<syre::Texture>(trackSharpRocks, "SharpRock.png");
+	m_Registry.emplace<syre::Texture>(trackSharpRocks, "images/SharpRock.png");
 
 	//round rocks
 	entt::entity trackRoundRocks = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackRoundRocks, "RoundRockMap.obj");
+	m_Registry.emplace<syre::Mesh>(trackRoundRocks, "objects/RoundRockMap.obj");
 	m_Registry.emplace<syre::Transform>(trackRoundRocks, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
-	m_Registry.emplace<syre::Texture>(trackRoundRocks, "RoundRock.png");
+	m_Registry.emplace<syre::Texture>(trackRoundRocks, "images/RoundRock.png");
 
 	//flowers
 	entt::entity trackFlowers = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackFlowers, "FlowersMap.obj");
+	m_Registry.emplace<syre::Mesh>(trackFlowers, "objects/FlowersMap.obj");
 	m_Registry.emplace<syre::Transform>(trackFlowers, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
-	m_Registry.emplace<syre::Texture>(trackFlowers, "Flower.png");
+	m_Registry.emplace<syre::Texture>(trackFlowers, "images/Flower.png");
 
 	//bush
 	entt::entity trackBush = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackBush, "BushMap.obj");
+	m_Registry.emplace<syre::Mesh>(trackBush, "objects/BushMap.obj");
 	m_Registry.emplace<syre::Transform>(trackBush, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
-	m_Registry.emplace<syre::Texture>(trackBush, "Bush.png");
+	m_Registry.emplace<syre::Texture>(trackBush, "images/Bush.png");
 	
 	entt::entity butterflies = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(butterflies);
-	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyNeutral.obj");
-	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyDown.obj");
-	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyNeutral.obj");
-	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyUp.obj");
+	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("objects/ButterflyNeutral.obj");
+	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("objects/ButterflyDown.obj");
+	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("objects/ButterflyNeutral.obj");
+	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("objects/ButterflyUp.obj");
 
-	m_Registry.emplace<syre::Texture>(butterflies, "butterfly.png");
+	m_Registry.emplace<syre::Texture>(butterflies, "images/butterfly.png");
 	m_Registry.emplace<syre::TransformList>(butterflies);
 	m_Registry.get<syre::TransformList>(butterflies).SetDefaultRot(glm::vec3(90.0f, -70.0f, 180.0f));
 	m_Registry.get<syre::TransformList>(butterflies).SetDefaultSca(glm::vec3(0.2f));
@@ -254,17 +254,17 @@ void SceningTest::Start()
 
 	entt::entity swayingTree = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(swayingTree);
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying1.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying2.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying3.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying4.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying5.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying6.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying7.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying8.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying9.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying1.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying2.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying3.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying4.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying5.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying6.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying7.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying8.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying9.obj");
 
-	m_Registry.emplace<syre::Texture>(swayingTree, "Tree.png");
+	m_Registry.emplace<syre::Texture>(swayingTree, "images/Tree.png");
 	m_Registry.emplace<syre::TransformList>(swayingTree);
 	m_Registry.get<syre::TransformList>(swayingTree).SetDefaultRot(glm::vec3(90.0f, 0.0f, 0.0f));
 	m_Registry.get<syre::TransformList>(swayingTree).SetDefaultSca(glm::vec3(1.0f));
@@ -294,9 +294,9 @@ void SceningTest::Start()
 
 	
 	m_Registry.emplace<Cars>(m_PCar);
-	m_Registry.emplace<syre::Mesh>(m_PCar, "Car2.obj");
+	m_Registry.emplace<syre::Mesh>(m_PCar, "objects/Car2.obj");
 	m_Registry.emplace<syre::Transform>(m_PCar, glm::vec3(6.0f, 0.0f, 0.0f),glm::vec3(90.f,0.0f,0.0f),glm::vec3(1.0f));
-	m_Registry.emplace<syre::Texture>(m_PCar, "Car2.png");
+	m_Registry.emplace<syre::Texture>(m_PCar, "images/Car2.png");
 	m_Registry.emplace<syre::PathAnimator>(m_PCar,syre::PathType::BEZIER);
 	auto& carPath = m_Registry.get<syre::PathAnimator>(m_PCar);
 
@@ -456,9 +456,9 @@ void SceningTest::Start()
 
 
 	m_Registry.emplace<Cars>(m_enemy);
-	m_Registry.emplace<syre::Mesh>(m_enemy, "Car2.obj");
+	m_Registry.emplace<syre::Mesh>(m_enemy, "objects/Car2.obj");
 	m_Registry.emplace<syre::Transform>(m_enemy, glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(90.f, 0.0f, 0.0f), glm::vec3(1.0f));
-	m_Registry.emplace<syre::Texture>(m_enemy, "Car2-Blue.png");
+	m_Registry.emplace<syre::Texture>(m_enemy, "images/Car2-Blue.png");
 	m_Registry.emplace<syre::PathAnimator>(m_enemy, syre::PathType::BEZIER);
 	auto& enemyCarPath = m_Registry.get<syre::PathAnimator>(m_enemy);
 
@@ -618,75 +618,74 @@ void SceningTest::Start()
 
 	//cards
 
-	m_Registry.emplace<syre::Mesh>(m_Card, "Card.obj");
+	m_Registry.emplace<syre::Mesh>(m_Card, "objects/Card.obj");
 	m_Registry.emplace<syre::Transform>(m_Card, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2f));
-	m_Registry.emplace<syre::Texture>(m_Card, "NO2.png");
+	m_Registry.emplace<syre::Texture>(m_Card, "images/NO2.png");
 
 
 
-	cardTextures.push_back(syre::Texture("NO2.png"));
-	cardTextures.push_back(syre::Texture("Drift.png"));
-	cardTextures.push_back(syre::Texture("Slipstream.png"));
-	cardTextures.push_back(syre::Texture("Muffler.png"));
-	cardTextures.push_back(syre::Texture("Muffler.png"));
-	cardTextures.push_back(syre::Texture("Muffler.png"));
-	cardTextures.push_back(syre::Texture("Muffler.png"));
+	cardTextures.push_back(syre::Texture("images/NO2.png"));
+	cardTextures.push_back(syre::Texture("images/Drift.png"));
+	cardTextures.push_back(syre::Texture("images/Slipstream.png"));
+	cardTextures.push_back(syre::Texture("images/EBrake.png"));
+	cardTextures.push_back(syre::Texture("images/QuickShift.png"));
+	cardTextures.push_back(syre::Texture("images/Sabotage.png"));
 
-	hazardTextures.push_back(syre::Texture("Apex.png"));
-	hazardTextures.push_back(syre::Texture("Hairpin.png"));
-	hazardTextures.push_back(syre::Texture("Chicane.png"));
-	hazardTextures.push_back(syre::Texture("Rocks.png"));
+	hazardTextures.push_back(syre::Texture("images/Apex.png"));
+	hazardTextures.push_back(syre::Texture("images/Hairpin.png"));
+	hazardTextures.push_back(syre::Texture("images/Chicane.png"));
+	hazardTextures.push_back(syre::Texture("images/Rocks.png"));
 
-	gearboxTextures.push_back(syre::Texture("GearBoxNeutral.png"));
-	gearboxTextures.push_back(syre::Texture("GearBoxGasPressed.png"));
-	gearboxTextures.push_back(syre::Texture("GearBoxBrakePressed.png"));
+	gearboxTextures.push_back(syre::Texture("images/GearBoxNeutral.png"));
+	gearboxTextures.push_back(syre::Texture("images/GearBoxGasPressed.png"));
+	gearboxTextures.push_back(syre::Texture("images/GearBoxBrakePressed.png"));
 	
 	//accelerometerTexture.push_back(syre::Texture("Accelerometer.png"));
 
-	pGearTextures.push_back(syre::Texture("P1.png"));
-	pGearTextures.push_back(syre::Texture("P1.png"));
-	pGearTextures.push_back(syre::Texture("P2.png"));
-	pGearTextures.push_back(syre::Texture("P3.png"));
-	pGearTextures.push_back(syre::Texture("P4.png"));
-	pGearTextures.push_back(syre::Texture("P5.png"));
-	pGearTextures.push_back(syre::Texture("P6.png"));
+	pGearTextures.push_back(syre::Texture("images/P1.png"));
+	pGearTextures.push_back(syre::Texture("images/P1.png"));
+	pGearTextures.push_back(syre::Texture("images/P2.png"));
+	pGearTextures.push_back(syre::Texture("images/P3.png"));
+	pGearTextures.push_back(syre::Texture("images/P4.png"));
+	pGearTextures.push_back(syre::Texture("images/P5.png"));
+	pGearTextures.push_back(syre::Texture("images/P6.png"));
 
-	eGearTextures.push_back(syre::Texture("E1.png"));
-	eGearTextures.push_back(syre::Texture("E1.png"));
-	eGearTextures.push_back(syre::Texture("E2.png"));
-	eGearTextures.push_back(syre::Texture("E3.png"));
-	eGearTextures.push_back(syre::Texture("E4.png"));
-	eGearTextures.push_back(syre::Texture("E5.png"));
-	eGearTextures.push_back(syre::Texture("E6.png"));
+	eGearTextures.push_back(syre::Texture("images/E1.png"));
+	eGearTextures.push_back(syre::Texture("images/E1.png"));
+	eGearTextures.push_back(syre::Texture("images/E2.png"));
+	eGearTextures.push_back(syre::Texture("images/E3.png"));
+	eGearTextures.push_back(syre::Texture("images/E4.png"));
+	eGearTextures.push_back(syre::Texture("images/E5.png"));
+	eGearTextures.push_back(syre::Texture("images/E6.png"));
 
-	eneedleTextures.push_back(syre::Texture("Eneedle1.png"));
-	eneedleTextures.push_back(syre::Texture("Eneedle1.png"));
-	eneedleTextures.push_back(syre::Texture("Eneedle2.png"));
-	eneedleTextures.push_back(syre::Texture("Eneedle3.png"));
-	eneedleTextures.push_back(syre::Texture("Eneedle4.png"));
-	eneedleTextures.push_back(syre::Texture("Eneedle5.png"));
-	eneedleTextures.push_back(syre::Texture("Eneedle6.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle1.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle1.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle2.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle3.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle4.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle5.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle6.png"));
 
-	pneedleTextures.push_back(syre::Texture("Pneedle1.png"));
-	pneedleTextures.push_back(syre::Texture("Pneedle1.png"));
-	pneedleTextures.push_back(syre::Texture("Pneedle2.png"));
-	pneedleTextures.push_back(syre::Texture("Pneedle3.png"));
-	pneedleTextures.push_back(syre::Texture("Pneedle4.png"));
-	pneedleTextures.push_back(syre::Texture("Pneedle5.png"));
-	pneedleTextures.push_back(syre::Texture("Pneedle6.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle1.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle1.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle2.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle3.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle4.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle5.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle6.png"));
 
-	hnumberTextures.push_back(syre::Texture("O1.png"));
-	hnumberTextures.push_back(syre::Texture("O1.png"));
-	hnumberTextures.push_back(syre::Texture("O2.png"));
-	hnumberTextures.push_back(syre::Texture("O3.png"));
-	hnumberTextures.push_back(syre::Texture("O4.png"));
-	hnumberTextures.push_back(syre::Texture("O5.png"));
-	hnumberTextures.push_back(syre::Texture("O6.png"));
+	hnumberTextures.push_back(syre::Texture("images/O1.png"));
+	hnumberTextures.push_back(syre::Texture("images/O1.png"));
+	hnumberTextures.push_back(syre::Texture("images/O2.png"));
+	hnumberTextures.push_back(syre::Texture("images/O3.png"));
+	hnumberTextures.push_back(syre::Texture("images/O4.png"));
+	hnumberTextures.push_back(syre::Texture("images/O5.png"));
+	hnumberTextures.push_back(syre::Texture("images/O6.png"));
 
-	htexTextures.push_back(syre::Texture("Apex_HUD.png"));
-	htexTextures.push_back(syre::Texture("Hairpin_HUD.png"));
-	htexTextures.push_back(syre::Texture("Chicane_HUD.png"));
-	htexTextures.push_back(syre::Texture("Rocks_HUD.png"));
+	htexTextures.push_back(syre::Texture("images/Apex_HUD.png"));
+	htexTextures.push_back(syre::Texture("images/Hairpin_HUD.png"));
+	htexTextures.push_back(syre::Texture("images/Chicane_HUD.png"));
+	htexTextures.push_back(syre::Texture("images/Rocks_HUD.png"));
 
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);

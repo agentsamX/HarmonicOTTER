@@ -15,9 +15,9 @@ void MidGameMenu::Start()
 	camComponent->SetFovDegrees(100.0f); // Set an initial FOV
 
 	m_MenuImage = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(m_MenuImage, "RoadHazard.obj");
+	m_Registry.emplace<syre::Mesh>(m_MenuImage, "objects/RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_MenuImage, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-	m_Registry.emplace<syre::Texture>(m_MenuImage, "MidGameMenu.png");
+	m_Registry.emplace<syre::Texture>(m_MenuImage, "images/MidGameMenu.png");
 
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
