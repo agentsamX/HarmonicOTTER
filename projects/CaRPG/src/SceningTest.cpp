@@ -18,10 +18,14 @@ void SceningTest::Start()
 
 	sceneBuff = m_Registry.create();
 	cocoBuff = m_Registry.create();
+	bloomBuff = m_Registry.create();
 	m_Registry.emplace<PostEffect>(sceneBuff);
 	m_Registry.emplace<CubeCoCoEffect>(cocoBuff);
+	m_Registry.emplace<CombinedBloom>(bloomBuff);
 	m_Registry.get<PostEffect>(sceneBuff).Init(width, height);
 	m_Registry.get<CubeCoCoEffect>(cocoBuff).Init(width, height);
+	m_Registry.get<CombinedBloom>(bloomBuff).Init(width, height);
+
 
 	cubes.push_back(LUT3D("cubes/Neutral-512.cube"));
 	cubes.push_back(LUT3D("cubes/Cool.cube"));
@@ -773,11 +777,13 @@ int SceningTest::Update()
 {
 	PostEffect* framebuffer = &m_Registry.get<PostEffect>(sceneBuff);
 	CubeCoCoEffect* colorCorrect = &m_Registry.get<CubeCoCoEffect>(cocoBuff);
+	CombinedBloom* bloom = &m_Registry.get<CombinedBloom>(bloomBuff);
 
 	
 
 	framebuffer->Clear();
 	colorCorrect->Clear();
+	bloom->Clear();
 
 	AudioEngine& engine = AudioEngine::Instance();
 
@@ -1257,7 +1263,15 @@ int SceningTest::Update()
 
 	colorCorrect->ApplyEffect(framebuffer);
 
-	colorCorrect->DrawToScreen();
+	if (blooming)
+	{
+		bloom->ApplyEffect(colorCorrect);
+
+		bloom->DrawToScreen();
+	}
+	else
+		colorCorrect->DrawToScreen();
+
 
 	if (!manualCamera)
 	{
@@ -1363,6 +1377,10 @@ void SceningTest::ImGUIUpdate()
 		// Implementation new frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
+		CombinedBloom* bloom = &m_Registry.get<CombinedBloom>(bloomBuff);
+		float bloomThreshold = bloom->GetThreshold();
+		int bloomPasses = bloom->GetPasses();
+
 		// ImGui context new frame
 		ImGui::NewFrame();
 		AudioEngine& audio = AudioEngine::Instance();
@@ -1374,6 +1392,14 @@ void SceningTest::ImGUIUpdate()
 			// Render our GUI stuff
 			ImGui::SliderInt("Active CoCo Effect", &activeCube, 0, cubes.size() - 1);
 			ImGui::Text("0 is Neutral, 1 is Cool, 2 is Warm, 3 is Custom");
+			ImGui::Checkbox("Bloom", &blooming);
+			if (blooming)
+			{
+				ImGui::SliderFloat("Bloom Threshold", &bloomThreshold, 0, 1);
+				ImGui::SliderInt("Blur Passes", &bloomPasses, 0, 20);
+				bloom->SetPasses(bloomPasses);
+				bloom->SetThreshold(bloomThreshold);
+			}
 			ImGui::Checkbox("Ambient Lighting", &ambientOn);
 			ImGui::Checkbox("Diffuse Lighting", &diffuseOn);
 			ImGui::Checkbox("Specular Lighting", &specularOn);

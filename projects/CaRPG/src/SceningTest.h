@@ -2,6 +2,7 @@
 #include"SceneParent.h"
 #include "AudioEngine.h"
 #include "Graphics/Post/CubeCoCoEffect.h"
+#include "Graphics/Post/CombinedBloom.h"
 #include "Graphics/LUT.h"
 #include <cstdlib>
 #include <ctime>
@@ -53,6 +54,8 @@ private:
 
 	entt::entity sceneBuff;
 	entt::entity cocoBuff;
+	entt::entity bloomBuff;
+	bool blooming = true;
 
 	std::vector<LUT3D> cubes;
 
