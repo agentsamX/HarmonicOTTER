@@ -101,21 +101,30 @@ void CombinedBloom::ApplyEffect(PostEffect* buffer)
     }
 
     BindShader(4);
-    _shaders[4]->SetUniform("u_Intensity", _intensity);
     _buffers[2]->BindColorAsTexture(0, 0);
     buffer->BindColorAsTexture(0,0,1);
     _buffers[3]->RenderToFSQ();
     _buffers[2]->UnbindTexture(0);
     UnbindShader();
+
+    _buffers[0]->Clear();
+    BindShader(0);
+    _buffers[3]->BindColorAsTexture(0, 0);
+    _buffers[0]->RenderToFSQ();
+    _buffers[3]->UnbindTexture(0);
+    UnbindShader();
+
+
+
 }
 
 void CombinedBloom::DrawToScreen()
 {
     BindShader(0);
 
-    BindColorAsTexture(3, 0, 0);
+    BindColorAsTexture(0, 0, 0);
 
-    _buffers[3]->DrawFullscreenQuad();
+    _buffers[0]->DrawFullscreenQuad();
 
     UnbindTexture(0);
 
@@ -123,15 +132,6 @@ void CombinedBloom::DrawToScreen()
     
 }
 
-float CombinedBloom::GetIntensity() const
-{
-    return _intensity;
-}
-
-void CombinedBloom::SetIntensity(float intensity)
-{
-    _intensity = intensity;
-}
 
 float CombinedBloom::GetThreshold() const
 {
