@@ -236,9 +236,9 @@ void Cars::ResetTurn()
 	if (Turns == 2 && Quick == true)
 	{
 		Turns = 0;
-		Quick == false;
+		Quick = false;
 	}
-	else if (Quick == true)
+	if (Quick == true)
 	{
 		Turns += 1;
 	}

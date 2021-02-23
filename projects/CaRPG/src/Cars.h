@@ -54,6 +54,6 @@ private:
 	int Turns = 0;
 	int Turns2 = 0;
 	int CompletedObs = 0;
-	int Hand[5] = {0,1,0,2,2};
+	int Hand[5] = {0,1,2,0,2};
 	std::vector <int> Deck = {1,2,2,0,0};
 };

@@ -628,6 +628,9 @@ void SceningTest::Start()
 	cardTextures.push_back(syre::Texture("Drift.png"));
 	cardTextures.push_back(syre::Texture("Slipstream.png"));
 	cardTextures.push_back(syre::Texture("Muffler.png"));
+	cardTextures.push_back(syre::Texture("Muffler.png"));
+	cardTextures.push_back(syre::Texture("Muffler.png"));
+	cardTextures.push_back(syre::Texture("Muffler.png"));
 
 	hazardTextures.push_back(syre::Texture("Apex.png"));
 	hazardTextures.push_back(syre::Texture("Hairpin.png"));
@@ -959,9 +962,7 @@ int SceningTest::Update()
 	}
 	if (obstacleComponent.GetEnd() != true)
 	{
-		if (EnemyComponent.GetSabo() == false)
-		{
-			if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
+			if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1 && EnemyComponent.GetSabo() == false)
 			{
 				if (speedDemon == true)
 				{
@@ -1005,13 +1006,7 @@ int SceningTest::Update()
 
 				}
 			}
-		}
-		else if (EnemyComponent.GetSabo() == true)
-		{
-			EnemyComponent.ChangeGears(1);
-			EnemyComponent.SetAction(-4);
-			EnemyComponent.SetAction(-4);
-		}
+			/*
 		if (showGear == false)
 		{
 			showGear = true;
@@ -1020,7 +1015,7 @@ int SceningTest::Update()
 			printf("\n");
 			printf("\n");
 		}
-
+		*/
 		if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
 		{
 			/// harry i changed the bit below, what did it do lol
@@ -1142,6 +1137,10 @@ int SceningTest::Update()
 			{
 				PlayerComponent.SetAction(-6);
 				EnemyComponent.SetAction(-6);
+			}
+			if (EnemyComponent.GetSabo() == true)
+			{
+				EnemyComponent.ChangeGears(1);
 			}
 		}
 	}
@@ -1557,7 +1556,7 @@ int SceningTest::KeyEvents(float delta)
 			{
 				for (float i = 0; i <= 5; i++)
 				{
-					if ((i * 165.5) + 429 <= *x && (i + 1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
+					if ((i * 165) + 478 <= *x && (i + 1) * 165 + 478 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
 					{
 						if (PlayerComponent.GetCard(i, true) == 2)
 						{
@@ -1565,13 +1564,13 @@ int SceningTest::KeyEvents(float delta)
 							PlayerComponent.PlayCard(i, EnemyComponent.GetGear());
 							EnemyComponent.ChangeGears(temp);
 						}
-						else
-						{
-							PlayerComponent.PlayCard(i, 0);
-						}
-						if (PlayerComponent.GetCard(i, true) == 5)
+						else if (PlayerComponent.GetCard(i, true) == 5)
 						{
 							EnemyComponent.SetSabo();
+							PlayerComponent.PlayCard(i, 0);
+						}
+						else
+						{
 							PlayerComponent.PlayCard(i, 0);
 						}
 						Elapsedtime = 0;
@@ -1593,13 +1592,11 @@ int SceningTest::KeyEvents(float delta)
 				if (helptog == true)
 				{
 					helptog = false;
-					printf("Off");
 					Elapsedtime = 0;
 				}
 				else if (helptog == false)
 				{
 					helptog = true;
-					printf("On");
 					Elapsedtime = 0;
 				}
 			}

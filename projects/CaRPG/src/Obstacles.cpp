@@ -12,6 +12,7 @@ void Obstacles::Draw()
 		CurObs = Deck.at(Increment);
 		srand((unsigned)time(0));
 		Value = (rand() % 6 + 1);
+		/*
 		switch (Deck.at(Increment))
 		{
 		case 0:
@@ -38,6 +39,7 @@ void Obstacles::Draw()
 			printf("\n");
 			break;
 		}
+		*/
 		Increment++;
 	}
 	else
