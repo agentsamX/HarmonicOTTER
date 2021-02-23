@@ -630,6 +630,10 @@ void Scene2::Start()
 	cardTextures.push_back(syre::Texture("Drift.png"));
 	cardTextures.push_back(syre::Texture("Slipstream.png"));
 	cardTextures.push_back(syre::Texture("Muffler.png"));
+	cardTextures.push_back(syre::Texture("EBrake.png"));
+	cardTextures.push_back(syre::Texture("QuickShift.png"));
+	cardTextures.push_back(syre::Texture("Sabotage.png"));
+
 
 	hazardTextures.push_back(syre::Texture("Apex.png"));
 	hazardTextures.push_back(syre::Texture("Hairpin.png"));
