@@ -328,9 +328,5 @@ void Cars::Shuffle()
 		Deck.at(randomNumber1) = Deck.at(randomNumber2);
 		Deck.at(randomNumber2) = temp;
 	}
-	for (int index = 0; index < Deck.size() - 1; index++)
-	{
-		printf("%i", Deck.at(index));
-	}
 }
 

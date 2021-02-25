@@ -766,7 +766,8 @@ void SceningTest::Start()
 	{
 		m_Registry.get<syre::TransformList>(entity).SetCamera(camera);
 	}
-
+	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
+	PlayerComponent.Shuffle();
 
 	lastFrame = glfwGetTime();
 }
@@ -1454,6 +1455,7 @@ void SceningTest::ImGUIUpdate()
 		}
 	
 }
+
 
 Camera::sptr& SceningTest::GetCam()
 {
