@@ -142,7 +142,7 @@ void Cars::PlayCard(int Position, int NewGear)
 		else
 			Action2 = Hand[Position];
 		RemoveCard(Position, true);
-		//audio.GetEvent("MultiNitro").Restart();
+		audio.GetEvent("MultiNitro").Restart();
 
 
 	}
@@ -153,7 +153,7 @@ void Cars::PlayCard(int Position, int NewGear)
 		else
 			Action2 = Hand[Position];
 		RemoveCard(Position, true);
-		//audio.GetEvent("Drift").Restart();
+		audio.GetEvent("Drift").Restart();
 
 	}
 	if (Hand[Position] == 2)
@@ -164,7 +164,7 @@ void Cars::PlayCard(int Position, int NewGear)
 		else
 			Action2 = Hand[Position];
 		RemoveCard(Position, true);
-		//audio.GetEvent("Slipstream").Restart();
+		audio.GetEvent("Slipstream").Restart();
 
 
 	}

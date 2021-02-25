@@ -11,6 +11,48 @@ Scene2::Scene2(GLFWwindow* inWind)
 
 void Scene2::Start()
 {
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+
+	rampTex = Texture2D::LoadFromFile("images/tinyRamp.png");
+
+	sceneBuff = m_Registry.create();
+	cocoBuff = m_Registry.create();
+	bloomBuff = m_Registry.create();
+	blurBuff = m_Registry.create();
+	m_Registry.emplace<PostEffect>(sceneBuff);
+	m_Registry.emplace<CubeCoCoEffect>(cocoBuff);
+	m_Registry.emplace<CombinedBloom>(bloomBuff);
+	m_Registry.emplace<Blur>(blurBuff);
+	m_Registry.get<PostEffect>(sceneBuff).Init(width, height);
+	m_Registry.get<CubeCoCoEffect>(cocoBuff).Init(width, height);
+	m_Registry.get<CombinedBloom>(bloomBuff).Init(width, height);
+	m_Registry.get<Blur>(blurBuff).Init(width, height);
+
+
+
+	cubes.push_back(LUT3D("cubes/Neutral-512.cube"));
+	cubes.push_back(LUT3D("cubes/Cool.cube"));
+	cubes.push_back(LUT3D("cubes/Warm.cube"));
+	cubes.push_back(LUT3D("cubes/Darken-512.cube"));
+
+	AudioEngine& engine = AudioEngine::Instance();
+
+
+	//play event
+	AudioEvent& oldMusic = engine.GetEvent("Menu Music");
+	oldMusic.Stop();
+
+	AudioEvent& newMusic = engine.CreateEventW("Ambient", "{18c986e1-88b0-45ce-82c7-567d3447f2e8}");
+	newMusic.Play();
+
+	AudioEvent& slipstream = engine.CreateEventW("Slipstream", "{50d08bc6-b9f1-4411-906f-69506bd36f13}");
+	AudioEvent& drift = engine.CreateEventW("Drift", "{3eb39553-5d08-456c-998b-822942c1f860}");
+	AudioEvent& multiNitro = engine.CreateEventW("MultiNitro", "{6d8f789b-95db-4007-bd66-f26c1f377b3c}");
+
+	slipstream.StopImmediately();
+	drift.StopImmediately();
+	multiNitro.StopImmediately();
 
 	camera = Camera::Create();
 	std::string fileName = "monkey.obj";

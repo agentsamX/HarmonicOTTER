@@ -1,5 +1,10 @@
 #pragma once
 #include"SceneParent.h"
+#include "AudioEngine.h"
+#include "Graphics/Post/CubeCoCoEffect.h"
+#include "Graphics/Post/CombinedBloom.h"
+#include "Graphics/Post/Blur.h"
+#include "Graphics/LUT.h"
 #include <cstdlib>
 #include <ctime>
 class Scene2 :
@@ -35,6 +40,17 @@ private:
 	std::vector<syre::Texture> gearboxTextures;
 	std::vector<syre::Texture> accelerometerTextures;
 
+	entt::entity sceneBuff;
+	entt::entity cocoBuff;
+	bool correcting = true;
+	entt::entity bloomBuff;
+	bool blooming = true;
+	entt::entity blurBuff;
+	bool blurring = false;
+
+	std::vector<LUT3D> cubes;
+
+
 	Shader::sptr basicShader;
 	Shader::sptr flatShader;
 	Shader::sptr morphShader;
@@ -46,4 +62,7 @@ private:
 	bool showGear = false;
 	bool isPaused = false;
 	bool escRelease = false;
+
+	Texture2D::sptr rampTex;
+
 };
