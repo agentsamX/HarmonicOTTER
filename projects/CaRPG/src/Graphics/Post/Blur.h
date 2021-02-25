@@ -2,7 +2,7 @@
 
 #include "Graphics/Post/PostEffect.h"
 
-class CombinedBloom : public PostEffect
+class Blur : public PostEffect
 {
 public:
 	void Init(unsigned width, unsigned height) override;
@@ -13,15 +13,10 @@ public:
 	//applies effect to screeen
 	void DrawToScreen() override;
 
-	float GetThreshold() const;
-
-	void SetThreshold(float threshold);
-
 	int GetPasses() const;
 
 	void SetPasses(int passes);
 	
 private:
-	float _threshold = 0.5f;
 	int _passes = 5;
 };

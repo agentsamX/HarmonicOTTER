@@ -19,12 +19,16 @@ void SceningTest::Start()
 	sceneBuff = m_Registry.create();
 	cocoBuff = m_Registry.create();
 	bloomBuff = m_Registry.create();
+	blurBuff = m_Registry.create();
 	m_Registry.emplace<PostEffect>(sceneBuff);
 	m_Registry.emplace<CubeCoCoEffect>(cocoBuff);
 	m_Registry.emplace<CombinedBloom>(bloomBuff);
+	m_Registry.emplace<Blur>(blurBuff);
 	m_Registry.get<PostEffect>(sceneBuff).Init(width, height);
 	m_Registry.get<CubeCoCoEffect>(cocoBuff).Init(width, height);
 	m_Registry.get<CombinedBloom>(bloomBuff).Init(width, height);
+	m_Registry.get<Blur>(blurBuff).Init(width, height);
+
 
 
 	cubes.push_back(LUT3D("cubes/Neutral-512.cube"));
@@ -778,19 +782,21 @@ int SceningTest::Update()
 	PostEffect* framebuffer = &m_Registry.get<PostEffect>(sceneBuff);
 	CubeCoCoEffect* colorCorrect = &m_Registry.get<CubeCoCoEffect>(cocoBuff);
 	CombinedBloom* bloom = &m_Registry.get<CombinedBloom>(bloomBuff);
+	Blur* blur = &m_Registry.get<Blur>(blurBuff);
 
-	
+
 
 	framebuffer->Clear();
 	colorCorrect->Clear();
 	bloom->Clear();
+	blur->Clear();
 
 	AudioEngine& engine = AudioEngine::Instance();
 
 	AudioEvent& ambient = engine.GetEvent("Ambient");
 	AudioBus& musicBus = engine.GetBus("Music");
 
-	
+
 	//get ref listener
 	AudioListener& listener = engine.GetListener();
 	listener.SetPosition(glm::vec3(5, 0, 0));
@@ -810,7 +816,7 @@ int SceningTest::Update()
 	int temp = 0;
 	bool done = false;
 	bool Pemp = false;
-	bool Eemp=false;
+	bool Eemp = false;
 	if (start == 0)
 	{
 		start += 1;
@@ -826,11 +832,11 @@ int SceningTest::Update()
 		int cardVal = PlayerComponent.GetCard(i, true);
 		if (cardVal != -1)
 		{
-			flatShader->SetUniform("offset", glm::vec2(-0.1f+i/4.2f, -.66f));
+			flatShader->SetUniform("offset", glm::vec2(-0.1f + i / 4.2f, -.66f));
 
 			cardTextures[cardVal].Bind();
 			m_Registry.get<syre::Mesh>(m_Card).Render();
-		}	
+		}
 	}
 
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.09f)));
@@ -850,22 +856,22 @@ int SceningTest::Update()
 	int GerValE = EnemyComponent.GetGear();
 	eGearTextures[GerValE].Bind();
 	m_Registry.get<syre::Mesh>(m_EGears).Render();
-	
+
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.04f)));
 	flatShader->SetUniform("offset", glm::vec2(-0.50f, -0.96f));
 	m_Registry.get<syre::Texture>(m_AccRect).Bind();
 	m_Registry.get<syre::Mesh>(m_AccRect).Render();
-	
+
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
 	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
 	pneedleTextures[GerValP].Bind();
 	m_Registry.get<syre::Mesh>(m_Pneedle).Render();
-	
+
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
 	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
 	eneedleTextures[GerValE].Bind();
 	m_Registry.get<syre::Mesh>(m_Eneedle).Render();
-	
+
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
 	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
 	m_Registry.get<syre::Texture>(m_Accelerometer).Bind();
@@ -879,18 +885,18 @@ int SceningTest::Update()
 		htexTextures[obs].Bind();
 		m_Registry.get<syre::Mesh>(m_Htex).Render();
 
-		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.28f,0.1f,1.0f)));
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.28f, 0.1f, 1.0f)));
 		flatShader->SetUniform("offset", glm::vec2(0.54, 0.7f));
 		int value = obstacleComponent.GetValue();
 		hnumberTextures[value].Bind();
 		m_Registry.get<syre::Mesh>(m_Hnumber).Render();
 
-		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.25f,0.1f,1.0f)));
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.1f, 1.0f)));
 		flatShader->SetUniform("offset", glm::vec2(0.55, 0.7f));
 		m_Registry.get<syre::Texture>(m_HBox).Bind();
 		m_Registry.get<syre::Mesh>(m_HBox).Render();
 	}
-	
+
 	if (lbutton_down == false)
 	{
 		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
@@ -968,60 +974,60 @@ int SceningTest::Update()
 	}
 	if (obstacleComponent.GetEnd() != true)
 	{
-			if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1 && EnemyComponent.GetSabo() == false)
+		if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1 && EnemyComponent.GetSabo() == false)
+		{
+			if (speedDemon == true)
 			{
-				if (speedDemon == true)
+				for (int i = 0; i <= 5; i++)
 				{
-					for (int i = 0; i <= 5; i++)
+					if (EnemyComponent.GetCard(i, true) == 0)
 					{
-						if (EnemyComponent.GetCard(i, true) == 0)
-						{
-							EnemyComponent.PlayCard(i, 0);
-							break;
-						}
+						EnemyComponent.PlayCard(i, 0);
+						break;
 					}
-					if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
+				}
+				if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
+				{
+					EnemyComponent.SetAcc();
+					EnemyComponent.ChangeGears();
+				}
+				else if (EnemyComponent.GetAction2() == -1)
+				{
+					if (EnemyComponent.GetAcc() == false)
 					{
 						EnemyComponent.SetAcc();
+					}
+					else if (EnemyComponent.GetAcc() == true)
+					{
 						EnemyComponent.ChangeGears();
 					}
-					else if (EnemyComponent.GetAction2() == -1)
-					{
-						if (EnemyComponent.GetAcc() == false)
-						{
-							EnemyComponent.SetAcc();
-						}
-						else if (EnemyComponent.GetAcc() == true)
-						{
-							EnemyComponent.ChangeGears();
-						}
-					}
-					if (EnemyComponent.GetGear() == 6)
-					{
-						speedDemon = false;
-					}
 				}
-				else if (speedDemon == false)
+				if (EnemyComponent.GetGear() == 6)
 				{
-					if (EnemyComponent.GetGear() == 1)
-					{
-						speedDemon = true;
-					}
-					EnemyComponent.SetBrk();
-					EnemyComponent.ChangeGears();
-
+					speedDemon = false;
 				}
 			}
-			/*
-		if (showGear == false)
-		{
-			showGear = true;
-			printf("The enemy's gear level is : ");
-			printf("%i", EnemyComponent.GetGear());
-			printf("\n");
-			printf("\n");
+			else if (speedDemon == false)
+			{
+				if (EnemyComponent.GetGear() == 1)
+				{
+					speedDemon = true;
+				}
+				EnemyComponent.SetBrk();
+				EnemyComponent.ChangeGears();
+
+			}
 		}
-		*/
+		/*
+	if (showGear == false)
+	{
+		showGear = true;
+		printf("The enemy's gear level is : ");
+		printf("%i", EnemyComponent.GetGear());
+		printf("\n");
+		printf("\n");
+	}
+	*/
 		if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
 		{
 			/// harry i changed the bit below, what did it do lol
@@ -1054,7 +1060,7 @@ int SceningTest::Update()
 				if (obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear()) == 1)
 				{
 					PlayerComponent.IncreaseScore();
-					m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(0.25,true);
+					m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(0.25, true);
 					m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(0.25, false);
 					if (obstacleComponent.GetObs() == 3)
 					{
@@ -1152,8 +1158,8 @@ int SceningTest::Update()
 	}
 	else
 	{
-	m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);//needs changed
-	m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);//needs changed
+		m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);//needs changed
+		m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);//needs changed
 		if (PlayerComponent.GetScore() >= EnemyComponent.GetScore())
 		{
 			printf("PLAYER WINS");
@@ -1191,7 +1197,7 @@ int SceningTest::Update()
 	framebuffer->BindBuffer(0);
 	rampTex->Bind(20);
 
-	
+
 	basicShader->Bind();
 	basicShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	basicShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
@@ -1205,7 +1211,7 @@ int SceningTest::Update()
 
 
 
-	auto renderView = m_Registry.view<syre::Mesh,syre::Transform,syre::Texture>();
+	auto renderView = m_Registry.view<syre::Mesh, syre::Transform, syre::Texture>();
 	for (auto entity : renderView)
 	{
 		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
@@ -1219,7 +1225,7 @@ int SceningTest::Update()
 	for (auto entity : listRenderView)
 	{
 		listRenderView.get<syre::Texture>(entity).Bind();
-		listRenderView.get<syre::TransformList>(entity).ListRender(basicShader, listRenderView.get<syre::Mesh>(entity),deltaTime);
+		listRenderView.get<syre::TransformList>(entity).ListRender(basicShader, listRenderView.get<syre::Mesh>(entity), deltaTime);
 	}
 
 	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
@@ -1254,23 +1260,34 @@ int SceningTest::Update()
 		float t = morphListRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime);
 		morphShader->SetUniform("t", t);
 		morphListRenderView.get<syre::Texture>(entity).Bind();
-		morphListRenderView.get<syre::TransformList>(entity).ListRender(morphShader,morphListRenderView.get<syre::MorphRenderer>(entity));
+		morphListRenderView.get<syre::TransformList>(entity).ListRender(morphShader, morphListRenderView.get<syre::MorphRenderer>(entity));
 	}
 
+	PostEffect* lastBuffer = framebuffer;
 	framebuffer->UnBindBuffer();
-
-	cubes[activeCube].bind(30);
-
-	colorCorrect->ApplyEffect(framebuffer);
 
 	if (blooming)
 	{
-		bloom->ApplyEffect(colorCorrect);
+		bloom->ApplyEffect(lastBuffer);
 
-		bloom->DrawToScreen();
+		lastBuffer = bloom;
 	}
-	else
-		colorCorrect->DrawToScreen();
+	if (blurring)
+	{
+		blur->ApplyEffect(lastBuffer);
+
+		lastBuffer = blur;
+	}
+
+	if (correcting)
+	{
+		cubes[activeCube].bind(30);
+
+		colorCorrect->ApplyEffect(lastBuffer);
+
+		lastBuffer = colorCorrect;
+	}
+	lastBuffer->DrawToScreen();
 
 
 	if (!manualCamera)
@@ -1378,6 +1395,8 @@ void SceningTest::ImGUIUpdate()
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		CombinedBloom* bloom = &m_Registry.get<CombinedBloom>(bloomBuff);
+		Blur* blur = &m_Registry.get<Blur>(blurBuff);
+		int blurPasses = blur->GetPasses();
 		float bloomThreshold = bloom->GetThreshold();
 		int bloomPasses = bloom->GetPasses();
 
@@ -1390,35 +1409,45 @@ void SceningTest::ImGUIUpdate()
 
 		if (ImGui::Begin("Debug")) {
 			// Render our GUI stuff
-			ImGui::SliderInt("Active CoCo Effect", &activeCube, 0, cubes.size() - 1);
-			ImGui::Text("0 is Neutral, 1 is Cool, 2 is Warm, 3 is Custom");
-			ImGui::Checkbox("Bloom", &blooming);
-			if (blooming)
+			if (ImGui::CollapsingHeader("Post Processing"))
 			{
-				ImGui::SliderFloat("Bloom Threshold", &bloomThreshold, 0, 1);
-				ImGui::SliderInt("Blur Passes", &bloomPasses, 0, 20);
-				bloom->SetPasses(bloomPasses);
-				bloom->SetThreshold(bloomThreshold);
+				ImGui::Checkbox("Bloom", &blooming);
+				if (blooming)
+				{
+					ImGui::SliderFloat("Bloom Threshold", &bloomThreshold, 0, 1);
+					ImGui::SliderInt("Bloom blur Passes", &bloomPasses, 0, 20);
+					bloom->SetPasses(bloomPasses);
+					bloom->SetThreshold(bloomThreshold);
+				}
+				ImGui::Checkbox("Blur", &blurring);
+				if (blurring)
+				{
+					ImGui::SliderInt("Blur blur Passes", &blurPasses, 0, 20);
+					blur->SetPasses(blurPasses);
+				}
+				ImGui::Checkbox("Color Correction", &correcting);
+				if (correcting)
+				{
+					ImGui::SliderInt("Active CoCo Effect", &activeCube, 0, cubes.size() - 1);
+					ImGui::Text("0 is Neutral, 1 is Cool, 2 is Warm, 3 is Custom");
+				}
 			}
-			ImGui::Checkbox("Ambient Lighting", &ambientOn);
-			ImGui::Checkbox("Diffuse Lighting", &diffuseOn);
-			ImGui::Checkbox("Specular Lighting", &specularOn);
-			ImGui::Checkbox("Emissive Car Lighting", &carLighting);
-			ImGui::Checkbox("Specular Ramping", &rampOnSpec);
-			ImGui::Checkbox("Diffuse Ramping", &rampOnDiff);
-			//ImGui::SliderInt("IsPaused", &pauseStatus, 0, 1);
-			ImGui::SliderFloat("Effects Volume", &sfxVol, 0.f, 1.f);
-			ImGui::SliderFloat("Music Volume", &musVol, 0.f, 1.f);
+			if (ImGui::CollapsingHeader("Lighting"))
+			{
+				ImGui::Checkbox("Ambient Lighting", &ambientOn);
+				ImGui::Checkbox("Diffuse Lighting", &diffuseOn);
+				ImGui::Checkbox("Specular Lighting", &specularOn);
+				ImGui::Checkbox("Emissive Car Lighting", &carLighting);
+				ImGui::Checkbox("Specular Ramping", &rampOnSpec);
+				ImGui::Checkbox("Diffuse Ramping", &rampOnDiff);
+			}
+			if (ImGui::CollapsingHeader("FMOD"))
+			{
+				ImGui::SliderFloat("Effects Volume", &sfxVol, 0.f, 1.f);
+				ImGui::SliderFloat("Music Volume", &musVol, 0.f, 1.f);
+			}
 
-
-
-
-			
-
-
-			/*auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
-			auto& camComponent = camera;
-			glm::vec3 camPos = camComponent->GetPosition();
+			glm::vec3 camPos = camera->GetPosition();
 			if (ImGui::Button(manualCamera?"Auto Camera": "Manual Camera"))
 			{
 				manualCamera = !manualCamera;
@@ -1427,7 +1456,7 @@ void SceningTest::ImGUIUpdate()
 			{
 				ImGui::SliderFloat3("Camera Position", &camPos.x,-200.f, 200.f);
 			}
-			camComponent->SetPosition(camPos);*/
+			camera->SetPosition(camPos);
 			
 		}
 		ImGui::End();

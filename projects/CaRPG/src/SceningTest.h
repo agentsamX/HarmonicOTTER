@@ -3,6 +3,7 @@
 #include "AudioEngine.h"
 #include "Graphics/Post/CubeCoCoEffect.h"
 #include "Graphics/Post/CombinedBloom.h"
+#include "Graphics/Post/Blur.h"
 #include "Graphics/LUT.h"
 #include <cstdlib>
 #include <ctime>
@@ -54,8 +55,11 @@ private:
 
 	entt::entity sceneBuff;
 	entt::entity cocoBuff;
+	bool correcting = true;
 	entt::entity bloomBuff;
 	bool blooming = true;
+	entt::entity blurBuff;
+	bool blurring = false;
 
 	std::vector<LUT3D> cubes;
 
