@@ -9,6 +9,7 @@
 #include "MenuScreen.h"
 #include "MidGameMenu.h"
 #include "Scene2.h"
+#include "TutorialScene.h"
 
 //taken from CG tutorials
 extern "C" {
@@ -219,7 +220,7 @@ int main()
 			{
 				delete scenes[scenes.size() - 1];
 				scenes.pop_back();
-				scenes.push_back(new SceningTest(window)); //////////////////////
+				scenes.push_back(new TutorialScene(window)); //////////////////////
 				curScene = scenes[2];
 
 				curScene->Start();
