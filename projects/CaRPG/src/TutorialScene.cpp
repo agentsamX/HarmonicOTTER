@@ -66,7 +66,7 @@ void TutorialScene::Start()
 	m_Gearbox = m_Registry.create();
 	m_GearboxLever = m_Registry.create();
 	m_Accelerometer = m_Registry.create();
-	m_Needle = m_Registry.create();
+	//m_Needle = m_Registry.create();
 	/*m_Particles1 = m_Registry.create();
 	m_Particles2 = m_Registry.create();*/
 	//cards
@@ -84,7 +84,7 @@ void TutorialScene::Start()
 	*/
 
 	//track and scenery
-	m_Registry.emplace<syre::Mesh>(Track, "objects/Track2.obj");
+	m_Registry.emplace<syre::Mesh>(Track, "objects/tutorialTrack.obj");
 	m_Registry.emplace<syre::Transform>(Track, glm::vec3(8.0f, 8.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(Track, "images/PossibleRoad.png");
 
@@ -104,12 +104,12 @@ void TutorialScene::Start()
 	m_Registry.emplace<syre::Transform>(m_Accelerometer, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Accelerometer, "images/Accelerometer1.png");
 
-	m_Registry.emplace<syre::MorphRenderer>(m_Needle);
+	/*m_Registry.emplace<syre::MorphRenderer>(m_Needle);
 	m_Registry.emplace<syre::Transform>(m_Needle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Needle, "images/Finish.png");
 	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("objects/NeedleLeft.obj");
 	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("objects/Needle.obj");
-	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("objects/NeedleRight.obj");
+	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("objects/NeedleRight.obj");*/
 
 	m_Registry.emplace<syre::Mesh>(m_TransparentBlack, "objects/RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_TransparentBlack, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
@@ -268,7 +268,67 @@ void TutorialScene::Start()
 	carPath.AddPoint(glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	carPath.AddPoint(glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
+	carPath.AddPoint(glm::vec3(6.0f, -62.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //end of first straight
+	carPath.AddPoint(glm::vec3(6.0f, -62.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(6.0f, -89.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(-24.0f, -89.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //turn
+	carPath.AddPoint(glm::vec3(-24.0f, -89.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-24.0f, -89.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(-95.0f, -89.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //str
+	carPath.AddPoint(glm::vec3(-95.0f, -89.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-138.0f, -90.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(-138.0f, -119.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //u
+	carPath.AddPoint(glm::vec3(-138.0f, -119.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-145.0f, -183.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(-95.0f, -173.f, 0.0f), glm::vec3(90.0f, 0.0f, 90.0f)); //u
+	carPath.AddPoint(glm::vec3(-95.0f, -173.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-95.0f, -173.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(-20.0f, -173.f, 0.0f), glm::vec3(90.0f, 0.0f, 90.0f)); //str
+	carPath.AddPoint(glm::vec3(-20.0f, -173.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(8.0f, -173.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(8.0f, -203.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //turn
+	carPath.AddPoint(glm::vec3(8.0f, -203.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(8.0f, -203.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(8.0f, -286.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //str
+	carPath.AddPoint(glm::vec3(8.0f, -286.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(10.0f, -316.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(-20.0f, -316.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //turn
+	carPath.AddPoint(glm::vec3(-20.0f, -316.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-20.0f, -316.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(-105.0f, -316.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //str
+	carPath.AddPoint(glm::vec3(-105.0f, -316.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-105.0f, -316.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(-185.0f, -316.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //rocks
+	carPath.AddPoint(glm::vec3(-185.0f, -316.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-185.0f, -316.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(-230.0f, -316.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //str
+	carPath.AddPoint(glm::vec3(-230.0f, -316.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-267.0f, -314.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(-267.0f, -284.f, 0.0f), glm::vec3(90.0f, 0.0f, -180.0f)); //s
+	carPath.AddPoint(glm::vec3(-267.0f, -284.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-265.0f, -227.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(-305.0f, -237.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //s
+	carPath.AddPoint(glm::vec3(-305.0f, -237.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-305.0f, -237.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+	carPath.AddPoint(glm::vec3(-440.0f, -237.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //str
+	carPath.AddPoint(glm::vec3(-440.0f, -237.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-440.0f, -237.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	
+
 
 	carPath.SpeedControl();
 
@@ -283,8 +343,67 @@ void TutorialScene::Start()
 	enemyCarPath.AddPoint(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //start point
 	enemyCarPath.AddPoint(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	enemyCarPath.AddPoint(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-
+									 
+	enemyCarPath.AddPoint(glm::vec3(10.0f, -62.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //end of first straight
+	enemyCarPath.AddPoint(glm::vec3(10.0f, -62.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(10.0f, -93.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	
+	enemyCarPath.AddPoint(glm::vec3(-24.0f, -93.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //turn
+	enemyCarPath.AddPoint(glm::vec3(-24.0f, -93.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-24.0f, -93.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	
+	enemyCarPath.AddPoint(glm::vec3(-95.0f, -93.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //str
+	enemyCarPath.AddPoint(glm::vec3(-95.0f, -93.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-134.0f, -90.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	
+	enemyCarPath.AddPoint(glm::vec3(-134.0f, -119.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //u
+	enemyCarPath.AddPoint(glm::vec3(-134.0f, -119.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-145.0f, -179.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	
+	enemyCarPath.AddPoint(glm::vec3(-95.0f, -169.f, 0.0f), glm::vec3(90.0f, 0.0f, 90.0f)); //u
+	enemyCarPath.AddPoint(glm::vec3(-95.0f, -169.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-95.0f, -169.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+											  
+	enemyCarPath.AddPoint(glm::vec3(-20.0f, -169.f, 0.0f), glm::vec3(90.0f, 0.0f, 90.0f)); //str
+	enemyCarPath.AddPoint(glm::vec3(-20.0f, -169.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(12.0f, -173.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	
+	enemyCarPath.AddPoint(glm::vec3(12.0f, -203.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //turn
+	enemyCarPath.AddPoint(glm::vec3(12.0f, -203.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(12.0f, -203.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+									
+	enemyCarPath.AddPoint(glm::vec3(12.0f, -286.f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f)); //str
+	enemyCarPath.AddPoint(glm::vec3(12.0f, -286.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(10.0f, -320.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	
+	enemyCarPath.AddPoint(glm::vec3(-20.0f, -320.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //turn
+	enemyCarPath.AddPoint(glm::vec3(-20.0f, -320.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-20.0f, -320.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	
+	enemyCarPath.AddPoint(glm::vec3(-105.0f, -320.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //str
+	enemyCarPath.AddPoint(glm::vec3(-105.0f, -320.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-105.0f, -320.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+											   
+	enemyCarPath.AddPoint(glm::vec3(-185.0f, -320.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //rocks
+	enemyCarPath.AddPoint(glm::vec3(-185.0f, -320.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-185.0f, -320.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+											   
+	enemyCarPath.AddPoint(glm::vec3(-230.0f, -320.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //str
+	enemyCarPath.AddPoint(glm::vec3(-230.0f, -320.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-271.0f, -314.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	
+	enemyCarPath.AddPoint(glm::vec3(-271.0f, -284.f, 0.0f), glm::vec3(90.0f, 0.0f, -180.0f)); //s
+	enemyCarPath.AddPoint(glm::vec3(-271.0f, -284.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-265.0f, -231.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	
+	enemyCarPath.AddPoint(glm::vec3(-305.0f, -241.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //s
+	enemyCarPath.AddPoint(glm::vec3(-305.0f, -241.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-305.0f, -241.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+											   
+	enemyCarPath.AddPoint(glm::vec3(-440.0f, -241.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //str
+	enemyCarPath.AddPoint(glm::vec3(-440.0f, -241.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-440.0f, -241.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
 
 	enemyCarPath.SpeedControl();
 
@@ -733,9 +852,9 @@ int TutorialScene::Update()
 	flatMorphShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.12f)));
 	flatMorphShader->SetUniform("offset", glm::vec2(-0.55, -0.97f));
 	flatMorphShader->SetUniform("t", 0.0f);
-	m_Registry.get<syre::MorphRenderer>(m_Needle).ManualFrameSet(0);
-	m_Registry.get<syre::Texture>(m_Needle).Bind();
-	m_Registry.get<syre::MorphRenderer>(m_Needle).Render();
+	//m_Registry.get<syre::MorphRenderer>(m_Needle).ManualFrameSet(0);
+	//m_Registry.get<syre::Texture>(m_Needle).Bind();
+	//m_Registry.get<syre::MorphRenderer>(m_Needle).Render();
 	auto pathView = m_Registry.view<syre::PathAnimator, syre::Transform>();
 	for (auto entity : pathView)
 	{
