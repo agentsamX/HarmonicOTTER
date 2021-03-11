@@ -775,6 +775,19 @@ void Scene2::Start()
 
 int Scene2::Update()
 {
+
+	AudioEngine& engine = AudioEngine::Instance();
+
+	AudioEvent& ambient = engine.GetEvent("Ambient");
+	AudioBus& musicBus = engine.GetBus("Music");
+
+
+	//get ref listener
+	AudioListener& listener = engine.GetListener();
+	listener.SetPosition(glm::vec3(5, 0, 0));
+
+	engine.Update();
+
 	if (isPaused)
 	{
 		return PausedUpdate();
