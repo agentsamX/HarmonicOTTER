@@ -917,20 +917,6 @@ int SceningTest::Update()
 			m_Registry.get<syre::Texture>(m_GearboxLever).Bind();
 			m_Registry.get<syre::Mesh>(m_GearboxLever).Render();
 		}
-		else if (-0.75f + 0.6f + (*y * -0.00104f) <= -0.79 && PlayerComponent.GetBrake() == true)
-		{
-			PlayerComponent.SetAction(-4);
-			PlayerComponent.ChangeGears();
-			PlayerComponent.ResetPed();
-			lbutton_down = false;
-		}
-		else if (-0.75f + 0.6f + (*y * -0.00104f) >= -0.71 && PlayerComponent.GetAcc() == true)
-		{
-			PlayerComponent.SetAction(-5);
-			PlayerComponent.ChangeGears();
-			PlayerComponent.ResetPed();
-			lbutton_down = false;
-		}
 		else
 		{
 			lbutton_down = false;
@@ -989,7 +975,6 @@ int SceningTest::Update()
 				if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
 				{
 					EnemyComponent.SetAcc();
-					EnemyComponent.ChangeGears();
 				}
 				else if (EnemyComponent.GetAction2() == -1)
 				{
@@ -999,7 +984,6 @@ int SceningTest::Update()
 					}
 					else if (EnemyComponent.GetAcc() == true)
 					{
-						EnemyComponent.ChangeGears();
 					}
 				}
 				if (EnemyComponent.GetGear() == 6)
@@ -1014,9 +998,10 @@ int SceningTest::Update()
 					speedDemon = true;
 				}
 				EnemyComponent.SetBrk();
-				EnemyComponent.ChangeGears();
 
 			}
+			EnemyComponent.ResolveCards();
+			PlayerComponent.SetOppGear(EnemyComponent.GetGear());
 		}
 		/*
 	if (showGear == false)
@@ -1028,7 +1013,7 @@ int SceningTest::Update()
 		printf("\n");
 	}
 	*/
-		if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
+		if (PlayerComponent.GetEnded() == true)
 		{
 			/// harry i changed the bit below, what did it do lol
 			for (int i = 0; i <= 5; i++)
@@ -1664,6 +1649,30 @@ int SceningTest::KeyEvents(float delta)
 		if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
 		{
 			m_Registry.get<syre::PathAnimator>(m_PCar).Reset();
+		}
+		if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
+		{
+			if (PlayerComponent.GetAction1() == 2)
+			{
+				temp = PlayerComponent.GetGear();
+				EnemyComponent.ChangeGears(temp);
+			}
+			else if (PlayerComponent.GetAction1() == 5)
+			{
+				EnemyComponent.SetSabo();
+			}
+
+			if (PlayerComponent.GetAction2() == 2)
+			{
+				temp = PlayerComponent.GetGear();
+				EnemyComponent.ChangeGears(temp);
+			}
+			else if (PlayerComponent.GetAction2() == 5)
+			{
+				EnemyComponent.SetSabo();
+			}
+
+			PlayerComponent.ResolveCards();
 		}
 		camComponent->SetPosition(curCamPos);
 		return 0;

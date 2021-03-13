@@ -17,7 +17,6 @@ public:
 	Cars();
 	~Cars();
 	void ChangeGears(int);
-	void ChangeGears();
 	int GetGear();
 	void SetAcc();
 	void SetBrk();
@@ -31,8 +30,12 @@ public:
 	void SetAction(int);
 	void IncreaseScore();
 	int GetScore();
+	void SetOppGear(int);
 	void ResetTurn();
 	void ResetPed();
+	void ResolveCards();
+	void SetEnded();
+	bool GetEnded();
 
 	//Hand interactions
 	void AddCard(int, bool);
@@ -47,13 +50,17 @@ private:
 	bool Brake;
 	bool Quick;
 	bool Sabo;
+	bool PEnd = false;
 	int Gear;
 	int Increment = 0;
 	int Action1 = -1;
 	int Action2 = -1;
 	int Turns = 0;
 	int Turns2 = 0;
+	int position1;
+	int position2;
 	int CompletedObs = 0;
+	int Oppgear;
 	int Hand[5] = {0,1,2,3,4};
 	std::vector <int> Deck = {0,0,1,1,2,2,3,3,4,4,5,5};
 };

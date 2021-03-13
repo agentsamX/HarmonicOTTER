@@ -19,40 +19,6 @@ void Cars::ChangeGears(int NewGear)
 	Gear = NewGear;
 }
 
-void Cars::ChangeGears()
-{
-	if (Accelerate == true && Gear + 1 != 7)
-	{
-		if (Quick == false)
-		{
-			Gear += 1;
-		}
-		else if (Gear + 2 > 6)
-		{
-			Gear = 6;
-		}
-		else
-		{
-			Gear += 2;
-		}
-	}
-	if (Brake == true && Gear - 1 != 0)
-	{
-		if (Quick == false)
-		{
-			Gear -= 1;
-		}
-		else if (Gear - 2 < 0)
-		{
-			Gear = 0;
-		}
-		else
-		{
-			Gear -= 2;
-		}
-	}
-}
-
 int Cars::GetGear()
 {
 	return Gear;
@@ -129,22 +95,11 @@ void Cars::PlayCard(int Position, int NewGear)
 
 	if (Hand[Position] == 0)
 	{
-		if (Gear + 3 > 6)
-		{
-			Gear = 6;
-		}
-		else
-		{
-			Gear += 3;
-		}
 		if (Action1 == -1)
 			Action1 = Hand[Position];
 		else
 			Action2 = Hand[Position];
-		RemoveCard(Position, true);
 		audio.GetEvent("MultiNitro").Restart();
-
-
 	}
 	if (Hand[Position] == 1)
 	{
@@ -152,43 +107,30 @@ void Cars::PlayCard(int Position, int NewGear)
 			Action1 = Hand[Position];
 		else
 			Action2 = Hand[Position];
-		RemoveCard(Position, true);
 		audio.GetEvent("Drift").Restart();
 
 	}
 	if (Hand[Position] == 2)
 	{
-		Gear = NewGear;
 		if (Action1 == -1)
 			Action1 = Hand[Position];
 		else
 			Action2 = Hand[Position];
-		RemoveCard(Position, true);
 		audio.GetEvent("Slipstream").Restart();
-
-
 	}
 	if (Hand[Position] == 3)
 	{
-		Gear = 1;
 		if (Action1 == -1)
 			Action1 = Hand[Position];
 		else
 			Action2 = Hand[Position];
-		RemoveCard(Position, true);
 	}
 	if (Hand[Position] == 4)
 	{
-		Quick = true;
-		if (Turns != 0)
-		{
-			Turns = 0;
-		}
 		if (Action1 == -1)
 			Action1 = Hand[Position];
 		else
 			Action2 = Hand[Position];
-		RemoveCard(Position, true);
 	}
 	if (Hand[Position] == 5)
 	{
@@ -196,7 +138,6 @@ void Cars::PlayCard(int Position, int NewGear)
 			Action1 = Hand[Position];
 		else
 			Action2 = Hand[Position];
-		RemoveCard(Position, true);
 	}
 }
 
@@ -228,11 +169,17 @@ int Cars::GetScore()
 	return CompletedObs;
 }
 
+void Cars::SetOppGear(int gear)
+{
+	Oppgear = gear;
+}
+
 void Cars::ResetTurn()
 {
 	Draw();
 	Action1 = -1;
 	Action2 = -1;
+	PEnd = false;
 	if (Turns == 2 && Quick == true)
 	{
 		Turns = 0;
@@ -257,6 +204,132 @@ void Cars::ResetPed()
 {
 	Accelerate = false;
 	Brake = false;
+}
+
+void Cars::ResolveCards()
+{
+	if (Action1 == 0)
+	{
+		if (Gear + 3 > 6)
+		{
+			Gear = 6;
+		}
+		else
+		{
+			Gear += 3;
+		}
+	}
+	else if (Action1 == 2)
+	{
+		Gear = Oppgear;
+	}
+	else if (Action1 == 3)
+	{
+		Gear = 1;
+	}
+	else if (Action1 == 4)
+	{
+		Quick = true;
+		if (Turns != 0)
+		{
+			Turns = 0;
+		}
+	}
+	else if (Action1 == -2 && Gear + 1 != 7)
+	{
+		if (Quick == false)
+		{
+			Gear += 1;
+		}
+		else if (Gear + 2 > 6)
+		{
+			Gear = 6;
+		}
+		else
+		{
+			Gear += 2;
+		}
+	}
+	else if (Action1 == -3 && Gear - 1 != 0)
+	{
+		if (Quick == false)
+		{
+			Gear -= 1;
+		}
+		else if (Gear - 2 < 0)
+		{
+			Gear = 0;
+		}
+		else
+		{
+			Gear -= 2;
+		}
+	}
+
+
+	if (Action2 == 0)
+	{
+		if (Gear + 3 > 6)
+		{
+			Gear = 6;
+		}
+		else
+		{
+			Gear += 3;
+		}
+	}
+	else if (Action2 == 3)
+	{
+		Gear = 1;
+	}
+	else if (Action2 == 4)
+	{
+		Quick = true;
+		if (Turns != 0)
+		{
+			Turns = 0;
+		}
+	}
+	else if (Action1 == -2 && Gear + 1 != 7)
+	{
+		if (Quick == false)
+		{
+			Gear += 1;
+		}
+		else if (Gear + 2 > 6)
+		{
+			Gear = 6;
+		}
+		else
+		{
+			Gear += 2;
+		}
+	}
+	else if (Action1 == -3 && Gear - 1 != 0)
+	{
+		if (Quick == false)
+		{
+			Gear -= 1;
+		}
+		else if (Gear - 2 < 0)
+		{
+			Gear = 0;
+		}
+		else
+		{
+			Gear -= 2;
+		}
+	}
+}
+
+void Cars::SetEnded()
+{
+	PEnd = true;
+}
+
+bool Cars::GetEnded()
+{
+	return PEnd;
 }
 
 void Cars::AddCard(int NewCard, bool object)

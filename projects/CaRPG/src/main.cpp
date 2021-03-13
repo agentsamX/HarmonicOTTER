@@ -220,7 +220,7 @@ int main()
 			{
 				delete scenes[scenes.size() - 1];
 				scenes.pop_back();
-				scenes.push_back(new TutorialScene(window)); //////////////////////
+				scenes.push_back(new SceningTest(window)); //////////////////////
 				curScene = scenes[2];
 
 				curScene->Start();
