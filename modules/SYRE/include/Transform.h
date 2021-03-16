@@ -24,7 +24,7 @@ namespace syre
 		glm::vec3 scale;
 		glm::vec3 rotationEuler;
 		glm::quat rotation;
-		
+
 
 		Transform* parent = nullptr;
 

@@ -165,8 +165,9 @@ int main()
 	//turn off for build for gdw
 	glDebugMessageCallback(GlDebugMessage, nullptr);
 	//end of cg tutorial
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+
 
 	std::vector<syre::SceneParent*> scenes;////////////
 	scenes.push_back(new MenuScreen(window));
@@ -220,7 +221,7 @@ int main()
 			{
 				delete scenes[scenes.size() - 1];
 				scenes.pop_back();
-				scenes.push_back(new TutorialScene(window)); //////////////////////
+				scenes.push_back(new SceningTest(window)); //////////////////////
 				curScene = scenes[2];
 
 				curScene->Start();
