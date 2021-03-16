@@ -29,6 +29,8 @@ public:
 
 	void SetLightSpaceViewProj(glm::mat4 lightSpaceViewProj);
 	void SetCamPos(glm::vec3 camPos);
+	void SetPlayerPos(glm::vec3 playPos);
+	void SetEnemyPos(glm::vec3 enemPos);
 
 	DirectionalLight& GetSunRef();
 	
@@ -41,6 +43,8 @@ public:
 private:
 	glm::mat4 _lightSpaceViewProj;
 	glm::vec3 _camPos;
+	glm::vec3 _playPos;
+	glm::vec3 _enemPos;
 
 	UniformBuffer _sunBuffer;
 

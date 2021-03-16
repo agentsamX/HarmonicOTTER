@@ -1348,6 +1348,8 @@ int SceningTest::Update()
 
 	shadow->BindDepthAsTexture(30);
 
+	illum->SetPlayerPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	illum->SetEnemyPos(m_Registry.get<syre::Transform>(m_enemy).GetPosition());
 	illum->ApplyEffect(g);
 
 	shadow->UnbindTexture(30);

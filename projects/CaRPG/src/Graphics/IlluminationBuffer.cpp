@@ -66,6 +66,8 @@ void IlluminationBuffer::ApplyEffect(GBuffer* gBuffer)
 
 	//bind ambient
 	_shaders[Lights::AMBIENT]->Bind();
+	_shaders[Lights::AMBIENT]->SetUniform("u_PlayerPos", _playPos);
+	_shaders[Lights::AMBIENT]->SetUniform("u_EnemyPos", _enemPos);
 
 	_sunBuffer.Bind(0);
 
@@ -106,6 +108,16 @@ void IlluminationBuffer::SetLightSpaceViewProj(glm::mat4 lightSpaceViewProj)
 void IlluminationBuffer::SetCamPos(glm::vec3 camPos)
 {
 	_camPos = camPos;
+}
+
+void IlluminationBuffer::SetPlayerPos(glm::vec3 playPos)
+{
+	_playPos = playPos;
+}
+
+void IlluminationBuffer::SetEnemyPos(glm::vec3 enemPos)
+{
+	_enemPos = enemPos;
 }
 
 DirectionalLight& IlluminationBuffer::GetSunRef()

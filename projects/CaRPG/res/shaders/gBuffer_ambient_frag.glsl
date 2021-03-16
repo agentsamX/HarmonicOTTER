@@ -32,10 +32,18 @@ layout(binding = 3) uniform sampler2D s_positionTex;
 layout(binding = 4) uniform sampler2D s_lightAccumTex;
 layout(binding = 5) uniform sampler2D s_skyBox;
 
+uniform vec3 u_PlayerPos;
+uniform vec3 u_EnemyPos;
+
 out vec4 frag_color;
 
 void main()
 {
+
+	float distPlay= max(4.0,distance(u_PlayerPos,texture(s_positionTex,inUV).xyz));
+	float distEnemy =max(4.0,distance(u_EnemyPos,texture(s_positionTex,inUV).xyz));
+
+
      //albedo
     vec4 textureColor=texture(s_albedoTex,inUV);
     //light accum
@@ -45,10 +53,13 @@ void main()
 
     vec3 ambient = ambience._lightAmbientPow*ambience._ambientCol.rgb;
 
-    vec3 result = (ambient +lightAccum.rgb)*textureColor.rgb;
+    //vec3 result = (ambient +lightAccum.rgb)*textureColor.rgb;
+    vec3 result = (ambient +lightAccum.rgb);
 
     //result = result*skybox.rgb;
 
-    frag_color=vec4(result,1.0);
+    //frag_color=vec4(result,1.0);
+
+	frag_color =textureColor/(distPlay/5)*vec4(result,1.0)+vec4(1/(distPlay),0.0f,1/(distEnemy),0.0f);
 
 }
