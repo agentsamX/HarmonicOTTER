@@ -20,15 +20,48 @@ void SceningTest::Start()
 	cocoBuff = m_Registry.create();
 	bloomBuff = m_Registry.create();
 	blurBuff = m_Registry.create();
+	gBuff = m_Registry.create();
+	illumBuff = m_Registry.create();
+	shadowBuff = m_Registry.create();
+	pixelBuff = m_Registry.create();
+	nightVisBuff = m_Registry.create();
+	grainBuff = m_Registry.create();
+
 	m_Registry.emplace<PostEffect>(sceneBuff);
 	m_Registry.emplace<CubeCoCoEffect>(cocoBuff);
 	m_Registry.emplace<CombinedBloom>(bloomBuff);
 	m_Registry.emplace<Blur>(blurBuff);
+	m_Registry.emplace<GBuffer>(gBuff);
+	m_Registry.emplace<IlluminationBuffer>(illumBuff);
+	m_Registry.emplace<Framebuffer>(shadowBuff);
+	m_Registry.emplace<Pixelate>(pixelBuff);
+	m_Registry.emplace<NightVision>(nightVisBuff);
+	m_Registry.emplace<FilmGrain>(grainBuff);
+
 	m_Registry.get<PostEffect>(sceneBuff).Init(width, height);
 	m_Registry.get<CubeCoCoEffect>(cocoBuff).Init(width, height);
 	m_Registry.get<CombinedBloom>(bloomBuff).Init(width, height);
 	m_Registry.get<Blur>(blurBuff).Init(width, height);
+	m_Registry.get<GBuffer>(gBuff).Init(width, height);
+	m_Registry.get<IlluminationBuffer>(illumBuff).Init(width, height);
+	m_Registry.get<Framebuffer>(shadowBuff).AddDepthTarget();
+	m_Registry.get<Framebuffer>(shadowBuff).Init(shadowWidth, shadowHeight);
+	m_Registry.get<Pixelate>(pixelBuff).Init(width, height);
+	m_Registry.get<NightVision>(nightVisBuff).Init(width, height);
+	m_Registry.get<FilmGrain>(grainBuff).Init(width, height);
 
+	Sun._ambientPow = 0.2;
+	Sun._ambientCol = glm::vec4(1.0, 1.0, 1.0,1.0);
+	Sun._lightAmbientPow = 0.2;
+	Sun._lightCol=glm::vec4(1.0, 1.0, 1.0,1.0);
+	Sun._lightDirection = glm::vec4(-0.170,1.6,-2.530,0.0);
+	Sun._lightSpecularPow = 0.7;
+	Sun._shadowBias = 0.05;
+	
+	m_Registry.get<IlluminationBuffer>(illumBuff).SetSun(Sun);
+
+	m_Registry.get<CombinedBloom>(bloomBuff).SetThreshold(0.7);
+	m_Registry.get<CombinedBloom>(bloomBuff).SetPasses(10);
 
 
 	cubes.push_back(LUT3D("cubes/Neutral-512.cube"));
@@ -707,7 +740,7 @@ void SceningTest::Start()
 	
 	basicShader = Shader::Create();
 	basicShader->LoadShaderPartFromFile("vertex_shader.glsl", GL_VERTEX_SHADER);
-	basicShader->LoadShaderPartFromFile("frag_shader.glsl", GL_FRAGMENT_SHADER);
+	basicShader->LoadShaderPartFromFile("shaders/gBuffer_pass_frag.glsl", GL_FRAGMENT_SHADER);
 	basicShader->Link();
 
 	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 2.0f);
@@ -730,7 +763,7 @@ void SceningTest::Start()
 
 	morphShader = Shader::Create();
 	morphShader->LoadShaderPartFromFile("morph_vertex_shader.glsl", GL_VERTEX_SHADER);
-	morphShader->LoadShaderPartFromFile("frag_shader.glsl", GL_FRAGMENT_SHADER);
+	morphShader->LoadShaderPartFromFile("gfrag_shader.glsl", GL_FRAGMENT_SHADER);
 	morphShader->Link();
 
 	lightPos = glm::vec3(0.0f, 0.0f, 2.0f);
@@ -755,6 +788,12 @@ void SceningTest::Start()
 	flatMorphShader->LoadShaderPartFromFile("flatMorphVert.glsl", GL_VERTEX_SHADER);
 	flatMorphShader->LoadShaderPartFromFile("flatFrag.glsl", GL_FRAGMENT_SHADER);
 	flatMorphShader->Link();
+
+	simpleDepthShader = Shader::Create();
+	Shader::sptr simpleDepthShader = Shader::Create();
+	simpleDepthShader->LoadShaderPartFromFile("shaders/simple_depth_vert.glsl", GL_VERTEX_SHADER);
+	simpleDepthShader->LoadShaderPartFromFile("shaders/simple_depth_frag.glsl", GL_FRAGMENT_SHADER);
+	simpleDepthShader->Link();
 
 
 	auto& camComponent = camera;
@@ -783,13 +822,27 @@ int SceningTest::Update()
 	CubeCoCoEffect* colorCorrect = &m_Registry.get<CubeCoCoEffect>(cocoBuff);
 	CombinedBloom* bloom = &m_Registry.get<CombinedBloom>(bloomBuff);
 	Blur* blur = &m_Registry.get<Blur>(blurBuff);
+	GBuffer* g = &m_Registry.get<GBuffer>(gBuff);
+	IlluminationBuffer* illum = &m_Registry.get<IlluminationBuffer>(illumBuff);
+	Framebuffer* shadow = &m_Registry.get<Framebuffer>(shadowBuff);
+	Pixelate* pixel = &m_Registry.get<Pixelate>(pixelBuff);
+	NightVision* vision = &m_Registry.get<NightVision>(nightVisBuff);
+	FilmGrain* grain = &m_Registry.get<FilmGrain>(grainBuff);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
 	framebuffer->Clear();
 	colorCorrect->Clear();
 	bloom->Clear();
 	blur->Clear();
+	g->Clear();
+	shadow->Clear();
+	illum->Clear();
+	pixel->Clear();
+	vision->Clear();
+	grain->Clear();;
 
 	AudioEngine& engine = AudioEngine::Instance();
 
@@ -1173,8 +1226,36 @@ int SceningTest::Update()
 		m_Registry.get<syre::PathAnimator>(entity).Update(transform, deltaTime);
 	}
 
+	auto renderView = m_Registry.view<syre::Mesh, syre::Transform, syre::Texture>();
+
+	glm::mat4 lightProjectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, -30.0f, 30.0f);
+	glm::mat4 lightViewMatrix = glm::lookAt(glm::vec3(-illum->GetSunRef()._lightDirection), glm::vec3(), glm::vec3(0.0f, 0.0f, 1.0f));
+	glm::mat4 lightSpaceViewProj = lightProjectionMatrix * lightViewMatrix;
+	illum->SetLightSpaceViewProj(lightSpaceViewProj);
+	illum->SetCamPos(camera->GetPosition());
+
+	glViewport(0, 0, shadowWidth, shadowHeight);
+	simpleDepthShader->Bind();
+	shadow->Bind();
+	for (auto entity : renderView)
+	{
+		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
+		basicShader->SetUniformMatrix("u_LightSpaceMatrix", lightSpaceViewProj);
+		basicShader->SetUniformMatrix("u_Model", transform);
+		renderView.get<syre::Texture>(entity).Bind();
+		renderView.get<syre::Mesh>(entity).Render();
+	}
+	simpleDepthShader->UnBind();
+	shadow->Unbind();
+
 	//framebuffer bound
-	framebuffer->BindBuffer(0);
+	//framebuffer->BindBuffer(0);
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+	glViewport(0, 0, width, height);
+	glDisable(GL_BLEND);
+	
+	g->Bind();
 	rampTex->Bind(20);
 
 
@@ -1191,7 +1272,6 @@ int SceningTest::Update()
 
 
 
-	auto renderView = m_Registry.view<syre::Mesh, syre::Transform, syre::Texture>();
 	for (auto entity : renderView)
 	{
 		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
@@ -1201,6 +1281,7 @@ int SceningTest::Update()
 		renderView.get<syre::Texture>(entity).Bind();
 		renderView.get<syre::Mesh>(entity).Render();
 	}
+
 	auto listRenderView = m_Registry.view<syre::Mesh, syre::TransformList, syre::Texture>();
 	for (auto entity : listRenderView)
 	{
@@ -1243,31 +1324,76 @@ int SceningTest::Update()
 		morphListRenderView.get<syre::TransformList>(entity).ListRender(morphShader, morphListRenderView.get<syre::MorphRenderer>(entity));
 	}
 
-	PostEffect* lastBuffer = framebuffer;
-	framebuffer->UnBindBuffer();
+	g->Unbind();
 
-	if (blooming)
+	shadow->BindDepthAsTexture(30);
+
+	illum->SetPlayerPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	illum->SetEnemyPos(m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	illum->ApplyEffect(g);
+
+	shadow->UnbindTexture(30);
+
+	if (dispG)
 	{
-		bloom->ApplyEffect(lastBuffer);
-
-		lastBuffer = bloom;
+		if (indivgBuff)
+			g->DrawBuffersToScreen(colTarg);
+		else
+			g->DrawBuffersToScreen();
 	}
-	if (blurring)
+	else if (dispIllum)
 	{
-		blur->ApplyEffect(lastBuffer);
-
-		lastBuffer = blur;
+		illum->DrawIllumBuffer();
 	}
-
-	if (correcting)
+	else
 	{
-		cubes[activeCube].bind(30);
+		PostEffect* lastBuffer = illum;
+		if (nightVising)
+		{
+			vision->ApplyEffect(lastBuffer);
 
-		colorCorrect->ApplyEffect(lastBuffer);
+			lastBuffer = vision;
+		}
+		if (blooming)
+		{
+			bloom->ApplyEffect(lastBuffer);
 
-		lastBuffer = colorCorrect;
+			lastBuffer = bloom;
+		}
+		if (blurring)
+		{
+			blur->ApplyEffect(lastBuffer);
+
+			lastBuffer = blur;
+		}
+		if (correcting)
+		{
+			cubes[activeCube].bind(30);
+
+			colorCorrect->ApplyEffect(lastBuffer);
+
+			lastBuffer = colorCorrect;
+		}
+		if (pixelling)
+		{
+			pixel->ApplyEffect(lastBuffer);
+
+			lastBuffer = pixel;
+		}
+		if (graining)
+		{
+			grain->ApplyEffect(lastBuffer);
+
+			lastBuffer = grain;
+		}
+		
+
+		lastBuffer->DrawToScreen();
 	}
-	lastBuffer->DrawToScreen();
+	//PostEffect* lastBuffer = framebuffer;
+	//framebuffer->UnBindBuffer();
+
+	
 
 
 	if (!manualCamera)
@@ -1376,9 +1502,12 @@ void SceningTest::ImGUIUpdate()
 		ImGui_ImplGlfw_NewFrame();
 		CombinedBloom* bloom = &m_Registry.get<CombinedBloom>(bloomBuff);
 		Blur* blur = &m_Registry.get<Blur>(blurBuff);
+		IlluminationBuffer* illum = &m_Registry.get<IlluminationBuffer>(illumBuff);
+		Pixelate* pixel = &m_Registry.get<Pixelate>(pixelBuff);
 		int blurPasses = blur->GetPasses();
 		float bloomThreshold = bloom->GetThreshold();
 		int bloomPasses = bloom->GetPasses();
+		int pixellationFactor = pixel->GetFactor();
 
 		// ImGui context new frame
 		ImGui::NewFrame();
@@ -1389,8 +1518,23 @@ void SceningTest::ImGUIUpdate()
 
 		if (ImGui::Begin("Debug")) {
 			// Render our GUI stuff
+			if (ImGui::CollapsingHeader("Deferred"))
+			{
+				ImGui::DragFloat3("Light Direction/Position", glm::value_ptr(illum->GetSunRef()._lightDirection), 0.01f, -10.0f, 10.0f);
+				ImGui::Checkbox("Display GBuffer", &dispG);
+				if (dispG)
+				{
+					ImGui::Checkbox("Display Targets Individually", &indivgBuff);
+					if (indivgBuff)
+					{
+						ImGui::SliderInt("Color Target", &colTarg, 0, 3);
+					}
+				}
+				ImGui::Checkbox("Display Illumination Accumulation", &dispIllum);
+			}
 			if (ImGui::CollapsingHeader("Post Processing"))
 			{
+				ImGui::Checkbox("Night Vision", &nightVising);
 				ImGui::Checkbox("Bloom", &blooming);
 				if (blooming)
 				{
@@ -1411,6 +1555,13 @@ void SceningTest::ImGUIUpdate()
 					ImGui::SliderInt("Active CoCo Effect", &activeCube, 0, cubes.size() - 1);
 					ImGui::Text("0 is Neutral, 1 is Cool, 2 is Warm, 3 is Custom");
 				}
+				ImGui::Checkbox("Pixelation", &pixelling);
+				if (pixelling)
+				{
+					ImGui::SliderInt("Pixellation Amount", &pixellationFactor, 2, 32);
+					pixel->SetFactor(pixellationFactor);
+				}
+				//ImGui::Checkbox("Film Grain", &graining);
 			}
 			if (ImGui::CollapsingHeader("Lighting"))
 			{
@@ -1437,7 +1588,34 @@ void SceningTest::ImGUIUpdate()
 				ImGui::SliderFloat3("Camera Position", &camPos.x,-200.f, 200.f);
 			}
 			camera->SetPosition(camPos);
-			
+			if (ImGui::Button("1"))
+			{
+				dispG = false;
+				dispIllum = false;
+			}
+			if (ImGui::Button("2"))
+			{
+				dispG = true;
+				indivgBuff = true;
+				colTarg = 3;
+			}
+			if (ImGui::Button("3"))
+			{
+				dispG = true;
+				indivgBuff = true;
+				colTarg = 1;
+			}
+			if (ImGui::Button("4"))
+			{
+				dispG = true;
+				indivgBuff = true;
+				colTarg = 0;
+			}
+			if (ImGui::Button("5"))
+			{
+				dispG = false;
+				dispIllum = true;
+			}
 		}
 		ImGui::End();
 		audio.SetGlobalParameter("IsPaused",pauseStatus);

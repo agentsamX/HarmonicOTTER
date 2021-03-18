@@ -4,7 +4,13 @@
 #include "Graphics/Post/CubeCoCoEffect.h"
 #include "Graphics/Post/CombinedBloom.h"
 #include "Graphics/Post/Blur.h"
+#include "Graphics/Post/Pixelate.h"
+#include "Graphics/Post/FilmGrain.h"
+#include "Graphics/Post/NightVision.h"
 #include "Graphics/LUT.h"
+#include "Graphics/GBuffer.h"
+#include "Graphics/IlluminationBuffer.h"
+#include "DirectionalLight.h"
 #include <cstdlib>
 #include <ctime>
 class SceningTest:
@@ -60,6 +66,19 @@ private:
 	bool blooming = true;
 	entt::entity blurBuff;
 	bool blurring = false;
+	entt::entity gBuff;
+	bool dispG = false;
+	bool indivgBuff = false;
+	int colTarg = 0;
+	entt::entity illumBuff;
+	bool dispIllum = false;
+	entt::entity shadowBuff;
+	entt::entity pixelBuff;
+	bool pixelling = false;
+	entt::entity grainBuff;
+	bool graining = false;
+	entt::entity nightVisBuff;
+	bool nightVising = false;
 
 	std::vector<LUT3D> cubes;
 
@@ -67,6 +86,7 @@ private:
 	Shader::sptr flatShader;
 	Shader::sptr morphShader;
 	Shader::sptr flatMorphShader;
+	Shader::sptr simpleDepthShader;
 	bool manualCamera = false;
 	float Elapsedtime = 0;
 	bool lbutton_down = false;
@@ -84,5 +104,10 @@ private:
 
 	Texture2D::sptr rampTex;
 
-	int activeCube = 0;
+	DirectionalLight Sun;
+
+	int activeCube = 3;
+
+	int shadowWidth = 4096;
+	int shadowHeight = 4096;
 };
