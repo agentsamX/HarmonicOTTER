@@ -830,7 +830,14 @@ int SceningTest::Update()
 	for (int i = 0; i <= 4; i++)
 	{
 		int cardVal = PlayerComponent.GetCard(i, true);
-		if (cardVal != -1)
+		if (PlayerComponent.GetPosition1() == i || PlayerComponent.GetPosition2() == i)
+		{
+			flatShader->SetUniform("offset", glm::vec2(-0.1f + i / 4.2f, -.42f));
+
+			cardTextures[cardVal].Bind();
+			m_Registry.get<syre::Mesh>(m_Card).Render();
+		}
+		else if (cardVal != -1)
 		{
 			flatShader->SetUniform("offset", glm::vec2(-0.1f + i / 4.2f, -.66f));
 
@@ -924,23 +931,21 @@ int SceningTest::Update()
 	}
 
 
-	bool Accelerate = PlayerComponent.GetAcc();
-	bool Brake = PlayerComponent.GetBrake();
-	if (Accelerate == false && Brake == false)
+	if (PlayerComponent.GetBrk() == false && PlayerComponent.GetAcc() == false)
 	{
 		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
 		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f));
 		gearboxTextures[0].Bind();
 		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
 	}
-	else if (Brake == true)
+	else if (PlayerComponent.GetBrk() == true)
 	{
 		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
 		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f));
 		gearboxTextures[2].Bind();
 		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
 	}
-	else if (Accelerate == true)
+	else if (PlayerComponent.GetAcc() == true)
 	{
 		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
 		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f));
@@ -960,7 +965,7 @@ int SceningTest::Update()
 	}
 	if (obstacleComponent.GetEnd() != true)
 	{
-		if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1 && EnemyComponent.GetSabo() == false)
+		if (EnemyComponent.GetSabo() == false && EnemyComponent.GetEnded() == false)
 		{
 			if (speedDemon == true)
 			{
@@ -972,19 +977,9 @@ int SceningTest::Update()
 						break;
 					}
 				}
-				if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
+				if (EnemyComponent.GetPosition1() == -1 || EnemyComponent.GetPosition2() == -1)
 				{
 					EnemyComponent.SetAcc();
-				}
-				else if (EnemyComponent.GetAction2() == -1)
-				{
-					if (EnemyComponent.GetAcc() == false)
-					{
-						EnemyComponent.SetAcc();
-					}
-					else if (EnemyComponent.GetAcc() == true)
-					{
-					}
 				}
 				if (EnemyComponent.GetGear() == 6)
 				{
@@ -993,7 +988,7 @@ int SceningTest::Update()
 			}
 			else if (speedDemon == false)
 			{
-				if (EnemyComponent.GetGear() == 1)
+				if (EnemyComponent.GetGear() - 1 <= 1)
 				{
 					speedDemon = true;
 				}
@@ -1088,13 +1083,13 @@ int SceningTest::Update()
 					}
 				}
 			}
-			if (EnemyComponent.GetAction1() == 1 || EnemyComponent.GetAction2() == 1)
+			if (EnemyComponent.GetPosition1() != -1 && EnemyComponent.GetPosition2() != -1 && EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 1 || EnemyComponent.GetCard(EnemyComponent.GetPosition2(),true) == 1)
 			{
 				temp = EnemyComponent.GetGear();
 				EnemyComponent.ChangeGears(PlayerComponent.GetGear());
 				PlayerComponent.ChangeGears(temp);
 			}
-			if (PlayerComponent.GetAction1() == 1 || PlayerComponent.GetAction2() == 1)
+			if (EnemyComponent.GetPosition1() != -1 && EnemyComponent.GetPosition2() != -1 && PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1 || PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1)
 			{
 				temp = PlayerComponent.GetGear();
 				PlayerComponent.ChangeGears(EnemyComponent.GetGear());
@@ -1132,8 +1127,8 @@ int SceningTest::Update()
 			showGear = false;
 			if (obstacleComponent.GetObs() == 2)
 			{
-				PlayerComponent.SetAction(-6);
-				EnemyComponent.SetAction(-6);
+				PlayerComponent.SetPosition(-6);
+				EnemyComponent.SetPosition(-6);
 			}
 			if (EnemyComponent.GetSabo() == true)
 			{
@@ -1599,21 +1594,7 @@ int SceningTest::KeyEvents(float delta)
 				{
 					if ((i * 165) + 478 <= *x && (i + 1) * 165 + 478 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
 					{
-						if (PlayerComponent.GetCard(i, true) == 2)
-						{
-							temp = PlayerComponent.GetGear();
-							PlayerComponent.PlayCard(i, EnemyComponent.GetGear());
-							EnemyComponent.ChangeGears(temp);
-						}
-						else if (PlayerComponent.GetCard(i, true) == 5)
-						{
-							EnemyComponent.SetSabo();
 							PlayerComponent.PlayCard(i, 0);
-						}
-						else
-						{
-							PlayerComponent.PlayCard(i, 0);
-						}
 						Elapsedtime = 0;
 					}
 				}
@@ -1652,27 +1633,37 @@ int SceningTest::KeyEvents(float delta)
 		}
 		if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
 		{
-			if (PlayerComponent.GetAction1() == 2)
+			if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
 			{
-				temp = PlayerComponent.GetGear();
-				EnemyComponent.ChangeGears(temp);
-			}
-			else if (PlayerComponent.GetAction1() == 5)
-			{
-				EnemyComponent.SetSabo();
-			}
+				if (PlayerComponent.GetPosition1() != -1 && PlayerComponent.GetPosition1() != -2 && PlayerComponent.GetPosition1() != -3)
+				{
+					if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 2)
+					{
+						temp = PlayerComponent.GetGear();
+						PlayerComponent.ChangeGears(EnemyComponent.GetGear());
+						EnemyComponent.ChangeGears(temp);
+					}
+					else if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 5)
+					{
+						EnemyComponent.SetSabo();
+					}
+				}
 
-			if (PlayerComponent.GetAction2() == 2)
-			{
-				temp = PlayerComponent.GetGear();
-				EnemyComponent.ChangeGears(temp);
+				if (PlayerComponent.GetPosition2() != -1 && PlayerComponent.GetPosition2() != -2 && PlayerComponent.GetPosition2() != -3)
+				{
+					if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 2)
+					{
+						temp = PlayerComponent.GetGear();
+						PlayerComponent.ChangeGears(EnemyComponent.GetGear());
+						EnemyComponent.ChangeGears(temp);
+					}
+					else if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 5)
+					{
+						EnemyComponent.SetSabo();
+					}
+				}
+				PlayerComponent.ResolveCards();
 			}
-			else if (PlayerComponent.GetAction2() == 5)
-			{
-				EnemyComponent.SetSabo();
-			}
-
-			PlayerComponent.ResolveCards();
 		}
 		camComponent->SetPosition(curCamPos);
 		return 0;

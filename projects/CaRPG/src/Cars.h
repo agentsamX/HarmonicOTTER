@@ -21,21 +21,25 @@ public:
 	void SetAcc();
 	void SetBrk();
 	bool GetAcc();
-	bool GetBrake();
+	bool GetBrk();
 	bool GetSabo();
 	void SetSabo();
 	void PlayCard(int,int);
+	/*
 	int GetAction1();
 	int GetAction2();
 	void SetAction(int);
+	*/
 	void IncreaseScore();
 	int GetScore();
 	void SetOppGear(int);
 	void ResetTurn();
-	void ResetPed();
 	void ResolveCards();
 	void SetEnded();
 	bool GetEnded();
+	int GetPosition1();
+	int GetPosition2();
+	void SetPosition(int);
 
 	//Hand interactions
 	void AddCard(int, bool);
@@ -46,19 +50,21 @@ public:
 	void Draw();
 	void Shuffle();
 private:
-	bool Accelerate;
-	bool Brake;
 	bool Quick;
 	bool Sabo;
 	bool PEnd = false;
+	bool Acce = false;
+	bool Brake = false;
 	int Gear;
 	int Increment = 0;
+	/*
 	int Action1 = -1;
 	int Action2 = -1;
+	*/
 	int Turns = 0;
 	int Turns2 = 0;
-	int position1;
-	int position2;
+	int Position1 = -1;
+	int Position2 = -1;
 	int CompletedObs = 0;
 	int Oppgear;
 	int Hand[5] = {0,1,2,3,4};

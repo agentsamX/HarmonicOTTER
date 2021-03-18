@@ -685,13 +685,50 @@ void Scene2::Start()
 	gearboxTextures.push_back(syre::Texture("images/GearBoxGasPressed.png"));
 	gearboxTextures.push_back(syre::Texture("images/GearBoxBrakePressed.png"));
 
-	accelerometerTextures.push_back(syre::Texture("images/Accelerometer1.png"));
-	accelerometerTextures.push_back(syre::Texture("images/Accelerometer1.png"));
-	accelerometerTextures.push_back(syre::Texture("images/Accelerometer2.png"));
-	accelerometerTextures.push_back(syre::Texture("images/Accelerometer3.png"));
-	accelerometerTextures.push_back(syre::Texture("images/Accelerometer4.png"));
-	accelerometerTextures.push_back(syre::Texture("images/Accelerometer5.png"));
-	accelerometerTextures.push_back(syre::Texture("images/Accelerometer6.png"));
+	pGearTextures.push_back(syre::Texture("images/P1.png"));
+	pGearTextures.push_back(syre::Texture("images/P1.png"));
+	pGearTextures.push_back(syre::Texture("images/P2.png"));
+	pGearTextures.push_back(syre::Texture("images/P3.png"));
+	pGearTextures.push_back(syre::Texture("images/P4.png"));
+	pGearTextures.push_back(syre::Texture("images/P5.png"));
+	pGearTextures.push_back(syre::Texture("images/P6.png"));
+
+	eGearTextures.push_back(syre::Texture("images/E1.png"));
+	eGearTextures.push_back(syre::Texture("images/E1.png"));
+	eGearTextures.push_back(syre::Texture("images/E2.png"));
+	eGearTextures.push_back(syre::Texture("images/E3.png"));
+	eGearTextures.push_back(syre::Texture("images/E4.png"));
+	eGearTextures.push_back(syre::Texture("images/E5.png"));
+	eGearTextures.push_back(syre::Texture("images/E6.png"));
+
+	eneedleTextures.push_back(syre::Texture("images/Eneedle1.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle1.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle2.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle3.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle4.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle5.png"));
+	eneedleTextures.push_back(syre::Texture("images/Eneedle6.png"));
+
+	pneedleTextures.push_back(syre::Texture("images/Pneedle1.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle1.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle2.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle3.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle4.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle5.png"));
+	pneedleTextures.push_back(syre::Texture("images/Pneedle6.png"));
+
+	hnumberTextures.push_back(syre::Texture("images/O1.png"));
+	hnumberTextures.push_back(syre::Texture("images/O1.png"));
+	hnumberTextures.push_back(syre::Texture("images/O2.png"));
+	hnumberTextures.push_back(syre::Texture("images/O3.png"));
+	hnumberTextures.push_back(syre::Texture("images/O4.png"));
+	hnumberTextures.push_back(syre::Texture("images/O5.png"));
+	hnumberTextures.push_back(syre::Texture("images/O6.png"));
+
+	htexTextures.push_back(syre::Texture("images/Apex_HUD.png"));
+	htexTextures.push_back(syre::Texture("images/Hairpin_HUD.png"));
+	htexTextures.push_back(syre::Texture("images/Chicane_HUD.png"));
+	htexTextures.push_back(syre::Texture("images/Rocks_HUD.png"));
 
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
@@ -775,6 +812,30 @@ void Scene2::Start()
 
 int Scene2::Update()
 {
+	PostEffect* framebuffer = &m_Registry.get<PostEffect>(sceneBuff);
+	CubeCoCoEffect* colorCorrect = &m_Registry.get<CubeCoCoEffect>(cocoBuff);
+	CombinedBloom* bloom = &m_Registry.get<CombinedBloom>(bloomBuff);
+	Blur* blur = &m_Registry.get<Blur>(blurBuff);
+
+
+
+	framebuffer->Clear();
+	colorCorrect->Clear();
+	bloom->Clear();
+	blur->Clear();
+
+	AudioEngine& engine = AudioEngine::Instance();
+
+	AudioEvent& ambient = engine.GetEvent("Ambient");
+	AudioBus& musicBus = engine.GetBus("Music");
+
+
+	//get ref listener
+	AudioListener& listener = engine.GetListener();
+	listener.SetPosition(glm::vec3(5, 0, 0));
+
+	engine.Update();
+
 	if (isPaused)
 	{
 		return PausedUpdate();
@@ -802,6 +863,14 @@ int Scene2::Update()
 	for (int i = 0; i <= 4; i++)
 	{
 		int cardVal = PlayerComponent.GetCard(i, true);
+		// TODO: set this up so that it pushed the card up if the card matches pos 1 or 2
+		if (PlayerComponent.GetPosition1() == i || PlayerComponent.GetPosition2() == i)
+		{
+			flatShader->SetUniform("offset", glm::vec2(-0.1f + i / 4.2f, -.42f));
+
+			cardTextures[cardVal].Bind();
+			m_Registry.get<syre::Mesh>(m_Card).Render();
+		}
 		if (cardVal != -1)
 		{
 			flatShader->SetUniform("offset", glm::vec2(-0.1f + i / 4.2f, -.66f));
@@ -811,18 +880,63 @@ int Scene2::Update()
 		}
 	}
 
-
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.09f)));
 	flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
 	int ObsVal = obstacleComponent.GetObs();
 	hazardTextures[ObsVal].Bind();
 	m_Registry.get<syre::Mesh>(m_Hazard).Render();
 
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.0325f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.52f, -0.95f));
+	int GerValP = PlayerComponent.GetGear();
+	pGearTextures[GerValP].Bind();
+	m_Registry.get<syre::Mesh>(m_PGears).Render();
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.0325f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.95f));
+	int GerValE = EnemyComponent.GetGear();
+	eGearTextures[GerValE].Bind();
+	m_Registry.get<syre::Mesh>(m_EGears).Render();
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.04f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.50f, -0.96f));
+	m_Registry.get<syre::Texture>(m_AccRect).Bind();
+	m_Registry.get<syre::Mesh>(m_AccRect).Render();
+
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.55f, -0.95f));
-	int GerVal = PlayerComponent.GetGear();
-	accelerometerTextures[GerVal].Bind();
+	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
+	pneedleTextures[GerValP].Bind();
+	m_Registry.get<syre::Mesh>(m_Pneedle).Render();
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
+	eneedleTextures[GerValE].Bind();
+	m_Registry.get<syre::Mesh>(m_Eneedle).Render();
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
+	m_Registry.get<syre::Texture>(m_Accelerometer).Bind();
 	m_Registry.get<syre::Mesh>(m_Accelerometer).Render();
+
+	if (helptog == true)
+	{
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.28f, 0.1f, 1.0f)));
+		flatShader->SetUniform("offset", glm::vec2(0.57, 0.7f));
+		int obs = obstacleComponent.GetObs();
+		htexTextures[obs].Bind();
+		m_Registry.get<syre::Mesh>(m_Htex).Render();
+
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.28f, 0.1f, 1.0f)));
+		flatShader->SetUniform("offset", glm::vec2(0.54, 0.7f));
+		int value = obstacleComponent.GetValue();
+		hnumberTextures[value].Bind();
+		m_Registry.get<syre::Mesh>(m_Hnumber).Render();
+
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.1f, 1.0f)));
+		flatShader->SetUniform("offset", glm::vec2(0.55, 0.7f));
+		m_Registry.get<syre::Texture>(m_HBox).Bind();
+		m_Registry.get<syre::Mesh>(m_HBox).Render();
+	}
 
 	if (lbutton_down == false)
 	{
@@ -844,20 +958,6 @@ int Scene2::Update()
 			m_Registry.get<syre::Texture>(m_GearboxLever).Bind();
 			m_Registry.get<syre::Mesh>(m_GearboxLever).Render();
 		}
-		else if (-0.75f + 0.6f + (*y * -0.00104f) <= -0.79 && PlayerComponent.GetBrake() == true)
-		{
-			PlayerComponent.SetAction(-4);
-			PlayerComponent.ChangeGears();
-			PlayerComponent.ResetPed();
-			lbutton_down = false;
-		}
-		else if (-0.75f + 0.6f + (*y * -0.00104f) >= -0.71 && PlayerComponent.GetAcc() == true)
-		{
-			PlayerComponent.SetAction(-5);
-			PlayerComponent.ChangeGears();
-			PlayerComponent.ResetPed();
-			lbutton_down = false;
-		}
 		else
 		{
 			lbutton_down = false;
@@ -865,23 +965,21 @@ int Scene2::Update()
 	}
 
 
-	bool Accelerate = PlayerComponent.GetAcc();
-	bool Brake = PlayerComponent.GetBrake();
-	if (Accelerate == false && Brake == false)
+	if (PlayerComponent.GetPosition1() != -3 && PlayerComponent.GetPosition1() != -2 && PlayerComponent.GetPosition2() != -3 && PlayerComponent.GetPosition2() != -2)
 	{
 		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
 		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f));
 		gearboxTextures[0].Bind();
 		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
 	}
-	else if (Brake == true)
+	else if (PlayerComponent.GetPosition1() == -3 || PlayerComponent.GetPosition2() == -3)
 	{
 		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
 		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f));
 		gearboxTextures[2].Bind();
 		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
 	}
-	else if (Accelerate == true)
+	else if (PlayerComponent.GetPosition1() == -2 || PlayerComponent.GetPosition2() == -2)
 	{
 		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
 		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f));
@@ -901,7 +999,7 @@ int Scene2::Update()
 	}
 	if (obstacleComponent.GetEnd() != true)
 	{
-		if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
+		if (EnemyComponent.GetPosition1() == -1 && EnemyComponent.GetPosition2() == -1 && EnemyComponent.GetSabo() == false)
 		{
 			if (speedDemon == true)
 			{
@@ -913,21 +1011,9 @@ int Scene2::Update()
 						break;
 					}
 				}
-				if (EnemyComponent.GetAction1() == -1 && EnemyComponent.GetAction2() == -1)
+				if (EnemyComponent.GetPosition1() == -1 || EnemyComponent.GetPosition2() == -1)
 				{
 					EnemyComponent.SetAcc();
-					EnemyComponent.ChangeGears();
-				}
-				else if (EnemyComponent.GetAction2() == -1)
-				{
-					if (EnemyComponent.GetAcc() == false)
-					{
-						EnemyComponent.SetAcc();
-					}
-					else if (EnemyComponent.GetAcc() == true)
-					{
-						EnemyComponent.ChangeGears();
-					}
 				}
 				if (EnemyComponent.GetGear() == 6)
 				{
@@ -936,25 +1022,27 @@ int Scene2::Update()
 			}
 			else if (speedDemon == false)
 			{
-				if (EnemyComponent.GetGear() == 1)
+				if (EnemyComponent.GetGear() - 1 == 1)
 				{
 					speedDemon = true;
 				}
 				EnemyComponent.SetBrk();
-				EnemyComponent.ChangeGears();
 
 			}
+			EnemyComponent.ResolveCards();
+			PlayerComponent.SetOppGear(EnemyComponent.GetGear());
 		}
-		if (showGear == false)
-		{
-			showGear = true;
-			printf("The enemy's gear level is : ");
-			printf("%i", EnemyComponent.GetGear());
-			printf("\n");
-			printf("\n");
-		}
-
-		if (PlayerComponent.GetAction1() != -1 && PlayerComponent.GetAction2() != -1)
+		/*
+	if (showGear == false)
+	{
+		showGear = true;
+		printf("The enemy's gear level is : ");
+		printf("%i", EnemyComponent.GetGear());
+		printf("\n");
+		printf("\n");
+	}
+	*/
+		if (PlayerComponent.GetEnded() == true)
 		{
 			/// harry i changed the bit below, what did it do lol
 			for (int i = 0; i <= 5; i++)
@@ -1029,13 +1117,13 @@ int Scene2::Update()
 					}
 				}
 			}
-			if (EnemyComponent.GetAction1() == 1 || EnemyComponent.GetAction2() == 1)
+			if (EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 1 || EnemyComponent.GetCard(EnemyComponent.GetPosition2(), true) == 1)
 			{
 				temp = EnemyComponent.GetGear();
 				EnemyComponent.ChangeGears(PlayerComponent.GetGear());
 				PlayerComponent.ChangeGears(temp);
 			}
-			if (PlayerComponent.GetAction1() == 1 || PlayerComponent.GetAction2() == 1)
+			if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1 || PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1)
 			{
 				temp = PlayerComponent.GetGear();
 				PlayerComponent.ChangeGears(EnemyComponent.GetGear());
@@ -1073,8 +1161,12 @@ int Scene2::Update()
 			showGear = false;
 			if (obstacleComponent.GetObs() == 2)
 			{
-				PlayerComponent.SetAction(-6);
-				EnemyComponent.SetAction(-6);
+				PlayerComponent.SetPosition(-6);
+				EnemyComponent.SetPosition(-6);
+			}
+			if (EnemyComponent.GetSabo() == true)
+			{
+				EnemyComponent.ChangeGears(1);
 			}
 		}
 	}
@@ -1115,11 +1207,23 @@ int Scene2::Update()
 		m_Registry.get<syre::PathAnimator>(entity).Update(transform, deltaTime);
 	}
 
+	//framebuffer bound
+	framebuffer->BindBuffer(0);
+	rampTex->Bind(20);
+
 
 	basicShader->Bind();
 	basicShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	basicShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	basicShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	basicShader->SetUniform("u_SpecularStrength", specularOn ? 0.7f : 0.0f);
+	basicShader->SetUniform("u_AmbientStrength", ambientOn ? 0.3f : 0.0f);
+	basicShader->SetUniform("u_DiffuseStrength", diffuseOn ? 1.0f : 0.0f);
+	basicShader->SetUniform("u_CarEmissive", carLighting ? 1 : 0);
+	basicShader->SetUniform("u_RampingSpec", rampOnSpec ? 1 : 0);
+	basicShader->SetUniform("u_RampingDiff", rampOnDiff ? 1 : 0);
+
+
 
 	auto renderView = m_Registry.view<syre::Mesh, syre::Transform, syre::Texture>();
 	for (auto entity : renderView)
@@ -1139,10 +1243,20 @@ int Scene2::Update()
 	}
 
 	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
+	morphShader->Bind();
+
 	morphShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	morphShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	morphShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
-	morphShader->Bind();
+	morphShader->SetUniform("u_SpecularStrength", specularOn ? 0.7f : 0.0f);
+	morphShader->SetUniform("u_AmbientStrength", ambientOn ? 0.3f : 0.0f);
+	morphShader->SetUniform("u_DiffuseStrength", diffuseOn ? 1.0f : 0.0f);
+	morphShader->SetUniform("u_CarEmissive", carLighting ? 1 : 0);
+	morphShader->SetUniform("u_RampingSpec", rampOnSpec ? 1 : 0);
+	morphShader->SetUniform("u_RampingDiff", rampOnDiff ? 1 : 0);
+
+
+
 	for (auto entity : morphRenderView)
 	{
 		float t = morphRenderView.get<syre::MorphRenderer>(entity).Update(deltaTime);
@@ -1162,6 +1276,36 @@ int Scene2::Update()
 		morphListRenderView.get<syre::Texture>(entity).Bind();
 		morphListRenderView.get<syre::TransformList>(entity).ListRender(morphShader, morphListRenderView.get<syre::MorphRenderer>(entity));
 	}
+
+	PostEffect* lastBuffer = framebuffer;
+	framebuffer->UnBindBuffer();
+
+	if (blooming)
+	{
+		bloom->ApplyEffect(lastBuffer);
+
+		lastBuffer = bloom;
+	}
+	if (blurring)
+	{
+		blur->ApplyEffect(lastBuffer);
+
+		lastBuffer = blur;
+	}
+
+	if (correcting)
+	{
+		/*
+		cubes[activeCube].bind(30);
+
+		colorCorrect->ApplyEffect(lastBuffer);
+
+		lastBuffer = colorCorrect;
+		*/
+	}
+	lastBuffer->DrawToScreen();
+
+
 	if (!manualCamera)
 	{
 		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
