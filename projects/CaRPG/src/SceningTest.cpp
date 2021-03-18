@@ -883,7 +883,7 @@ int SceningTest::Update()
 	for (int i = 0; i <= 4; i++)
 	{
 		int cardVal = PlayerComponent.GetCard(i, true);
-		if (PlayerComponent.GetPosition1() == i || PlayerComponent.GetPosition2() == i)
+		if (cardVal != -1 && PlayerComponent.GetPosition1() == i || PlayerComponent.GetPosition2() == i && cardVal != -1)
 		{
 			flatShader->SetUniform("offset", glm::vec2(-0.1f + i / 4.2f, -.42f));
 

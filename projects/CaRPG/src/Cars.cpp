@@ -54,9 +54,17 @@ void Cars::SetAcc()
 		if (Position1 == -3)
 			Position1 = -1;
 		else if (Position1 == -1)
+		{
 			Position1 = -3;
+			Brake = false;
+			Acce = true;
+		}
 		else
+		{
 			Position1 = -3;
+			Brake = false;
+			Acce = true;
+		}
 	}
 }
 
@@ -92,9 +100,17 @@ void Cars::SetBrk()
 		if (Position1 == -3)
 			Position1 = -1;
 		else if (Position1 == -1)
+		{
 			Position1 = -2;
+			Brake = true;
+			Acce = false;
+		}
 		else
+		{
 			Position1 = -2;
+			Brake = true;
+			Acce = false;
+		}
 	}
 }
 
@@ -295,71 +311,79 @@ void Cars::ResolveCards()
 			}
 		}
 	}
-
-	if (Position2 != -1 && Position2 != -2 && Position2 != -3 || Position2 != -6)
+	if (Position2 != -6)
 	{
-		if (Hand[Position2] == 0)
+		if (Position2 != -1 && Position2 != -2 && Position2 != -3)
 		{
-			if (Gear + 3 > 6)
+			if (Hand[Position2] == 0)
+			{
+				if (Gear + 3 > 6)
+				{
+					Gear = 6;
+				}
+				else
+				{
+					Gear += 3;
+				}
+			}
+			else if (Hand[Position2] == 3)
+			{
+				Gear = 1;
+			}
+			else if (Hand[Position2] == 4)
+			{
+				Quick = true;
+				if (Turns != 0)
+				{
+					Turns = 0;
+				}
+			}
+		}
+	}
+
+	if (Position1 == -3 || Position2 == -3)
+	{
+		if (Gear + 1 != 7)
+		{
+			if (Quick == false)
+			{
+				Gear += 1;
+			}
+			else if (Gear + 2 > 6 || Gear > 6)
 			{
 				Gear = 6;
 			}
 			else
 			{
-				Gear += 3;
+				Gear += 2;
 			}
 		}
-		else if (Hand[Position2] == 3)
+	}
+
+	if (Position1 == -2 || Position2 == -2)
+	{
+		if (Gear - 1 != 0)
 		{
-			Gear = 1;
-		}
-		else if (Hand[Position2] == 4)
-		{
-			Quick = true;
-			if (Turns != 0)
+			if (Quick == false)
 			{
-				Turns = 0;
+				Gear -= 1;
+			}
+			else if (Gear - 2 < 0)
+			{
+				Gear = 0;
+			}
+			else
+			{
+				Gear -= 2;
 			}
 		}
 	}
 
-	if (Gear + 1 != 7 && Acce == true)
-	{
-		if (Quick == false)
-		{
-			Gear += 1;
-		}
-		else if (Gear + 2 > 6 || Gear > 6)
-		{
-			Gear = 6;
-		}
-		else
-		{
-			Gear += 2;
-		}
-	}
-
-	if (Gear - 1 != 0 && Brake == true)
-	{
-		if (Quick == false)
-		{
-			Gear -= 1;
-		}
-		else if (Gear - 2 < 0)
-		{
-			Gear = 0;
-		}
-		else
-		{
-			Gear -= 2;
-		}
-	}
-
-	if (Position1 != -1)
+	if (Position1 != -1 && Position1 != -3 && Position1 != -2)
 	{
 		RemoveCard(Position1, true);
 	}
-	else if (Position2 != -1)
+	else if (Position2 != -1 && Position2 != -3 && Position2 != -2)
 	{
 		RemoveCard(Position2, true);
 	}
@@ -389,7 +413,7 @@ int Cars::GetPosition2()
 
 void Cars::SetPosition(int Position)
 {
-	Position1 = Position;
+	Position2 = Position;
 }
 
 void Cars::AddCard(int NewCard, bool object)
