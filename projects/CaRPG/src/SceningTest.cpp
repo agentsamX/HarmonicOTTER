@@ -665,12 +665,12 @@ void SceningTest::Start()
 
 
 
-	cardTextures.push_back(syre::Texture("images/NO2.png"));
-	cardTextures.push_back(syre::Texture("images/Drift.png"));
-	cardTextures.push_back(syre::Texture("images/Slipstream.png"));
-	cardTextures.push_back(syre::Texture("images/EBrake.png"));
-	cardTextures.push_back(syre::Texture("images/QuickShift.png"));
-	cardTextures.push_back(syre::Texture("images/Sabotage.png"));
+	cardTextures.push_back(syre::Texture("images/NO2N.png"));
+	cardTextures.push_back(syre::Texture("images/DriftN.png"));
+	cardTextures.push_back(syre::Texture("images/SlipstreamN.png"));
+	cardTextures.push_back(syre::Texture("images/EBrakeN.png"));
+	cardTextures.push_back(syre::Texture("images/QuickShiftN.png"));
+	cardTextures.push_back(syre::Texture("images/SabotageN.png"));
 
 	hazardTextures.push_back(syre::Texture("images/Apex.png"));
 	hazardTextures.push_back(syre::Texture("images/Hairpin.png"));

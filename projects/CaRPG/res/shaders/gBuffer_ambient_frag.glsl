@@ -60,6 +60,6 @@ void main()
 
     //frag_color=vec4(result,1.0);
 
-	frag_color =textureColor/(distPlay/5)*vec4(result,1.0)+vec4(1/(distPlay),0.0f,1/(distEnemy),0.0f);
+	frag_color =textureColor/(distPlay/3)*vec4(result,1.0)+vec4(1/(distPlay),0.0f,1/(distEnemy),0.0f);
 
 }

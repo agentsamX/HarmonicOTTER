@@ -9,7 +9,7 @@
 #include "MenuScreen.h"
 #include "MidGameMenu.h"
 #include "Scene2.h"
-#include "TutorialScene.h"
+//#include "TutorialScene.h"
 
 //taken from CG tutorials
 extern "C" {

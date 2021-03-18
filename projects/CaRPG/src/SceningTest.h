@@ -74,7 +74,7 @@ private:
 	bool dispIllum = false;
 	entt::entity shadowBuff;
 	entt::entity pixelBuff;
-	bool pixelling = false;
+	bool pixelling = true;
 	entt::entity grainBuff;
 	bool graining = false;
 	entt::entity nightVisBuff;
@@ -106,7 +106,7 @@ private:
 
 	DirectionalLight Sun;
 
-	int activeCube = 3;
+	int activeCube = 0;
 
 	int shadowWidth = 4096;
 	int shadowHeight = 4096;
