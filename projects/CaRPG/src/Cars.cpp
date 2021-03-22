@@ -27,9 +27,15 @@ void Cars::SetAcc()
 	if (Position2 != -6)
 	{
 		if (Position1 == -3)
+		{
 			Position1 = -1;
+			Acce = false;
+		}
 		else if (Position2 == -3)
+		{
 			Position2 = -1;
+			Acce = false;
+		}
 		else if (Position1 == -1 || Position1 == -2)
 		{
 			Position1 = -3;
@@ -52,7 +58,10 @@ void Cars::SetAcc()
 	else
 	{
 		if (Position1 == -3)
+		{
 			Position1 = -1;
+			Acce = false;
+		}
 		else if (Position1 == -1)
 		{
 			Position1 = -3;
@@ -73,9 +82,15 @@ void Cars::SetBrk()
 	if (Position2 != -6)
 	{
 		if (Position1 == -2)
+		{
 			Position1 = -1;
+			Brake = false;
+		}
 		else if (Position2 == -2)
+		{
 			Position2 = -1;
+			Brake = false;
+		}
 		else if (Position1 == -1 || Position1 == -3)
 		{
 			Position1 = -2;
@@ -98,7 +113,10 @@ void Cars::SetBrk()
 	else
 	{
 		if (Position1 == -3)
+		{
 			Position1 = -1;
+			Brake = false;
+		}
 		else if (Position1 == -1)
 		{
 			Position1 = -2;
@@ -142,35 +160,6 @@ void Cars::PlayCard(int Position, int NewGear)
 	AudioEngine& audio = AudioEngine::Instance();
 
 
-	if (Position2 != 6)
-	{
-		if (Position1 != -1 && Position2 != -1 && Acce == true)
-		{
-			Acce = false;
-			Brake = false;
-		}
-
-		if (Position1 != -1 && Position2 != -1 && Brake == true)
-		{
-			Acce = false;
-			Brake = false;
-		}
-	}
-	else
-	{
-		if (Position1 != -1 && Acce == true)
-		{
-			Acce = false;
-			Brake = false;
-		}
-
-		if (Position1 != -1 && Brake == true)
-		{
-			Acce = false;
-			Brake = false;
-		}
-	}
-
 	if (Position2 != -6)
 	{
 		if (Position1 == Position)
@@ -194,6 +183,35 @@ void Cars::PlayCard(int Position, int NewGear)
 			Position1 = Position;
 		else
 			Position1 = Position;
+	}
+
+	if (Position2 != 6)
+	{
+		if (Position1 != -3 && Position2 != -3 && Acce == true)
+		{
+			Acce = false;
+			Brake = false;
+		}
+
+		if (Position1 != -2 && Position2 != -2 && Brake == true)
+		{
+			Acce = false;
+			Brake = false;
+		}
+	}
+	else
+	{
+		if (Position1 != -1 && Acce == true)
+		{
+			Acce = false;
+			Brake = false;
+		}
+
+		if (Position1 != -1 && Brake == true)
+		{
+			Acce = false;
+			Brake = false;
+		}
 	}
 
 	if (Hand[Position] == 0)
