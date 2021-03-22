@@ -50,7 +50,8 @@ void Cars::SetAcc()
 		}
 		else
 		{
-			Position1 = -3;
+			Position1 = Position2;
+			Position2 = -3;
 			Brake = false;
 			Acce = true;
 		}
@@ -105,7 +106,8 @@ void Cars::SetBrk()
 		}
 		else
 		{
-			Position1 = -2;
+			Position1 = Position2;
+			Position2 = -2;
 			Brake = true;
 			Acce = false;
 		}
@@ -172,7 +174,8 @@ void Cars::PlayCard(int Position, int NewGear)
 			Position2 = Position;
 		else
 		{
-			Position1 = Position;
+			Position1 = Position2;
+			Position2 = Position;
 		}
 	}
 	else
@@ -270,6 +273,15 @@ void Cars::SetOppGear(int gear)
 
 void Cars::ResetTurn()
 {
+	if (Position1 != -1 && Position1 != -3 && Position1 != -2)
+	{
+		RemoveCard(Position1, true);
+	}
+	else if (Position2 != -1 && Position2 != -3 && Position2 != -2)
+	{
+		RemoveCard(Position2, true);
+	}
+
 	Draw();
 	Position1 = -1;
 	Position2 = -1;
@@ -395,15 +407,6 @@ void Cars::ResolveCards()
 				Gear -= 2;
 			}
 		}
-	}
-
-	if (Position1 != -1 && Position1 != -3 && Position1 != -2)
-	{
-		RemoveCard(Position1, true);
-	}
-	else if (Position2 != -1 && Position2 != -3 && Position2 != -2)
-	{
-		RemoveCard(Position2, true);
 	}
 
 	PEnd = true;

@@ -102,14 +102,9 @@ void SceningTest::Start()
 	entt::entity Track = m_Registry.create();
 	m_Hazard = m_Registry.create();
 	m_Gearbox = m_Registry.create();
-	m_GearboxLever = m_Registry.create();
-	m_Accelerometer = m_Registry.create();
-	m_Needle = m_Registry.create();
+	m_Gearbox2 = m_Registry.create();
 	m_PGears = m_Registry.create();
 	m_EGears = m_Registry.create();
-	m_AccRect = m_Registry.create();
-	m_Pneedle = m_Registry.create();
-	m_Eneedle = m_Registry.create();
 	m_HBox = m_Registry.create();
 	m_Htex = m_Registry.create();
 	m_Hnumber = m_Registry.create();
@@ -138,24 +133,13 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Transform>(m_Hazard, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Hazard, "images/Apex.png");
 
-	m_Registry.emplace<syre::Mesh>(m_Gearbox, "objects/Gearbox.obj");
+	m_Registry.emplace<syre::Mesh>(m_Gearbox, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Gearbox, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Gearbox, "images/GearBoxNeutral.png");
 
-	m_Registry.emplace<syre::Mesh>(m_GearboxLever, "objects/Lever.obj");
-	m_Registry.emplace<syre::Transform>(m_GearboxLever, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_GearboxLever, "images/GearboxLever.png");
-	
-	m_Registry.emplace<syre::Mesh>(m_Accelerometer, "objects/Accelerometer.obj");
-	m_Registry.emplace<syre::Transform>(m_Accelerometer, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Accelerometer, "images/Accelerometer.png");
-	
-	m_Registry.emplace<syre::MorphRenderer>(m_Needle);
-	m_Registry.emplace<syre::Transform>(m_Needle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Needle, "images/Finish.png");
-	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("objects/NeedleLeft.obj");
-	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("objects/Needle.obj");
-	m_Registry.get<syre::MorphRenderer>(m_Needle).AddFrame("objects/NeedleRight.obj");
+	m_Registry.emplace<syre::Mesh>(m_Gearbox2, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Gearbox2, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Gearbox2, "images/New_Gearbox.png");
 
 	m_Registry.emplace<syre::Mesh>(m_TransparentBlack, "objects/RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_TransparentBlack, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
@@ -168,18 +152,6 @@ void SceningTest::Start()
 	m_Registry.emplace<syre::Mesh>(m_PGears, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_PGears, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_PGears, "images/PauseMenu.png");
-
-	m_Registry.emplace<syre::Mesh>(m_AccRect, "objects/Accelerometer.obj");
-	m_Registry.emplace<syre::Transform>(m_AccRect, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_AccRect, "images/Accelerometer_rec.png");
-
-	m_Registry.emplace<syre::Mesh>(m_Pneedle, "objects/Accelerometer.obj");
-	m_Registry.emplace<syre::Transform>(m_Pneedle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Pneedle, "images/Pneedle1.png");
-
-	m_Registry.emplace<syre::Mesh>(m_Eneedle, "objects/Accelerometer.obj");
-	m_Registry.emplace<syre::Transform>(m_Eneedle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Eneedle, "images/Eneedle1.png");
 
 	m_Registry.emplace<syre::Mesh>(m_EGears, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_EGears, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
@@ -677,9 +649,9 @@ void SceningTest::Start()
 	hazardTextures.push_back(syre::Texture("images/Chicane.png"));
 	hazardTextures.push_back(syre::Texture("images/Rocks.png"));
 
-	gearboxTextures.push_back(syre::Texture("images/GearBoxNeutral.png"));
-	gearboxTextures.push_back(syre::Texture("images/GearBoxGasPressed.png"));
-	gearboxTextures.push_back(syre::Texture("images/GearBoxBrakePressed.png"));
+	gearboxTextures.push_back(syre::Texture("images/Pedals_Neutral.png"));
+	gearboxTextures.push_back(syre::Texture("images/Pedals_Gas.png"));
+	gearboxTextures.push_back(syre::Texture("images/Pedals_Brake.png"));
 	
 	//accelerometerTexture.push_back(syre::Texture("Accelerometer.png"));
 
@@ -898,44 +870,24 @@ int SceningTest::Update()
 			m_Registry.get<syre::Mesh>(m_Card).Render();
 		}
 	}
-
+	
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.09f)));
 	flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
 	int ObsVal = obstacleComponent.GetObs();
 	hazardTextures[ObsVal].Bind();
 	m_Registry.get<syre::Mesh>(m_Hazard).Render();
 
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.0325f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.52f, -0.95f));
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.87, -0.62f));
 	int GerValP = PlayerComponent.GetGear();
 	pGearTextures[GerValP].Bind();
 	m_Registry.get<syre::Mesh>(m_PGears).Render();
 
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.0325f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.95f));
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.87, -0.62f));
 	int GerValE = EnemyComponent.GetGear();
 	eGearTextures[GerValE].Bind();
 	m_Registry.get<syre::Mesh>(m_EGears).Render();
-
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.04f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.50f, -0.96f));
-	m_Registry.get<syre::Texture>(m_AccRect).Bind();
-	m_Registry.get<syre::Mesh>(m_AccRect).Render();
-
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
-	pneedleTextures[GerValP].Bind();
-	m_Registry.get<syre::Mesh>(m_Pneedle).Render();
-
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
-	eneedleTextures[GerValE].Bind();
-	m_Registry.get<syre::Mesh>(m_Eneedle).Render();
-
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
-	m_Registry.get<syre::Texture>(m_Accelerometer).Bind();
-	m_Registry.get<syre::Mesh>(m_Accelerometer).Render();
 
 	if (helptog == true)
 	{
@@ -945,11 +897,14 @@ int SceningTest::Update()
 		htexTextures[obs].Bind();
 		m_Registry.get<syre::Mesh>(m_Htex).Render();
 
-		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.28f, 0.1f, 1.0f)));
-		flatShader->SetUniform("offset", glm::vec2(0.54, 0.7f));
-		int value = obstacleComponent.GetValue();
-		hnumberTextures[value].Bind();
-		m_Registry.get<syre::Mesh>(m_Hnumber).Render();
+		if (obstacleComponent.GetObs() != 3)
+		{
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.28f, 0.1f, 1.0f)));
+			flatShader->SetUniform("offset", glm::vec2(0.54, 0.7f));
+			int value = obstacleComponent.GetValue();
+			hnumberTextures[value].Bind();
+			m_Registry.get<syre::Mesh>(m_Hnumber).Render();
+		}
 
 		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.1f, 1.0f)));
 		flatShader->SetUniform("offset", glm::vec2(0.55, 0.7f));
@@ -957,32 +912,11 @@ int SceningTest::Update()
 		m_Registry.get<syre::Mesh>(m_HBox).Render();
 	}
 
-	if (lbutton_down == false)
-	{
-		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
-		flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f));
-		m_Registry.get<syre::Texture>(m_GearboxLever).Bind();
-		m_Registry.get<syre::Mesh>(m_GearboxLever).Render();
-	}
-	if (lbutton_down == true)
-	{
-		double* x = new double;
-		double* y = new double;
-
-		glfwGetCursorPos(window, x, y);
-		if (-0.75f + 0.6f + (*y * -0.00104f) >= -0.79 && -0.75f + 0.6f + (*y * -0.00104f) <= -0.71)
-		{
-			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
-			flatShader->SetUniform("offset", glm::vec2(-0.87, -0.75f + 0.6f + (*y * -0.00104f)));
-			m_Registry.get<syre::Texture>(m_GearboxLever).Bind();
-			m_Registry.get<syre::Mesh>(m_GearboxLever).Render();
-		}
-		else
-		{
-			lbutton_down = false;
-		}
-	}
-
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.87, -0.62f));
+	m_Registry.get<syre::Texture>(m_Gearbox2).Bind();
+	m_Registry.get<syre::Mesh>(m_Gearbox2).Render();
+	
 
 	if (PlayerComponent.GetBrk() == false && PlayerComponent.GetAcc() == false)
 	{
@@ -1136,13 +1070,13 @@ int SceningTest::Update()
 					}
 				}
 			}
-			if (EnemyComponent.GetPosition1() != -1 && EnemyComponent.GetPosition2() != -1 && EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 1 || EnemyComponent.GetCard(EnemyComponent.GetPosition2(),true) == 1)
+			if (EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 1 || EnemyComponent.GetCard(EnemyComponent.GetPosition2(),true) == 1)
 			{
 				temp = EnemyComponent.GetGear();
 				EnemyComponent.ChangeGears(PlayerComponent.GetGear());
 				PlayerComponent.ChangeGears(temp);
 			}
-			if (EnemyComponent.GetPosition1() != -1 && EnemyComponent.GetPosition2() != -1 && PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1 || PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1)
+			if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1 || PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1)
 			{
 				temp = PlayerComponent.GetGear();
 				PlayerComponent.ChangeGears(EnemyComponent.GetGear());
@@ -1212,13 +1146,6 @@ int SceningTest::Update()
 			m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(1.0, true);
 		}
 	}
-	flatMorphShader->Bind();
-	flatMorphShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.12f)));
-	flatMorphShader->SetUniform("offset", glm::vec2(-0.55, -0.97f));
-	flatMorphShader->SetUniform("t", 0.0f);
-	m_Registry.get<syre::MorphRenderer>(m_Needle).ManualFrameSet(0);
-	m_Registry.get<syre::Texture>(m_Needle).Bind();
-	m_Registry.get<syre::MorphRenderer>(m_Needle).Render();
 	auto pathView = m_Registry.view<syre::PathAnimator, syre::Transform>();
 	for (auto entity : pathView)
 	{
@@ -1815,13 +1742,7 @@ int SceningTest::KeyEvents(float delta)
 			{
 				if (PlayerComponent.GetPosition1() != -1 && PlayerComponent.GetPosition1() != -2 && PlayerComponent.GetPosition1() != -3)
 				{
-					if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 2)
-					{
-						temp = PlayerComponent.GetGear();
-						PlayerComponent.ChangeGears(EnemyComponent.GetGear());
-						EnemyComponent.ChangeGears(temp);
-					}
-					else if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 5)
+					if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 5)
 					{
 						EnemyComponent.SetSabo();
 					}
@@ -1829,13 +1750,7 @@ int SceningTest::KeyEvents(float delta)
 
 				if (PlayerComponent.GetPosition2() != -1 && PlayerComponent.GetPosition2() != -2 && PlayerComponent.GetPosition2() != -3)
 				{
-					if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 2)
-					{
-						temp = PlayerComponent.GetGear();
-						PlayerComponent.ChangeGears(EnemyComponent.GetGear());
-						EnemyComponent.ChangeGears(temp);
-					}
-					else if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 5)
+					if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 5)
 					{
 						EnemyComponent.SetSabo();
 					}
