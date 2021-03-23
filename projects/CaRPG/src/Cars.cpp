@@ -356,6 +356,10 @@ void Cars::ResolveCards()
 					Gear += 3;
 				}
 			}
+			else if (Hand[Position2] == 2)
+			{
+				Gear = Oppgear;
+			}
 			else if (Hand[Position2] == 3)
 			{
 				Gear = 1;

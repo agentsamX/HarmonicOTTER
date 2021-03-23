@@ -1742,7 +1742,11 @@ int SceningTest::KeyEvents(float delta)
 			{
 				if (PlayerComponent.GetPosition1() != -1 && PlayerComponent.GetPosition1() != -2 && PlayerComponent.GetPosition1() != -3)
 				{
-					if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 5)
+					if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 2)
+					{
+						EnemyComponent.ChangeGears(PlayerComponent.GetGear());
+					}
+					else if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 5)
 					{
 						EnemyComponent.SetSabo();
 					}
@@ -1750,7 +1754,11 @@ int SceningTest::KeyEvents(float delta)
 
 				if (PlayerComponent.GetPosition2() != -1 && PlayerComponent.GetPosition2() != -2 && PlayerComponent.GetPosition2() != -3)
 				{
-					if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 5)
+					if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 2)
+					{
+						EnemyComponent.ChangeGears(PlayerComponent.GetGear());
+					}
+					else if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 5)
 					{
 						EnemyComponent.SetSabo();
 					}
