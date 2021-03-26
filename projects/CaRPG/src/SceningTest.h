@@ -80,7 +80,7 @@ private:
 	Shader::sptr basicShader;
 	Shader::sptr flatShader;
 	Shader::sptr morphShader;
-	Shader::sptr flatMorphShader;
+	//Shader::sptr flatMorphShader;
 	Shader::sptr simpleDepthShader;
 	bool manualCamera = false;
 	float Elapsedtime = 0;
@@ -105,4 +105,10 @@ private:
 
 	int shadowWidth = 4096;
 	int shadowHeight = 4096;
+
+
+	float ud = 200.0f;
+	float lr = 200.0f;
+	float unear = 80.0f;
+	float ufar = 80.0f;
 };
