@@ -54,7 +54,7 @@ void SceningTest::Start()
 	Sun._ambientCol = glm::vec4(1.0, 1.0, 1.0,1.0);
 	Sun._lightAmbientPow = 0.2;
 	Sun._lightCol=glm::vec4(1.0, 1.0, 1.0,1.0);
-	Sun._lightDirection = glm::vec4(-0.170,1.6,-2.530,0.0);
+	Sun._lightDirection = glm::vec4(1.370,2.760,-3.090,0.0);
 	Sun._lightSpecularPow = 0.7;
 	Sun._shadowBias = 0.05;
 	
@@ -783,13 +783,12 @@ void SceningTest::Start()
 	morphShader->SetUniform("u_Shininess", shininess);
 
 
-	flatMorphShader = Shader::Create();
+	/*flatMorphShader = Shader::Create();
 	flatMorphShader->LoadShaderPartFromFile("flatMorphVert.glsl", GL_VERTEX_SHADER);
 	flatMorphShader->LoadShaderPartFromFile("flatFrag.glsl", GL_FRAGMENT_SHADER);
-	flatMorphShader->Link();
+	flatMorphShader->Link();*/
 
 	simpleDepthShader = Shader::Create();
-	Shader::sptr simpleDepthShader = Shader::Create();
 	simpleDepthShader->LoadShaderPartFromFile("shaders/simple_depth_vert.glsl", GL_VERTEX_SHADER);
 	simpleDepthShader->LoadShaderPartFromFile("shaders/simple_depth_frag.glsl", GL_FRAGMENT_SHADER);
 	simpleDepthShader->Link();
@@ -1004,6 +1003,7 @@ int SceningTest::Update()
 	{
 		m_Registry.get<syre::PathAnimator>(m_PCar).Stop();
 		m_Registry.get<syre::PathAnimator>(m_enemy).Stop();
+		deltaTime = deltaTime / 8.0f;
 	}
 	else if (!(m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() && m_Registry.get<syre::PathAnimator>(m_enemy).HitMax()))
 	{
@@ -1218,10 +1218,10 @@ int SceningTest::Update()
 		auto& transform = m_Registry.get<syre::Transform>(entity);
 		m_Registry.get<syre::PathAnimator>(entity).Update(transform, deltaTime);
 	}
-
+	flatShader->UnBind();
 	auto renderView = m_Registry.view<syre::Mesh, syre::Transform, syre::Texture>();
 
-	glm::mat4 lightProjectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, -30.0f, 30.0f);
+	glm::mat4 lightProjectionMatrix = glm::ortho(-lr, lr, -ud, ud, -unear, ufar);
 	glm::mat4 lightViewMatrix = glm::lookAt(glm::vec3(-illum->GetSunRef()._lightDirection), glm::vec3(), glm::vec3(0.0f, 0.0f, 1.0f));
 	glm::mat4 lightSpaceViewProj = lightProjectionMatrix * lightViewMatrix;
 	illum->SetLightSpaceViewProj(lightSpaceViewProj);
@@ -1233,8 +1233,8 @@ int SceningTest::Update()
 	for (auto entity : renderView)
 	{
 		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
-		basicShader->SetUniformMatrix("u_LightSpaceMatrix", lightSpaceViewProj);
-		basicShader->SetUniformMatrix("u_Model", transform);
+		simpleDepthShader->SetUniformMatrix("u_LightSpaceMatrix", lightSpaceViewProj);
+		simpleDepthShader->SetUniformMatrix("u_Model", transform);
 		renderView.get<syre::Texture>(entity).Bind();
 		renderView.get<syre::Mesh>(entity).Render();
 	}
@@ -1391,7 +1391,7 @@ int SceningTest::Update()
 
 	if (!manualCamera)
 	{
-		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
+		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 5.0f, 5.0f));
 	}
 	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition() - camComponent->GetPosition()));
 	/*m_Registry.get<syre::TransformList>(m_Particles1).UpdateCurPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
@@ -1524,6 +1524,11 @@ void SceningTest::ImGUIUpdate()
 					}
 				}
 				ImGui::Checkbox("Display Illumination Accumulation", &dispIllum);
+				ImGui::SliderFloat("Left and Right ortho", &lr, 0.0f, 2000.0f);
+				ImGui::SliderFloat("Up and Down ortho", &ud, 0.0f, 2000.0f);
+				ImGui::SliderFloat("Near ortho", &unear, 0.0f, 2000.0f);
+				ImGui::SliderFloat("Far ortho", &ufar, 0.0f, 2000.0f);
+
 			}
 			if (ImGui::CollapsingHeader("Post Processing"))
 			{
@@ -1579,8 +1584,9 @@ void SceningTest::ImGUIUpdate()
 			if (manualCamera)
 			{
 				ImGui::SliderFloat3("Camera Position", &camPos.x,-200.f, 200.f);
+				camera->SetPosition(camPos);
+
 			}
-			camera->SetPosition(camPos);
 			if (ImGui::Button("1"))
 			{
 				dispG = false;
