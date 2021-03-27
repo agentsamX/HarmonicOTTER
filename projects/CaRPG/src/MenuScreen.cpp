@@ -26,7 +26,7 @@ void MenuScreen::Start()
 
 	AudioEngine& engine = AudioEngine::Instance();
 
-	AudioEvent& music = engine.CreateEventW("Menu Music", "{aefe09ea-1546-4ae9-9982-bf60713fdd02}");
+	AudioEvent& music = engine.GetEvent("Menu Music");
 	music.Play();
 
 }

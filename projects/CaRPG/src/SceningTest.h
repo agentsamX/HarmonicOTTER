@@ -99,6 +99,8 @@ private:
 	bool carLighting = true;
 	bool rampOnSpec = false;
 	bool rampOnDiff = false;
+	int start = 0;
+	float bootToMenu = 0.0f;
 
 	Texture2D::sptr rampTex;
 
@@ -112,6 +114,6 @@ private:
 
 	float ud = 200.0f;
 	float lr = 200.0f;
-	float unear = 80.0f;
-	float ufar = 80.0f;
+	float unear = 160.0f;
+	float ufar = 160.0f;
 };

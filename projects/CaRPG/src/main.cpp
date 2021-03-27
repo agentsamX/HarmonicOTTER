@@ -9,7 +9,7 @@
 #include "MenuScreen.h"
 #include "MidGameMenu.h"
 #include "Scene2.h"
-//#include "TutorialScene.h"
+#include "TutorialScene.h"
 
 //taken from CG tutorials
 extern "C" {
@@ -194,7 +194,11 @@ int main()
 	engine.LoadBank("Master");
 	engine.LoadBank("Master.strings");
 	engine.LoadBus("Music", "{65daa684-95d9-408f-b23f-d587e44e016b}");
-
+	engine.CreateEventW("Menu Music", "{aefe09ea-1546-4ae9-9982-bf60713fdd02}");
+	engine.CreateEventW("Ambient", "{18c986e1-88b0-45ce-82c7-567d3447f2e8}");
+	engine.CreateEventW("Slipstream", "{50d08bc6-b9f1-4411-906f-69506bd36f13}");
+	engine.CreateEventW("Drift", "{3eb39553-5d08-456c-998b-822942c1f860}");
+	engine.CreateEventW("MultiNitro", "{6d8f789b-95db-4007-bd66-f26c1f377b3c}");
 	curScene->Start();
 
 	camera = curScene->GetCam();
@@ -222,6 +226,30 @@ int main()
 				delete scenes[scenes.size() - 1];
 				scenes.pop_back();
 				scenes.push_back(new SceningTest(window)); //////////////////////
+				curScene = scenes[2];
+
+				curScene->Start();
+				camera = curScene->GetCam();
+				GlfwWindowResizedCallback(window, 1280, 720);
+				curScene->Update();
+			}
+			else if (returned == 2)
+			{
+				delete scenes[scenes.size() - 1];
+				scenes.pop_back();
+				scenes.push_back(new Scene2(window)); //////////////////////
+				curScene = scenes[2];
+
+				curScene->Start();
+				camera = curScene->GetCam();
+				GlfwWindowResizedCallback(window, 1280, 720);
+				curScene->Update();
+			}
+			else if (returned == 3)
+			{
+				delete scenes[scenes.size() - 1];
+				scenes.pop_back();
+				scenes.push_back(new TutorialScene(window)); //////////////////////
 				curScene = scenes[2];
 
 				curScene->Start();

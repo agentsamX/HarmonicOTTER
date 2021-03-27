@@ -2,7 +2,6 @@
 #include "Cars.h"
 #include "Obstacles.h"
 
-int start = 0;
 
 SceningTest::SceningTest(GLFWwindow* inWind)
 {
@@ -76,12 +75,12 @@ void SceningTest::Start()
 	AudioEvent& oldMusic = engine.GetEvent("Menu Music");
 	oldMusic.Stop();
 
-	AudioEvent& newMusic = engine.CreateEventW("Ambient", "{18c986e1-88b0-45ce-82c7-567d3447f2e8}");
+	AudioEvent& newMusic = engine.GetEvent("Ambient");
 	newMusic.Play();
 
-	AudioEvent& slipstream = engine.CreateEventW("Slipstream", "{50d08bc6-b9f1-4411-906f-69506bd36f13}");
-	AudioEvent& drift = engine.CreateEventW("Drift", "{3eb39553-5d08-456c-998b-822942c1f860}");
-	AudioEvent& multiNitro = engine.CreateEventW("MultiNitro", "{6d8f789b-95db-4007-bd66-f26c1f377b3c}");
+	AudioEvent& slipstream = engine.GetEvent("Slipstream");
+	AudioEvent& drift = engine.GetEvent("Drift");
+	AudioEvent& multiNitro = engine.GetEvent("MultiNitro");
 
 	slipstream.StopImmediately();
 	drift.StopImmediately();
@@ -840,7 +839,7 @@ int SceningTest::Update()
 	illum->Clear();
 	pixel->Clear();
 	vision->Clear();
-	grain->Clear();;
+	grain->Clear();
 
 	AudioEngine& engine = AudioEngine::Instance();
 
@@ -1203,6 +1202,11 @@ int SceningTest::Update()
 				//game is finished finished
 				m_Registry.get<syre::PathAnimator>(m_enemy).Stop();
 				//this is where we could go to next level
+				bootToMenu += deltaTime;
+				if (bootToMenu > 7.0f)
+				{
+					return -1;
+				}
 			}
 		}
 		else if (PlayerComponent.GetScore() < EnemyComponent.GetScore())
@@ -1210,6 +1214,11 @@ int SceningTest::Update()
 			printf("ENEMY WINS");
 			m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(1.0, false);
 			m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(1.0, true);
+			bootToMenu += deltaTime;
+			if (bootToMenu > 7.0f)
+			{
+				return -1;
+			}
 		}
 	}
 	auto pathView = m_Registry.view<syre::PathAnimator, syre::Transform>();
@@ -1403,6 +1412,32 @@ int SceningTest::Update()
 
 int SceningTest::PausedUpdate()
 {
+	PostEffect* framebuffer = &m_Registry.get<PostEffect>(sceneBuff);
+	CubeCoCoEffect* colorCorrect = &m_Registry.get<CubeCoCoEffect>(cocoBuff);
+	CombinedBloom* bloom = &m_Registry.get<CombinedBloom>(bloomBuff);
+	Blur* blur = &m_Registry.get<Blur>(blurBuff);
+	GBuffer* g = &m_Registry.get<GBuffer>(gBuff);
+	IlluminationBuffer* illum = &m_Registry.get<IlluminationBuffer>(illumBuff);
+	Framebuffer* shadow = &m_Registry.get<Framebuffer>(shadowBuff);
+	Pixelate* pixel = &m_Registry.get<Pixelate>(pixelBuff);
+	NightVision* vision = &m_Registry.get<NightVision>(nightVisBuff);
+	FilmGrain* grain = &m_Registry.get<FilmGrain>(grainBuff);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+	framebuffer->Clear();
+	colorCorrect->Clear();
+	bloom->Clear();
+	blur->Clear();
+	g->Clear();
+	shadow->Clear();
+	illum->Clear();
+	pixel->Clear();
+	vision->Clear();
+	grain->Clear();
+
 	thisFrame = glfwGetTime();
 	float deltaTime = thisFrame - lastFrame;
 	auto& camComponent = camera;
@@ -1415,14 +1450,61 @@ int SceningTest::PausedUpdate()
 		return -1;
 	}
 	
+	flatShader->Bind();
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+	flatShader->SetUniform("offset", glm::vec2(0.0, 0.0f));
+	flatShader->SetUniform("aspect", camera->GetAspect());
+	m_Registry.get<syre::Texture>(m_PauseMenu).Bind();
+	m_Registry.get<syre::Mesh>(m_PauseMenu).Render();
+
+
 	
+	auto renderView = m_Registry.view<syre::Mesh, syre::Transform, syre::Texture>();
+
+	glm::mat4 lightProjectionMatrix = glm::ortho(-lr, lr, -ud, ud, -unear, ufar);
+	glm::mat4 lightViewMatrix = glm::lookAt(glm::vec3(-illum->GetSunRef()._lightDirection), glm::vec3(), glm::vec3(0.0f, 0.0f, 1.0f));
+	glm::mat4 lightSpaceViewProj = lightProjectionMatrix * lightViewMatrix;
+	illum->SetLightSpaceViewProj(lightSpaceViewProj);
+	illum->SetCamPos(camera->GetPosition());
+
+	glViewport(0, 0, shadowWidth, shadowHeight);
+	simpleDepthShader->Bind();
+	shadow->Bind();
+	for (auto entity : renderView)
+	{
+		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
+		simpleDepthShader->SetUniformMatrix("u_LightSpaceMatrix", lightSpaceViewProj);
+		simpleDepthShader->SetUniformMatrix("u_Model", transform);
+		renderView.get<syre::Texture>(entity).Bind();
+		renderView.get<syre::Mesh>(entity).Render();
+	}
+	simpleDepthShader->UnBind();
+	shadow->Unbind();
+
+	//framebuffer bound
+	//framebuffer->BindBuffer(0);
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+	glViewport(0, 0, width, height);
+	glDisable(GL_BLEND);
+
+	g->Bind();
+	rampTex->Bind(20);
+
 
 	basicShader->Bind();
 	basicShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	basicShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	basicShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	basicShader->SetUniform("u_SpecularStrength", specularOn ? 0.7f : 0.0f);
+	basicShader->SetUniform("u_AmbientStrength", ambientOn ? 0.3f : 0.0f);
+	basicShader->SetUniform("u_DiffuseStrength", diffuseOn ? 1.0f : 0.0f);
+	basicShader->SetUniform("u_CarEmissive", carLighting ? 1 : 0);
+	basicShader->SetUniform("u_RampingSpec", rampOnSpec ? 1 : 0);
+	basicShader->SetUniform("u_RampingDiff", rampOnDiff ? 1 : 0);
 
-	auto renderView = m_Registry.view<syre::Mesh, syre::Transform, syre::Texture>();
+
+
 	for (auto entity : renderView)
 	{
 		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
@@ -1432,17 +1514,29 @@ int SceningTest::PausedUpdate()
 		renderView.get<syre::Texture>(entity).Bind();
 		renderView.get<syre::Mesh>(entity).Render();
 	}
+
 	auto listRenderView = m_Registry.view<syre::Mesh, syre::TransformList, syre::Texture>();
 	for (auto entity : listRenderView)
 	{
 		listRenderView.get<syre::Texture>(entity).Bind();
 		listRenderView.get<syre::TransformList>(entity).ListRender(basicShader, listRenderView.get<syre::Mesh>(entity), deltaTime);
 	}
+
 	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
+	morphShader->Bind();
+
 	morphShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	morphShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	morphShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
-	morphShader->Bind();
+	morphShader->SetUniform("u_SpecularStrength", specularOn ? 0.7f : 0.0f);
+	morphShader->SetUniform("u_AmbientStrength", ambientOn ? 0.3f : 0.0f);
+	morphShader->SetUniform("u_DiffuseStrength", diffuseOn ? 1.0f : 0.0f);
+	morphShader->SetUniform("u_CarEmissive", carLighting ? 1 : 0);
+	morphShader->SetUniform("u_RampingSpec", rampOnSpec ? 1 : 0);
+	morphShader->SetUniform("u_RampingDiff", rampOnDiff ? 1 : 0);
+
+
+
 	for (auto entity : morphRenderView)
 	{
 		float t = morphRenderView.get<syre::MorphRenderer>(entity).GetT();
@@ -1463,24 +1557,87 @@ int SceningTest::PausedUpdate()
 		morphListRenderView.get<syre::TransformList>(entity).ListRender(morphShader, morphListRenderView.get<syre::MorphRenderer>(entity));
 	}
 
+	g->Unbind();
+
+	shadow->BindDepthAsTexture(30);
+
+	illum->SetPlayerPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	illum->SetEnemyPos(m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	illum->ApplyEffect(g);
+
+	shadow->UnbindTexture(30);
+
+	if (dispG)
+	{
+		if (indivgBuff)
+			g->DrawBuffersToScreen(colTarg);
+		else
+			g->DrawBuffersToScreen();
+	}
+	else if (dispIllum)
+	{
+		illum->DrawIllumBuffer();
+	}
+	else
+	{
+		PostEffect* lastBuffer = illum;
+		if (nightVising)
+		{
+			vision->ApplyEffect(lastBuffer);
+
+			lastBuffer = vision;
+		}
+		if (blooming)
+		{
+			bloom->ApplyEffect(lastBuffer);
+
+			lastBuffer = bloom;
+		}
+		if (blurring)
+		{
+			blur->ApplyEffect(lastBuffer);
+
+			lastBuffer = blur;
+		}
+		if (correcting)
+		{
+			cubes[activeCube].bind(30);
+
+			colorCorrect->ApplyEffect(lastBuffer);
+
+			lastBuffer = colorCorrect;
+		}
+		if (pixelling)
+		{
+			pixel->ApplyEffect(lastBuffer);
+
+			lastBuffer = pixel;
+		}
+		if (graining)
+		{
+			grain->ApplyEffect(lastBuffer);
+
+			lastBuffer = grain;
+		}
+
+
+		lastBuffer->DrawToScreen();
+	}
+	//PostEffect* lastBuffer = framebuffer;
+	//framebuffer->UnBindBuffer();
+
+
+
+
 	if (!manualCamera)
 	{
-		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
+		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 5.0f, 5.0f));
 	}
 	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition() - camComponent->GetPosition()));
+	/*m_Registry.get<syre::TransformList>(m_Particles1).UpdateCurPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	m_Registry.get<syre::TransformList>(m_Particles2).UpdateCurPos(m_Registry.get<syre::Transform>(m_enemy).GetPosition());*/
 
-	flatShader->Bind();
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(0.0, 0.0f));
-	flatShader->SetUniform("aspect", camera->GetAspect());
-	m_Registry.get<syre::Texture>(m_PauseMenu).Bind();
-	m_Registry.get<syre::Mesh>(m_PauseMenu).Render();
-
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(1.2f)));
-	flatShader->SetUniform("offset", glm::vec2(0.0, 0.0f));
-	flatShader->SetUniform("aspect", camera->GetAspect());
-	m_Registry.get<syre::Texture>(m_TransparentBlack).Bind();
-	m_Registry.get<syre::Mesh>(m_TransparentBlack).Render();
+	
 
 
 	lastFrame = thisFrame;

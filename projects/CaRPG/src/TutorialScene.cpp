@@ -2,7 +2,6 @@
 #include "Cars.h"
 #include "Obstacles.h"
 
-int startTut = 0;
 
 TutorialScene::TutorialScene(GLFWwindow* inWind)
 {
@@ -62,12 +61,12 @@ void TutorialScene::Start()
 	AudioEvent& oldMusic = engine.GetEvent("Menu Music");
 	oldMusic.Stop();
 
-	AudioEvent& newMusic = engine.CreateEventW("Ambient", "{18c986e1-88b0-45ce-82c7-567d3447f2e8}");
+	AudioEvent& newMusic = engine.GetEvent("Ambient");
 	newMusic.Play();
 
-	AudioEvent& slipstream = engine.CreateEventW("Slipstream", "{50d08bc6-b9f1-4411-906f-69506bd36f13}");
-	AudioEvent& drift = engine.CreateEventW("Drift", "{3eb39553-5d08-456c-998b-822942c1f860}");
-	AudioEvent& multiNitro = engine.CreateEventW("MultiNitro", "{6d8f789b-95db-4007-bd66-f26c1f377b3c}");
+	AudioEvent& slipstream = engine.GetEvent("Slipstream");
+	AudioEvent& drift = engine.GetEvent("Drift");
+	AudioEvent& multiNitro = engine.GetEvent("MultiNitro");
 
 	slipstream.StopImmediately();
 	drift.StopImmediately();
@@ -83,7 +82,6 @@ void TutorialScene::Start()
 	entt::entity Track = m_Registry.create();
 	m_Hazard = m_Registry.create();
 	m_Gearbox = m_Registry.create();
-	m_Accelerometer = m_Registry.create();
 	//m_Needle = m_Registry.create();
 	/*m_Particles1 = m_Registry.create();
 	m_Particles2 = m_Registry.create();*/
@@ -114,9 +112,6 @@ void TutorialScene::Start()
 	m_Registry.emplace<syre::Transform>(m_Gearbox, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Gearbox, "images/GearBoxNeutral.png");
 
-	m_Registry.emplace<syre::Mesh>(m_Accelerometer, "objects/Accelerometer.obj");
-	m_Registry.emplace<syre::Transform>(m_Accelerometer, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
-	m_Registry.emplace<syre::Texture>(m_Accelerometer, "images/Accelerometer1.png");
 
 	/*m_Registry.emplace<syre::MorphRenderer>(m_Needle);
 	m_Registry.emplace<syre::Transform>(m_Needle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
@@ -551,11 +546,7 @@ void TutorialScene::Start()
 	morphShader->SetUniform("u_Shininess", shininess);
 
 
-	flatMorphShader = Shader::Create();
-	flatMorphShader->LoadShaderPartFromFile("flatMorphVert.glsl", GL_VERTEX_SHADER);
-	flatMorphShader->LoadShaderPartFromFile("flatFrag.glsl", GL_FRAGMENT_SHADER);
-	flatMorphShader->Link();
-
+	
 	simpleDepthShader = Shader::Create();
 	Shader::sptr simpleDepthShader = Shader::Create();
 	simpleDepthShader->LoadShaderPartFromFile("shaders/simple_depth_vert.glsl", GL_VERTEX_SHADER);
@@ -595,6 +586,21 @@ int TutorialScene::Update()
 	NightVision* vision = &m_Registry.get<NightVision>(nightVisBuff);
 	FilmGrain* grain = &m_Registry.get<FilmGrain>(grainBuff);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+	framebuffer->Clear();
+	colorCorrect->Clear();
+	bloom->Clear();
+	blur->Clear();
+	g->Clear();
+	shadow->Clear();
+	illum->Clear();
+	pixel->Clear();
+	vision->Clear();
+	grain->Clear();
+
 	AudioEngine& engine = AudioEngine::Instance();
 
 	AudioEvent& ambient = engine.GetEvent("Ambient");
@@ -621,9 +627,9 @@ int TutorialScene::Update()
 	bool done = false;
 	bool Pemp = false;
 	bool Eemp = false;
-	if (startTut == 0)
+	if (start == 0)
 	{
-		startTut += 1;
+		start += 1;
 		obstacleComponent.Draw();
 	}
 	glm::vec3 camX = glm::cross(camComponent->GetForward(), camComponent->GetUp());
@@ -634,7 +640,7 @@ int TutorialScene::Update()
 	for (int i = 0; i <= 4; i++)
 	{
 		int cardVal = PlayerComponent.GetCard(i, true);
-		if (PlayerComponent.GetPosition1() == i || PlayerComponent.GetPosition2() == i)
+		if (cardVal != -1 && PlayerComponent.GetPosition1() == i || PlayerComponent.GetPosition2() == i && cardVal != -1)
 		{
 			flatShader->SetUniform("offset", glm::vec2(-0.1f + i / 4.2f, -.42f));
 
@@ -656,37 +662,17 @@ int TutorialScene::Update()
 	hazardTextures[ObsVal].Bind();
 	m_Registry.get<syre::Mesh>(m_Hazard).Render();
 
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.0325f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.52f, -0.95f));
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.87, -0.62f));
 	int GerValP = PlayerComponent.GetGear();
 	pGearTextures[GerValP].Bind();
 	m_Registry.get<syre::Mesh>(m_PGears).Render();
 
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.0325f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.95f));
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.87, -0.62f));
 	int GerValE = EnemyComponent.GetGear();
 	eGearTextures[GerValE].Bind();
 	m_Registry.get<syre::Mesh>(m_EGears).Render();
-
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.04f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.50f, -0.96f));
-	m_Registry.get<syre::Texture>(m_AccRect).Bind();
-	m_Registry.get<syre::Mesh>(m_AccRect).Render();
-
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
-	pneedleTextures[GerValP].Bind();
-	m_Registry.get<syre::Mesh>(m_Pneedle).Render();
-
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
-	eneedleTextures[GerValE].Bind();
-	m_Registry.get<syre::Mesh>(m_Eneedle).Render();
-
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.5f, -0.95f));
-	m_Registry.get<syre::Texture>(m_Accelerometer).Bind();
-	m_Registry.get<syre::Mesh>(m_Accelerometer).Render();
 
 	if (helptog == true)
 	{
@@ -696,11 +682,14 @@ int TutorialScene::Update()
 		htexTextures[obs].Bind();
 		m_Registry.get<syre::Mesh>(m_Htex).Render();
 
-		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.28f, 0.1f, 1.0f)));
-		flatShader->SetUniform("offset", glm::vec2(0.54, 0.7f));
-		int value = obstacleComponent.GetValue();
-		hnumberTextures[value].Bind();
-		m_Registry.get<syre::Mesh>(m_Hnumber).Render();
+		if (obstacleComponent.GetObs() != 3)
+		{
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.28f, 0.1f, 1.0f)));
+			flatShader->SetUniform("offset", glm::vec2(0.54, 0.7f));
+			int value = obstacleComponent.GetValue();
+			hnumberTextures[value].Bind();
+			m_Registry.get<syre::Mesh>(m_Hnumber).Render();
+		}
 
 		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.1f, 1.0f)));
 		flatShader->SetUniform("offset", glm::vec2(0.55, 0.7f));
@@ -708,7 +697,10 @@ int TutorialScene::Update()
 		m_Registry.get<syre::Mesh>(m_HBox).Render();
 	}
 
-
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.87, -0.62f));
+	m_Registry.get<syre::Texture>(m_Gearbox2).Bind();
+	m_Registry.get<syre::Mesh>(m_Gearbox2).Render();
 
 
 	if (PlayerComponent.GetBrk() == false && PlayerComponent.GetAcc() == false)
@@ -733,10 +725,44 @@ int TutorialScene::Update()
 		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
 	}
 
+	for (int i = 0; i < 8; i++)
+	{
+		if (PlayerComponent.GetScore() > floor((obstacleComponent.GetSize() / 8) * i) && PlayerComponent.GetScore() <= floor((obstacleComponent.GetSize() / 8) * (i + 1)))
+		{
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
+			progressBar1[i].Bind();
+			m_Registry.get<syre::Mesh>(m_Pscore).Render();
+		}
+		else if (PlayerComponent.GetScore() < floor((obstacleComponent.GetSize() / 8) * i))
+		{
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
+			progressBar1[0].Bind();
+			m_Registry.get<syre::Mesh>(m_Pscore).Render();
+		}
+
+		if (EnemyComponent.GetScore() > floor((obstacleComponent.GetSize() / 8) * i) && EnemyComponent.GetScore() <= floor((obstacleComponent.GetSize() / 8) * (i + 1)))
+		{
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
+			progressBar2[i].Bind();
+			m_Registry.get<syre::Mesh>(m_Escore).Render();
+		}
+		else if (EnemyComponent.GetScore() < floor((obstacleComponent.GetSize() / 8) * i))
+		{
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
+			progressBar2[0].Bind();
+			m_Registry.get<syre::Mesh>(m_Pscore).Render();
+		}
+	}
+
 	if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
 	{
 		m_Registry.get<syre::PathAnimator>(m_PCar).Stop();
 		m_Registry.get<syre::PathAnimator>(m_enemy).Stop();
+		deltaTime = deltaTime / 8.0f;
 	}
 	else if (!(m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() && m_Registry.get<syre::PathAnimator>(m_enemy).HitMax()))
 	{
@@ -863,13 +889,13 @@ int TutorialScene::Update()
 					}
 				}
 			}
-			if (EnemyComponent.GetPosition1() != -1 && EnemyComponent.GetPosition2() != -1 && EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 1 || EnemyComponent.GetCard(EnemyComponent.GetPosition2(), true) == 1)
+			if (EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 1 || EnemyComponent.GetCard(EnemyComponent.GetPosition2(), true) == 1)
 			{
 				temp = EnemyComponent.GetGear();
 				EnemyComponent.ChangeGears(PlayerComponent.GetGear());
 				PlayerComponent.ChangeGears(temp);
 			}
-			if (EnemyComponent.GetPosition1() != -1 && EnemyComponent.GetPosition2() != -1 && PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1 || PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1)
+			if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1 || PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1)
 			{
 				temp = PlayerComponent.GetGear();
 				PlayerComponent.ChangeGears(EnemyComponent.GetGear());
@@ -877,18 +903,24 @@ int TutorialScene::Update()
 			}
 			if (obstacleComponent.GetObs() == 2)
 			{
-				obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear());
-				if (obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear() == true))
+				if (obstacleComponent.GetP1wins() + obstacleComponent.GetP2wins() > 0)
 				{
-					PlayerComponent.IncreaseScore();
-					m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(0.25, true);
-					m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(0.25, false);
+					if (obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear()) == true)
+					{
+						PlayerComponent.IncreaseScore();
+						m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(0.25, true);
+						m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(0.25, false);
+					}
+					else
+					{
+						EnemyComponent.IncreaseScore();
+						m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(0.25, false);
+						m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(0.25, true);
+					}
 				}
 				else
 				{
-					EnemyComponent.IncreaseScore();
-					m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(0.25, false);
-					m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(0.25, true);
+					obstacleComponent.Resolve(PlayerComponent.GetGear(), EnemyComponent.GetGear());
 				}
 			}
 			if (obstacleComponent.GetObs() != 2 && obstacleComponent.GetObs() != 3)
@@ -930,6 +962,11 @@ int TutorialScene::Update()
 				//game is finished finished
 				m_Registry.get<syre::PathAnimator>(m_enemy).Stop();
 				//this is where we could go to next level
+				bootToMenu += deltaTime;
+				if (bootToMenu > 7.0f)
+				{
+					return -1;
+				}
 			}
 		}
 		else if (PlayerComponent.GetScore() < EnemyComponent.GetScore())
@@ -937,25 +974,23 @@ int TutorialScene::Update()
 			printf("ENEMY WINS");
 			m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(1.0, false);
 			m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(1.0, true);
+			bootToMenu += deltaTime;
+			if (bootToMenu > 7.0f)
+			{
+				return -1;
+			}
 		}
 	}
-	flatMorphShader->Bind();
-	flatMorphShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.12f)));
-	flatMorphShader->SetUniform("offset", glm::vec2(-0.55, -0.97f));
-	flatMorphShader->SetUniform("t", 0.0f);
-	m_Registry.get<syre::MorphRenderer>(m_Needle).ManualFrameSet(0);
-	m_Registry.get<syre::Texture>(m_Needle).Bind();
-	m_Registry.get<syre::MorphRenderer>(m_Needle).Render();
 	auto pathView = m_Registry.view<syre::PathAnimator, syre::Transform>();
 	for (auto entity : pathView)
 	{
 		auto& transform = m_Registry.get<syre::Transform>(entity);
 		m_Registry.get<syre::PathAnimator>(entity).Update(transform, deltaTime);
 	}
-
+	flatShader->UnBind();
 	auto renderView = m_Registry.view<syre::Mesh, syre::Transform, syre::Texture>();
 
-	glm::mat4 lightProjectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, -30.0f, 30.0f);
+	glm::mat4 lightProjectionMatrix = glm::ortho(-lr, lr, -ud, ud, -unear, ufar);
 	glm::mat4 lightViewMatrix = glm::lookAt(glm::vec3(-illum->GetSunRef()._lightDirection), glm::vec3(), glm::vec3(0.0f, 0.0f, 1.0f));
 	glm::mat4 lightSpaceViewProj = lightProjectionMatrix * lightViewMatrix;
 	illum->SetLightSpaceViewProj(lightSpaceViewProj);
@@ -967,8 +1002,8 @@ int TutorialScene::Update()
 	for (auto entity : renderView)
 	{
 		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
-		basicShader->SetUniformMatrix("u_LightSpaceMatrix", lightSpaceViewProj);
-		basicShader->SetUniformMatrix("u_Model", transform);
+		simpleDepthShader->SetUniformMatrix("u_LightSpaceMatrix", lightSpaceViewProj);
+		simpleDepthShader->SetUniformMatrix("u_Model", transform);
 		renderView.get<syre::Texture>(entity).Bind();
 		renderView.get<syre::Mesh>(entity).Render();
 	}
@@ -1125,7 +1160,7 @@ int TutorialScene::Update()
 
 	if (!manualCamera)
 	{
-		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
+		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 5.0f, 5.0f));
 	}
 	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition() - camComponent->GetPosition()));
 	/*m_Registry.get<syre::TransformList>(m_Particles1).UpdateCurPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
