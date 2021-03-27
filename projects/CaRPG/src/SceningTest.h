@@ -42,11 +42,14 @@ private:
 	entt::entity m_HBox;
 	entt::entity m_Htex;
 	entt::entity m_Hnumber;
+	entt::entity m_Pscore;
+	entt::entity m_Escore;
 
 	std::vector<syre::Texture> cardTextures;
 	std::vector<syre::Texture> hazardTextures;
 	std::vector<syre::Texture> gearboxTextures;
-	//std::vector<syre::Texture> accelerometerTexture;
+	std::vector<syre::Texture> progressBar1;
+	std::vector<syre::Texture> progressBar2;
 	std::vector<syre::Texture> pGearTextures;
 	std::vector<syre::Texture> eGearTextures;
 	std::vector<syre::Texture> pneedleTextures;

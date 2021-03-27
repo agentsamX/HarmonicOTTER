@@ -18,6 +18,9 @@ public:
 	int GetValue();
 	bool Resolve(int,int);
 	bool GetEnd();
+	int GetSize();
+	int GetP1wins();
+	int GetP2wins();
 private:
 	int Increment = 0;
 	int CurObs = -1;

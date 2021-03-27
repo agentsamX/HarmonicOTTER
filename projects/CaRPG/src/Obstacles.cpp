@@ -92,7 +92,7 @@ bool Obstacles::Resolve(int pGear, int oGear)
 	}
 	else if (CurObs == 2)
 	{
-		if (P1wins + P2wins != 2)
+		if (P1wins + P2wins != 1)
 		{
 			if (abs(pGear - Value) <= abs(oGear - Value))
 			{
@@ -143,4 +143,19 @@ bool Obstacles::Resolve(int pGear, int oGear)
 bool Obstacles::GetEnd()
 {
 	return End;
+}
+
+int Obstacles::GetSize()
+{
+	return Deck.size();
+}
+
+int Obstacles::GetP1wins()
+{
+	return P1wins;
+}
+
+int Obstacles::GetP2wins()
+{
+	return P2wins;
 }
