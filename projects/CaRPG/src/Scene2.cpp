@@ -125,7 +125,7 @@ void Scene2::Start()
 
 	//track and scenery
 	m_Registry.emplace<syre::Mesh>(Track, "objects/Track2.obj");
-	m_Registry.emplace<syre::Transform>(Track, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Transform>(Track, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(Track, "images/PossibleRoad.png");
 
 	m_Registry.emplace<syre::Mesh>(m_Hazard, "objects/RoadHazard.obj");
@@ -215,43 +215,43 @@ void Scene2::Start()
 	//trees
 	entt::entity trackTrees = m_Registry.create();
 	m_Registry.emplace<syre::Mesh>(trackTrees, "objects/Trees2.obj");
-	m_Registry.emplace<syre::Transform>(trackTrees, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Transform>(trackTrees, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackTrees, "images/Tree.png");
 
 	//terrain
 	entt::entity trackTerrain = m_Registry.create();
 	m_Registry.emplace<syre::Mesh>(trackTerrain, "objects/Terrain2.obj");
-	m_Registry.emplace<syre::Transform>(trackTerrain, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Transform>(trackTerrain, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackTerrain, "images/Terrain.png");
 
 	//signs
 	entt::entity trackSigns = m_Registry.create();
 	m_Registry.emplace<syre::Mesh>(trackSigns, "objects/Signs2.obj");
-	m_Registry.emplace<syre::Transform>(trackSigns, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Transform>(trackSigns, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackSigns, "images/Signs.png");
 
 	//sharp rocks
 	entt::entity trackSharpRocks = m_Registry.create();
 	m_Registry.emplace<syre::Mesh>(trackSharpRocks, "objects/Sharp2.obj");
-	m_Registry.emplace<syre::Transform>(trackSharpRocks, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Transform>(trackSharpRocks, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackSharpRocks, "images/SharpRock.png");
 
 	//round rocks
 	entt::entity trackRoundRocks = m_Registry.create();
 	m_Registry.emplace<syre::Mesh>(trackRoundRocks, "objects/Round2.obj");
-	m_Registry.emplace<syre::Transform>(trackRoundRocks, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Transform>(trackRoundRocks, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackRoundRocks, "images/RoundRock.png");
 
 	//flowers
 	entt::entity trackFlowers = m_Registry.create();
 	m_Registry.emplace<syre::Mesh>(trackFlowers, "objects/Flowers2.obj");
-	m_Registry.emplace<syre::Transform>(trackFlowers, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Transform>(trackFlowers, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackFlowers, "images/Flower.png");
 
 	//bush
 	entt::entity trackBush = m_Registry.create();
 	m_Registry.emplace<syre::Mesh>(trackBush, "objects/Bush2.obj");
-	m_Registry.emplace<syre::Transform>(trackBush, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Transform>(trackBush, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackBush, "images/Bush.png");
 
 	entt::entity butterflies = m_Registry.create();
