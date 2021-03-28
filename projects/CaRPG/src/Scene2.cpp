@@ -19,15 +19,48 @@ void Scene2::Start()
 	cocoBuff = m_Registry.create();
 	bloomBuff = m_Registry.create();
 	blurBuff = m_Registry.create();
+	gBuff = m_Registry.create();
+	illumBuff = m_Registry.create();
+	shadowBuff = m_Registry.create();
+	pixelBuff = m_Registry.create();
+	nightVisBuff = m_Registry.create();
+	grainBuff = m_Registry.create();
+
 	m_Registry.emplace<PostEffect>(sceneBuff);
 	m_Registry.emplace<CubeCoCoEffect>(cocoBuff);
 	m_Registry.emplace<CombinedBloom>(bloomBuff);
 	m_Registry.emplace<Blur>(blurBuff);
+	m_Registry.emplace<GBuffer>(gBuff);
+	m_Registry.emplace<IlluminationBuffer>(illumBuff);
+	m_Registry.emplace<Framebuffer>(shadowBuff);
+	m_Registry.emplace<Pixelate>(pixelBuff);
+	m_Registry.emplace<NightVision>(nightVisBuff);
+	m_Registry.emplace<FilmGrain>(grainBuff);
+
 	m_Registry.get<PostEffect>(sceneBuff).Init(width, height);
 	m_Registry.get<CubeCoCoEffect>(cocoBuff).Init(width, height);
 	m_Registry.get<CombinedBloom>(bloomBuff).Init(width, height);
 	m_Registry.get<Blur>(blurBuff).Init(width, height);
+	m_Registry.get<GBuffer>(gBuff).Init(width, height);
+	m_Registry.get<IlluminationBuffer>(illumBuff).Init(width, height);
+	m_Registry.get<Framebuffer>(shadowBuff).AddDepthTarget();
+	m_Registry.get<Framebuffer>(shadowBuff).Init(shadowWidth, shadowHeight);
+	m_Registry.get<Pixelate>(pixelBuff).Init(width, height);
+	m_Registry.get<NightVision>(nightVisBuff).Init(width, height);
+	m_Registry.get<FilmGrain>(grainBuff).Init(width, height);
 
+	Sun._ambientPow = 0.2;
+	Sun._ambientCol = glm::vec4(1.0, 1.0, 1.0, 1.0);
+	Sun._lightAmbientPow = 0.2;
+	Sun._lightCol = glm::vec4(1.0, 1.0, 1.0, 1.0);
+	Sun._lightDirection = glm::vec4(1.370, 2.760, -3.090, 0.0);
+	Sun._lightSpecularPow = 0.7;
+	Sun._shadowBias = 0.05;
+
+	m_Registry.get<IlluminationBuffer>(illumBuff).SetSun(Sun);
+
+	m_Registry.get<CombinedBloom>(bloomBuff).SetThreshold(0.7);
+	m_Registry.get<CombinedBloom>(bloomBuff).SetPasses(10);
 
 
 	cubes.push_back(LUT3D("cubes/Neutral-512.cube"));
@@ -53,6 +86,11 @@ void Scene2::Start()
 	drift.StopImmediately();
 	multiNitro.StopImmediately();
 
+
+
+
+
+
 	camera = Camera::Create();
 	std::string fileName = "monkey.obj";
 	entt::entity testModel = m_Registry.create();
@@ -63,9 +101,14 @@ void Scene2::Start()
 	entt::entity Track = m_Registry.create();
 	m_Hazard = m_Registry.create();
 	m_Gearbox = m_Registry.create();
-
-	/*m_Particles1 = m_Registry.create();
-	m_Particles2 = m_Registry.create();*/
+	m_Gearbox2 = m_Registry.create();
+	m_PGears = m_Registry.create();
+	m_EGears = m_Registry.create();
+	m_HBox = m_Registry.create();
+	m_Htex = m_Registry.create();
+	m_Hnumber = m_Registry.create();
+	m_Pscore = m_Registry.create();
+	m_Escore = m_Registry.create();
 	//cards
 	m_Card = m_Registry.create();
 	m_TransparentBlack = m_Registry.create();
@@ -74,7 +117,7 @@ void Scene2::Start()
 
 	/*entt::entity morphTest = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(morphTest);
-	m_Registry.emplace<syre::Texture>(morphTest, "images/Car2.png");
+	m_Registry.emplace<syre::Texture>(morphTest, "Car2.png");
 	m_Registry.emplace<syre::Transform>(morphTest, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.0f), glm::vec3(1.0f));
 	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("morph01.obj");
 	m_Registry.get<syre::MorphRenderer>(morphTest).AddFrame("morph02.obj");
@@ -82,17 +125,20 @@ void Scene2::Start()
 
 	//track and scenery
 	m_Registry.emplace<syre::Mesh>(Track, "objects/Track2.obj");
-	m_Registry.emplace<syre::Transform>(Track, glm::vec3(8.0f, 8.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Transform>(Track, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(Track, "images/PossibleRoad.png");
 
 	m_Registry.emplace<syre::Mesh>(m_Hazard, "objects/RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_Hazard, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Hazard, "images/Apex.png");
 
-	m_Registry.emplace<syre::Mesh>(m_Gearbox, "objects/Gearbox.obj");
+	m_Registry.emplace<syre::Mesh>(m_Gearbox, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Gearbox, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Gearbox, "images/GearBoxNeutral.png");
 
+	m_Registry.emplace<syre::Mesh>(m_Gearbox2, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Gearbox2, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Gearbox2, "images/New_Gearbox.png");
 
 	m_Registry.emplace<syre::Mesh>(m_TransparentBlack, "objects/RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_TransparentBlack, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
@@ -102,14 +148,40 @@ void Scene2::Start()
 	m_Registry.emplace<syre::Transform>(m_PauseMenu, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_PauseMenu, "images/PauseMenu.png");
 
+	m_Registry.emplace<syre::Mesh>(m_PGears, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_PGears, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_PGears, "images/PauseMenu.png");
 
+	m_Registry.emplace<syre::Mesh>(m_EGears, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_EGears, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_EGears, "images/PauseMenu.png");
+
+	m_Registry.emplace<syre::Mesh>(m_HBox, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_HBox, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_HBox, "images/HUD_Info_box.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Htex, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Htex, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Htex, "images/Hairpin_HUD.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Hnumber, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Hnumber, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Hnumber, "images/O1.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Pscore, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Pscore, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Pscore, "images/Progress Bar.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Escore, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Escore, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Escore, "images/Progress Bar.png");
 
 	entt::entity start = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(start);
 	m_Registry.emplace<syre::Transform>(start, glm::vec3(15.0f, -50.0f, 0.0f), glm::vec3(90.0f, 0.0f, 190.0f), glm::vec3(1.0f));
-	m_Registry.emplace<syre::Texture>(start, "images/Start.png");
-	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/start2.obj");
-	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/start2.obj");
+	m_Registry.emplace<syre::Texture>(start, "images/START.png");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START1.obj");
+	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START1.obj");
 	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START2.obj");
 	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START3.obj");
 	m_Registry.get<syre::MorphRenderer>(start).AddFrame("objects/START4.obj");
@@ -138,56 +210,56 @@ void Scene2::Start()
 	m_Registry.get<syre::MorphRenderer>(finish).AddFrame("objects/FINISH12.obj");
 
 
-	/*
+
 
 	//trees
 	entt::entity trackTrees = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackTrees, "objects/TreesMap.obj");
-	m_Registry.emplace<syre::Transform>(trackTrees, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Mesh>(trackTrees, "objects/Trees2.obj");
+	m_Registry.emplace<syre::Transform>(trackTrees, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackTrees, "images/Tree.png");
-	*/
+
 	//terrain
 	entt::entity trackTerrain = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackTerrain, "objects/TerrainMap.obj");
-	m_Registry.emplace<syre::Transform>(trackTerrain, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Mesh>(trackTerrain, "objects/Terrain2.obj");
+	m_Registry.emplace<syre::Transform>(trackTerrain, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackTerrain, "images/Terrain.png");
-	/*
+
 	//signs
 	entt::entity trackSigns = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackSigns, "objects/SignsMap.obj");
-	m_Registry.emplace<syre::Transform>(trackSigns, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Mesh>(trackSigns, "objects/Signs2.obj");
+	m_Registry.emplace<syre::Transform>(trackSigns, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackSigns, "images/Signs.png");
 
 	//sharp rocks
 	entt::entity trackSharpRocks = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackSharpRocks, "objects/SharpRockMap.obj");
-	m_Registry.emplace<syre::Transform>(trackSharpRocks, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Mesh>(trackSharpRocks, "objects/Sharp2.obj");
+	m_Registry.emplace<syre::Transform>(trackSharpRocks, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackSharpRocks, "images/SharpRock.png");
 
 	//round rocks
 	entt::entity trackRoundRocks = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackRoundRocks, "objects/RoundRockMap.obj");
-	m_Registry.emplace<syre::Transform>(trackRoundRocks, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Mesh>(trackRoundRocks, "objects/Round2.obj");
+	m_Registry.emplace<syre::Transform>(trackRoundRocks, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackRoundRocks, "images/RoundRock.png");
 
 	//flowers
 	entt::entity trackFlowers = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackFlowers, "objects/FlowersMap.obj");
-	m_Registry.emplace<syre::Transform>(trackFlowers, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Mesh>(trackFlowers, "objects/Flowers2.obj");
+	m_Registry.emplace<syre::Transform>(trackFlowers, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackFlowers, "images/Flower.png");
 
 	//bush
 	entt::entity trackBush = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackBush, "objects/BushMap.obj");
-	m_Registry.emplace<syre::Transform>(trackBush, glm::vec3(-30.0f, 125.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
+	m_Registry.emplace<syre::Mesh>(trackBush, "objects/Bush2.obj");
+	m_Registry.emplace<syre::Transform>(trackBush, glm::vec3(8.0f, 7.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackBush, "images/Bush.png");
 
 	entt::entity butterflies = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(butterflies);
-	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyNeutral.obj");
-	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyDown.obj");
-	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyNeutral.obj");
-	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("ButterflyUp.obj");
+	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("objects/ButterflyNeutral.obj");
+	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("objects/ButterflyDown.obj");
+	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("objects/ButterflyNeutral.obj");
+	m_Registry.get<syre::MorphRenderer>(butterflies).AddFrame("objects/ButterflyUp.obj");
 
 	m_Registry.emplace<syre::Texture>(butterflies, "images/butterfly.png");
 	m_Registry.emplace<syre::TransformList>(butterflies);
@@ -201,15 +273,15 @@ void Scene2::Start()
 
 	entt::entity swayingTree = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(swayingTree);
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying1.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying2.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying3.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying4.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying5.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying6.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying7.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying8.obj");
-	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("TreeSwaying9.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying1.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying2.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying3.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying4.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying5.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying6.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying7.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying8.obj");
+	m_Registry.get<syre::MorphRenderer>(swayingTree).AddFrame("objects/TreeSwaying9.obj");
 
 	m_Registry.emplace<syre::Texture>(swayingTree, "images/Tree.png");
 	m_Registry.emplace<syre::TransformList>(swayingTree);
@@ -217,7 +289,7 @@ void Scene2::Start()
 	m_Registry.get<syre::TransformList>(swayingTree).SetDefaultSca(glm::vec3(1.0f));
 	m_Registry.get<syre::TransformList>(swayingTree).AddPos(glm::vec3(-1.0f, -80.0f, 0.0f));
 
-	*/
+
 
 
 
@@ -225,19 +297,6 @@ void Scene2::Start()
 
 	m_Registry.emplace<Obstacles>(m_Obstacle);
 
-
-	//remove this if frequent crashes
-	/*m_Registry.emplace<syre::Mesh>(m_Particles1, "particleLol.obj");
-	m_Registry.emplace<syre::Texture>(m_Particles1, "images/black.png");
-	m_Registry.emplace<syre::TransformList>(m_Particles1);
-	m_Registry.get<syre::TransformList>(m_Particles1).Particalize(0.05f, 0.6f);
-	m_Registry.get<syre::TransformList>(m_Particles1).SetDefaultSca(glm::vec3(0.1f));
-
-	m_Registry.emplace<syre::Mesh>(m_Particles2, "particleLol.obj");
-	m_Registry.emplace<syre::Texture>(m_Particles2, "images/black.png");
-	m_Registry.emplace<syre::TransformList>(m_Particles2);
-	m_Registry.get<syre::TransformList>(m_Particles2).Particalize(0.05f, 0.6f);
-	m_Registry.get<syre::TransformList>(m_Particles2).SetDefaultSca(glm::vec3(0.1f));*/
 
 
 	m_Registry.emplace<Cars>(m_PCar);
@@ -651,22 +710,23 @@ void Scene2::Start()
 
 
 
-	cardTextures.push_back(syre::Texture("images/NO2.png"));
-	cardTextures.push_back(syre::Texture("images/Drift.png"));
-	cardTextures.push_back(syre::Texture("images/Slipstream.png"));
-	cardTextures.push_back(syre::Texture("images/EBrake.png"));
-	cardTextures.push_back(syre::Texture("images/QuickShift.png"));
-	cardTextures.push_back(syre::Texture("images/Sabotage.png"));
-
+	cardTextures.push_back(syre::Texture("images/NO2N.png"));
+	cardTextures.push_back(syre::Texture("images/DriftN.png"));
+	cardTextures.push_back(syre::Texture("images/SlipstreamN.png"));
+	cardTextures.push_back(syre::Texture("images/EBrakeN.png"));
+	cardTextures.push_back(syre::Texture("images/QuickShiftN.png"));
+	cardTextures.push_back(syre::Texture("images/SabotageN.png"));
 
 	hazardTextures.push_back(syre::Texture("images/Apex.png"));
 	hazardTextures.push_back(syre::Texture("images/Hairpin.png"));
 	hazardTextures.push_back(syre::Texture("images/Chicane.png"));
 	hazardTextures.push_back(syre::Texture("images/Rocks.png"));
 
-	gearboxTextures.push_back(syre::Texture("images/GearBoxNeutral.png"));
-	gearboxTextures.push_back(syre::Texture("images/GearBoxGasPressed.png"));
-	gearboxTextures.push_back(syre::Texture("images/GearBoxBrakePressed.png"));
+	gearboxTextures.push_back(syre::Texture("images/Pedals_Neutral.png"));
+	gearboxTextures.push_back(syre::Texture("images/Pedals_Gas.png"));
+	gearboxTextures.push_back(syre::Texture("images/Pedals_Brake.png"));
+
+	//accelerometerTexture.push_back(syre::Texture("Accelerometer.png"));
 
 	pGearTextures.push_back(syre::Texture("images/P1.png"));
 	pGearTextures.push_back(syre::Texture("images/P1.png"));
@@ -713,6 +773,26 @@ void Scene2::Start()
 	htexTextures.push_back(syre::Texture("images/Chicane_HUD.png"));
 	htexTextures.push_back(syre::Texture("images/Rocks_HUD.png"));
 
+	progressBar1.push_back(syre::Texture("images/Progress Bar Top.png"));
+	progressBar1.push_back(syre::Texture("images/Red1.png"));
+	progressBar1.push_back(syre::Texture("images/Red2.png"));
+	progressBar1.push_back(syre::Texture("images/Red3.png"));
+	progressBar1.push_back(syre::Texture("images/Red4.png"));
+	progressBar1.push_back(syre::Texture("images/Red5.png"));
+	progressBar1.push_back(syre::Texture("images/Red6.png"));
+	progressBar1.push_back(syre::Texture("images/Red7.png"));
+	progressBar1.push_back(syre::Texture("images/Red8.png"));
+
+	progressBar2.push_back(syre::Texture("images/Progress Bar Bottom.png"));
+	progressBar2.push_back(syre::Texture("images/Blue1.png"));
+	progressBar2.push_back(syre::Texture("images/Blue1.png"));
+	progressBar2.push_back(syre::Texture("images/Blue1.png"));
+	progressBar2.push_back(syre::Texture("images/Blue1.png"));
+	progressBar2.push_back(syre::Texture("images/Blue1.png"));
+	progressBar2.push_back(syre::Texture("images/Blue1.png"));
+	progressBar2.push_back(syre::Texture("images/Blue1.png"));
+	progressBar2.push_back(syre::Texture("images/Blue1.png"));
+
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
 	flatShader->LoadShaderPartFromFile("flatFrag.glsl", GL_FRAGMENT_SHADER);
@@ -725,7 +805,7 @@ void Scene2::Start()
 
 	basicShader = Shader::Create();
 	basicShader->LoadShaderPartFromFile("vertex_shader.glsl", GL_VERTEX_SHADER);
-	basicShader->LoadShaderPartFromFile("frag_shader.glsl", GL_FRAGMENT_SHADER);
+	basicShader->LoadShaderPartFromFile("shaders/gBuffer_pass_frag.glsl", GL_FRAGMENT_SHADER);
 	basicShader->Link();
 
 	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 2.0f);
@@ -748,7 +828,7 @@ void Scene2::Start()
 
 	morphShader = Shader::Create();
 	morphShader->LoadShaderPartFromFile("morph_vertex_shader.glsl", GL_VERTEX_SHADER);
-	morphShader->LoadShaderPartFromFile("frag_shader.glsl", GL_FRAGMENT_SHADER);
+	morphShader->LoadShaderPartFromFile("gfrag_shader.glsl", GL_FRAGMENT_SHADER);
 	morphShader->Link();
 
 	lightPos = glm::vec3(0.0f, 0.0f, 2.0f);
@@ -769,7 +849,15 @@ void Scene2::Start()
 	morphShader->SetUniform("u_Shininess", shininess);
 
 
-	
+	/*flatMorphShader = Shader::Create();
+	flatMorphShader->LoadShaderPartFromFile("flatMorphVert.glsl", GL_VERTEX_SHADER);
+	flatMorphShader->LoadShaderPartFromFile("flatFrag.glsl", GL_FRAGMENT_SHADER);
+	flatMorphShader->Link();*/
+
+	simpleDepthShader = Shader::Create();
+	simpleDepthShader->LoadShaderPartFromFile("shaders/simple_depth_vert.glsl", GL_VERTEX_SHADER);
+	simpleDepthShader->LoadShaderPartFromFile("shaders/simple_depth_frag.glsl", GL_FRAGMENT_SHADER);
+	simpleDepthShader->Link();
 
 
 	auto& camComponent = camera;
@@ -785,7 +873,8 @@ void Scene2::Start()
 	{
 		m_Registry.get<syre::TransformList>(entity).SetCamera(camera);
 	}
-
+	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
+	PlayerComponent.Shuffle();
 
 	lastFrame = glfwGetTime();
 }
@@ -1389,6 +1478,32 @@ int Scene2::Update()
 
 int Scene2::PausedUpdate()
 {
+	PostEffect* framebuffer = &m_Registry.get<PostEffect>(sceneBuff);
+	CubeCoCoEffect* colorCorrect = &m_Registry.get<CubeCoCoEffect>(cocoBuff);
+	CombinedBloom* bloom = &m_Registry.get<CombinedBloom>(bloomBuff);
+	Blur* blur = &m_Registry.get<Blur>(blurBuff);
+	GBuffer* g = &m_Registry.get<GBuffer>(gBuff);
+	IlluminationBuffer* illum = &m_Registry.get<IlluminationBuffer>(illumBuff);
+	Framebuffer* shadow = &m_Registry.get<Framebuffer>(shadowBuff);
+	Pixelate* pixel = &m_Registry.get<Pixelate>(pixelBuff);
+	NightVision* vision = &m_Registry.get<NightVision>(nightVisBuff);
+	FilmGrain* grain = &m_Registry.get<FilmGrain>(grainBuff);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+	framebuffer->Clear();
+	colorCorrect->Clear();
+	bloom->Clear();
+	blur->Clear();
+	g->Clear();
+	shadow->Clear();
+	illum->Clear();
+	pixel->Clear();
+	vision->Clear();
+	grain->Clear();
+
 	thisFrame = glfwGetTime();
 	float deltaTime = thisFrame - lastFrame;
 	auto& camComponent = camera;
@@ -1396,16 +1511,66 @@ int Scene2::PausedUpdate()
 	auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
 	auto& EnemyComponent = m_Registry.get<Cars>(m_enemy);
 	int returning = KeyEvents(deltaTime);
+	if (returning == -1)
+	{
+		return -1;
+	}
+
+	flatShader->Bind();
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+	flatShader->SetUniform("offset", glm::vec2(0.0, 0.0f));
+	flatShader->SetUniform("aspect", camera->GetAspect());
+	m_Registry.get<syre::Texture>(m_PauseMenu).Bind();
+	m_Registry.get<syre::Mesh>(m_PauseMenu).Render();
 
 
+
+	auto renderView = m_Registry.view<syre::Mesh, syre::Transform, syre::Texture>();
+
+	glm::mat4 lightProjectionMatrix = glm::ortho(-lr, lr, -ud, ud, -unear, ufar);
+	glm::mat4 lightViewMatrix = glm::lookAt(glm::vec3(-illum->GetSunRef()._lightDirection), glm::vec3(), glm::vec3(0.0f, 0.0f, 1.0f));
+	glm::mat4 lightSpaceViewProj = lightProjectionMatrix * lightViewMatrix;
+	illum->SetLightSpaceViewProj(lightSpaceViewProj);
+	illum->SetCamPos(camera->GetPosition());
+
+	glViewport(0, 0, shadowWidth, shadowHeight);
+	simpleDepthShader->Bind();
+	shadow->Bind();
+	for (auto entity : renderView)
+	{
+		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
+		simpleDepthShader->SetUniformMatrix("u_LightSpaceMatrix", lightSpaceViewProj);
+		simpleDepthShader->SetUniformMatrix("u_Model", transform);
+		renderView.get<syre::Texture>(entity).Bind();
+		renderView.get<syre::Mesh>(entity).Render();
+	}
+	simpleDepthShader->UnBind();
+	shadow->Unbind();
+
+	//framebuffer bound
+	//framebuffer->BindBuffer(0);
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+	glViewport(0, 0, width, height);
+	glDisable(GL_BLEND);
+
+	g->Bind();
+	rampTex->Bind(20);
 
 
 	basicShader->Bind();
 	basicShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	basicShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	basicShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	basicShader->SetUniform("u_SpecularStrength", specularOn ? 0.7f : 0.0f);
+	basicShader->SetUniform("u_AmbientStrength", ambientOn ? 0.3f : 0.0f);
+	basicShader->SetUniform("u_DiffuseStrength", diffuseOn ? 1.0f : 0.0f);
+	basicShader->SetUniform("u_CarEmissive", carLighting ? 1 : 0);
+	basicShader->SetUniform("u_RampingSpec", rampOnSpec ? 1 : 0);
+	basicShader->SetUniform("u_RampingDiff", rampOnDiff ? 1 : 0);
 
-	auto renderView = m_Registry.view<syre::Mesh, syre::Transform, syre::Texture>();
+
+
 	for (auto entity : renderView)
 	{
 		glm::mat4 transform = renderView.get<syre::Transform>(entity).GetModelMat();
@@ -1415,17 +1580,29 @@ int Scene2::PausedUpdate()
 		renderView.get<syre::Texture>(entity).Bind();
 		renderView.get<syre::Mesh>(entity).Render();
 	}
+
 	auto listRenderView = m_Registry.view<syre::Mesh, syre::TransformList, syre::Texture>();
 	for (auto entity : listRenderView)
 	{
 		listRenderView.get<syre::Texture>(entity).Bind();
 		listRenderView.get<syre::TransformList>(entity).ListRender(basicShader, listRenderView.get<syre::Mesh>(entity), deltaTime);
 	}
+
 	auto morphRenderView = m_Registry.view<syre::MorphRenderer, syre::Transform, syre::Texture>();
+	morphShader->Bind();
+
 	morphShader->SetUniform("u_CamPos", camComponent->GetPosition());
 	morphShader->SetUniform("playerPos", m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	morphShader->SetUniform("enemyPos", m_Registry.get<syre::Transform>(m_enemy).GetPosition());
-	morphShader->Bind();
+	morphShader->SetUniform("u_SpecularStrength", specularOn ? 0.7f : 0.0f);
+	morphShader->SetUniform("u_AmbientStrength", ambientOn ? 0.3f : 0.0f);
+	morphShader->SetUniform("u_DiffuseStrength", diffuseOn ? 1.0f : 0.0f);
+	morphShader->SetUniform("u_CarEmissive", carLighting ? 1 : 0);
+	morphShader->SetUniform("u_RampingSpec", rampOnSpec ? 1 : 0);
+	morphShader->SetUniform("u_RampingDiff", rampOnDiff ? 1 : 0);
+
+
+
 	for (auto entity : morphRenderView)
 	{
 		float t = morphRenderView.get<syre::MorphRenderer>(entity).GetT();
@@ -1446,24 +1623,87 @@ int Scene2::PausedUpdate()
 		morphListRenderView.get<syre::TransformList>(entity).ListRender(morphShader, morphListRenderView.get<syre::MorphRenderer>(entity));
 	}
 
+	g->Unbind();
+
+	shadow->BindDepthAsTexture(30);
+
+	illum->SetPlayerPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	illum->SetEnemyPos(m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	illum->ApplyEffect(g);
+
+	shadow->UnbindTexture(30);
+
+	if (dispG)
+	{
+		if (indivgBuff)
+			g->DrawBuffersToScreen(colTarg);
+		else
+			g->DrawBuffersToScreen();
+	}
+	else if (dispIllum)
+	{
+		illum->DrawIllumBuffer();
+	}
+	else
+	{
+		PostEffect* lastBuffer = illum;
+		if (nightVising)
+		{
+			vision->ApplyEffect(lastBuffer);
+
+			lastBuffer = vision;
+		}
+		if (blooming)
+		{
+			bloom->ApplyEffect(lastBuffer);
+
+			lastBuffer = bloom;
+		}
+		if (blurring)
+		{
+			blur->ApplyEffect(lastBuffer);
+
+			lastBuffer = blur;
+		}
+		if (correcting)
+		{
+			cubes[activeCube].bind(30);
+
+			colorCorrect->ApplyEffect(lastBuffer);
+
+			lastBuffer = colorCorrect;
+		}
+		if (pixelling)
+		{
+			pixel->ApplyEffect(lastBuffer);
+
+			lastBuffer = pixel;
+		}
+		if (graining)
+		{
+			grain->ApplyEffect(lastBuffer);
+
+			lastBuffer = grain;
+		}
+
+
+		lastBuffer->DrawToScreen();
+	}
+	//PostEffect* lastBuffer = framebuffer;
+	//framebuffer->UnBindBuffer();
+
+
+
+
 	if (!manualCamera)
 	{
-		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 4.0f, 5.0f));
+		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 5.0f, 5.0f));
 	}
 	camComponent->SetForward(glm::normalize(m_Registry.get<syre::Transform>(m_PCar).GetPosition() - camComponent->GetPosition()));
+	/*m_Registry.get<syre::TransformList>(m_Particles1).UpdateCurPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
+	m_Registry.get<syre::TransformList>(m_Particles2).UpdateCurPos(m_Registry.get<syre::Transform>(m_enemy).GetPosition());*/
 
-	flatShader->Bind();
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-	flatShader->SetUniform("offset", glm::vec2(0.0, 0.0f));
-	flatShader->SetUniform("aspect", camera->GetAspect());
-	m_Registry.get<syre::Texture>(m_PauseMenu).Bind();
-	m_Registry.get<syre::Mesh>(m_PauseMenu).Render();
 
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(1.2f)));
-	flatShader->SetUniform("offset", glm::vec2(0.0, 0.0f));
-	flatShader->SetUniform("aspect", camera->GetAspect());
-	m_Registry.get<syre::Texture>(m_TransparentBlack).Bind();
-	m_Registry.get<syre::Mesh>(m_TransparentBlack).Render();
 
 
 	lastFrame = thisFrame;
@@ -1472,49 +1712,154 @@ int Scene2::PausedUpdate()
 
 void Scene2::ImGUIUpdate()
 {
-	//auto& PlayerComponent = m_Registry.get<Cars>(m_PCar);
-		// Implementation new frame
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		// ImGui context new frame
-		ImGui::NewFrame();
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	CombinedBloom* bloom = &m_Registry.get<CombinedBloom>(bloomBuff);
+	Blur* blur = &m_Registry.get<Blur>(blurBuff);
+	IlluminationBuffer* illum = &m_Registry.get<IlluminationBuffer>(illumBuff);
+	Pixelate* pixel = &m_Registry.get<Pixelate>(pixelBuff);
+	int blurPasses = blur->GetPasses();
+	float bloomThreshold = bloom->GetThreshold();
+	int bloomPasses = bloom->GetPasses();
+	int pixellationFactor = pixel->GetFactor();
 
-		if (ImGui::Begin("Debug")) {
-			// Render our GUI stuff
+	// ImGui context new frame
+	ImGui::NewFrame();
+	AudioEngine& audio = AudioEngine::Instance();
+	int pauseStatus = audio.GetGlobalParameterValue("IsPaused");
+	float sfxVol = audio.GetGlobalParameterValue("SFXVolume");
+	float musVol = audio.GetGlobalParameterValue("MusicVolume");
 
-
-			auto movable = m_Registry.view<syre::Mesh, syre::Transform>();
-			auto& camComponent = camera;
-			glm::vec3 camPos = camComponent->GetPosition();
-			if (ImGui::Button(manualCamera?"Auto Camera": "Manual Camera"))
+	if (ImGui::Begin("Debug")) {
+		// Render our GUI stuff
+		if (ImGui::CollapsingHeader("Deferred"))
+		{
+			ImGui::DragFloat3("Light Direction/Position", glm::value_ptr(illum->GetSunRef()._lightDirection), 0.01f, -10.0f, 10.0f);
+			ImGui::Checkbox("Display GBuffer", &dispG);
+			if (dispG)
 			{
-				manualCamera = !manualCamera;
+				ImGui::Checkbox("Display Targets Individually", &indivgBuff);
+				if (indivgBuff)
+				{
+					ImGui::SliderInt("Color Target", &colTarg, 0, 3);
+				}
 			}
-			if (manualCamera)
+			ImGui::Checkbox("Display Illumination Accumulation", &dispIllum);
+			ImGui::SliderFloat("Left and Right ortho", &lr, 0.0f, 2000.0f);
+			ImGui::SliderFloat("Up and Down ortho", &ud, 0.0f, 2000.0f);
+			ImGui::SliderFloat("Near ortho", &unear, 0.0f, 2000.0f);
+			ImGui::SliderFloat("Far ortho", &ufar, 0.0f, 2000.0f);
+
+		}
+		if (ImGui::CollapsingHeader("Post Processing"))
+		{
+			ImGui::Checkbox("Night Vision", &nightVising);
+			ImGui::Checkbox("Bloom", &blooming);
+			if (blooming)
 			{
-				ImGui::SliderFloat3("Camera Position", &camPos.x,-200.f, 200.f);
+				ImGui::SliderFloat("Bloom Threshold", &bloomThreshold, 0, 1);
+				ImGui::SliderInt("Bloom blur Passes", &bloomPasses, 0, 20);
+				bloom->SetPasses(bloomPasses);
+				bloom->SetThreshold(bloomThreshold);
 			}
-			camComponent->SetPosition(camPos);
-			ImGui::End();
+			ImGui::Checkbox("Blur", &blurring);
+			if (blurring)
+			{
+				ImGui::SliderInt("Blur blur Passes", &blurPasses, 0, 20);
+				blur->SetPasses(blurPasses);
+			}
+			ImGui::Checkbox("Color Correction", &correcting);
+			if (correcting)
+			{
+				ImGui::SliderInt("Active CoCo Effect", &activeCube, 0, cubes.size() - 1);
+				ImGui::Text("0 is Neutral, 1 is Cool, 2 is Warm, 3 is Custom");
+			}
+			ImGui::Checkbox("Pixelation", &pixelling);
+			if (pixelling)
+			{
+				ImGui::SliderInt("Pixellation Amount", &pixellationFactor, 2, 32);
+				pixel->SetFactor(pixellationFactor);
+			}
+			//ImGui::Checkbox("Film Grain", &graining);
+		}
+		if (ImGui::CollapsingHeader("Lighting"))
+		{
+			ImGui::Checkbox("Ambient Lighting", &ambientOn);
+			ImGui::Checkbox("Diffuse Lighting", &diffuseOn);
+			ImGui::Checkbox("Specular Lighting", &specularOn);
+			ImGui::Checkbox("Emissive Car Lighting", &carLighting);
+			ImGui::Checkbox("Specular Ramping", &rampOnSpec);
+			ImGui::Checkbox("Diffuse Ramping", &rampOnDiff);
+		}
+		if (ImGui::CollapsingHeader("FMOD"))
+		{
+			ImGui::SliderFloat("Effects Volume", &sfxVol, 0.f, 1.f);
+			ImGui::SliderFloat("Music Volume", &musVol, 0.f, 1.f);
 		}
 
-		// Make sure ImGui knows how big our window is
-		ImGuiIO& io = ImGui::GetIO();
-		int width{ 0 }, height{ 0 };
-		glfwGetWindowSize(window, &width, &height);
-		io.DisplaySize = ImVec2((float)width, (float)height);
-
-		// Render all of our ImGui elements
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-			// Update the windows that ImGui is using
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-			// Restore our gl context
-			glfwMakeContextCurrent(window);
+		glm::vec3 camPos = camera->GetPosition();
+		if (ImGui::Button(manualCamera ? "Auto Camera" : "Manual Camera"))
+		{
+			manualCamera = !manualCamera;
 		}
+		if (manualCamera)
+		{
+			ImGui::SliderFloat3("Camera Position", &camPos.x, -200.f, 200.f);
+			camera->SetPosition(camPos);
+
+		}
+		if (ImGui::Button("1"))
+		{
+			dispG = false;
+			dispIllum = false;
+		}
+		if (ImGui::Button("2"))
+		{
+			dispG = true;
+			indivgBuff = true;
+			colTarg = 3;
+		}
+		if (ImGui::Button("3"))
+		{
+			dispG = true;
+			indivgBuff = true;
+			colTarg = 1;
+		}
+		if (ImGui::Button("4"))
+		{
+			dispG = true;
+			indivgBuff = true;
+			colTarg = 0;
+		}
+		if (ImGui::Button("5"))
+		{
+			dispG = false;
+			dispIllum = true;
+		}
+	}
+	ImGui::End();
+	audio.SetGlobalParameter("IsPaused", pauseStatus);
+	audio.SetGlobalParameter("SFXVolume", sfxVol);
+	audio.SetGlobalParameter("MusicVolume", musVol);
+
+
+	// Make sure ImGui knows how big our window is
+	ImGuiIO& io = ImGui::GetIO();
+	int width{ 0 }, height{ 0 };
+	glfwGetWindowSize(window, &width, &height);
+	io.DisplaySize = ImVec2((float)width, (float)height);
+
+	// Render all of our ImGui elements
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+		// Update the windows that ImGui is using
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		// Restore our gl context
+		glfwMakeContextCurrent(window);
+	}
 
 }
 
@@ -1542,6 +1887,7 @@ int Scene2::KeyEvents(float delta)
 		{
 			isPaused = false;
 			escRelease = false;
+
 		}
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
@@ -1553,6 +1899,7 @@ int Scene2::KeyEvents(float delta)
 				}
 				else if (374.0f < *y && *y < 417.0f)
 				{
+					m_Registry.clear();
 					return -1;
 				}
 				else if (425.0f < *y && *y < 474.0f)
@@ -1618,6 +1965,7 @@ int Scene2::KeyEvents(float delta)
 		{
 			isPaused = true;
 			escRelease = false;
+
 		}
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && Elapsedtime >= 0.5)
 		{
@@ -1629,23 +1977,20 @@ int Scene2::KeyEvents(float delta)
 			{
 				lbutton_down = true;
 			}
-			//printf("Mouse at X %f Y %f\n", *x, *y);
+			/*
+			printf("Mouse at X ");
+			printf("%f", *x);
+			printf("\n");
+			printf("Mouse at Y ");
+			printf("%f", *y);
+			*/
 			if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
 			{
 				for (float i = 0; i <= 5; i++)
 				{
-					if ((i * 165) + 429 <= *x && (i + 1) * 165 + 429 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
+					if ((i * 165) + 478 <= *x && (i + 1) * 165 + 478 >= *x && *y >= 457 && *y <= 706 && PlayerComponent.GetCard(i, true) != -1)
 					{
-						if (PlayerComponent.GetCard(i, true) == 2)
-						{
-							temp = PlayerComponent.GetGear();
-							PlayerComponent.PlayCard(i, EnemyComponent.GetGear());
-							EnemyComponent.ChangeGears(temp);
-						}
-						else
-						{
-							PlayerComponent.PlayCard(i, 0);
-						}
+						PlayerComponent.PlayCard(i, 0);
 						Elapsedtime = 0;
 					}
 				}
@@ -1660,6 +2005,19 @@ int Scene2::KeyEvents(float delta)
 					Elapsedtime = 0;
 				}
 			}
+			if (*x >= 1157 && *x <= 1278 && *y <= 132 && *y >= 10)
+			{
+				if (helptog == true)
+				{
+					helptog = false;
+					Elapsedtime = 0;
+				}
+				else if (helptog == false)
+				{
+					helptog = true;
+					Elapsedtime = 0;
+				}
+			}
 		}
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
 		{
@@ -1668,6 +2026,36 @@ int Scene2::KeyEvents(float delta)
 		if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
 		{
 			m_Registry.get<syre::PathAnimator>(m_PCar).Reset();
+		}
+		if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
+		{
+			if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
+			{
+				if (PlayerComponent.GetPosition1() != -1 && PlayerComponent.GetPosition1() != -2 && PlayerComponent.GetPosition1() != -3)
+				{
+					if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 2)
+					{
+						EnemyComponent.ChangeGears(PlayerComponent.GetGear());
+					}
+					else if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 5)
+					{
+						EnemyComponent.SetSabo();
+					}
+				}
+
+				if (PlayerComponent.GetPosition2() != -1 && PlayerComponent.GetPosition2() != -2 && PlayerComponent.GetPosition2() != -3)
+				{
+					if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 2)
+					{
+						EnemyComponent.ChangeGears(PlayerComponent.GetGear());
+					}
+					else if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 5)
+					{
+						EnemyComponent.SetSabo();
+					}
+				}
+				PlayerComponent.ResolveCards();
+			}
 		}
 		camComponent->SetPosition(curCamPos);
 		return 0;
