@@ -1,6 +1,12 @@
 #pragma once
 
 #include "Graphics/Post/PostEffect.h"
+enum BlurType
+{
+	GAUSS,
+	BOX,
+	RADIAL
+};
 
 class CombinedBloom : public PostEffect
 {
@@ -20,8 +26,15 @@ public:
 	int GetPasses() const;
 
 	void SetPasses(int passes);
+
+	void SetBlurType(int type);
+
+	int GetBlurType();
 	
 private:
+	BlurType _blurType = GAUSS;
+	int widShader=2;
+	int heiShader=3;
 	float _threshold = 0.5f;
 	int _passes = 5;
 };

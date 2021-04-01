@@ -1657,6 +1657,7 @@ void SceningTest::ImGUIUpdate()
 		int blurPasses = blur->GetPasses();
 		float bloomThreshold = bloom->GetThreshold();
 		int bloomPasses = bloom->GetPasses();
+		int bloomBlurType = bloom->GetBlurType();
 		int pixellationFactor = pixel->GetFactor();
 
 		// ImGui context new frame
@@ -1695,8 +1696,10 @@ void SceningTest::ImGUIUpdate()
 				{
 					ImGui::SliderFloat("Bloom Threshold", &bloomThreshold, 0, 1);
 					ImGui::SliderInt("Bloom blur Passes", &bloomPasses, 0, 20);
+					ImGui::SliderInt("Blur Type", &bloomBlurType, 0, 2);
 					bloom->SetPasses(bloomPasses);
 					bloom->SetThreshold(bloomThreshold);
+					bloom->SetBlurType(bloomBlurType);
 				}
 				ImGui::Checkbox("Blur", &blurring);
 				if (blurring)

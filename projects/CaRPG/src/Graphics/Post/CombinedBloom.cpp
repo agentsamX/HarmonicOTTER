@@ -52,11 +52,39 @@ void CombinedBloom::Init(unsigned width, unsigned height)
     _shaders[index]->LoadShaderPartFromFile("shaders/passthrough_vert.glsl", GL_VERTEX_SHADER);
     _shaders[index]->LoadShaderPartFromFile("shaders/Post/compositeBloom_frag.glsl", GL_FRAGMENT_SHADER);
     _shaders[index]->Link();
+    index = int(_shaders.size());
+    _shaders.push_back(Shader::Create());
+    _shaders[index]->LoadShaderPartFromFile("shaders/Post/horizontalBlur_vert.glsl", GL_VERTEX_SHADER);
+    _shaders[index]->LoadShaderPartFromFile("shaders/Post/horizontalBlurBox_frag.glsl", GL_FRAGMENT_SHADER);
+    _shaders[index]->Link();
+    index = int(_shaders.size());
+    _shaders.push_back(Shader::Create());
+    _shaders[index]->LoadShaderPartFromFile("shaders/Post/verticalBlur_vert.glsl", GL_VERTEX_SHADER);
+    _shaders[index]->LoadShaderPartFromFile("shaders/Post/verticalBlurBox_frag.glsl", GL_FRAGMENT_SHADER);
+    _shaders[index]->Link();
+
+    index = int(_shaders.size());
+    _shaders.push_back(Shader::Create());
+    _shaders[index]->LoadShaderPartFromFile("shaders/Post/horizontalBlur_vert.glsl", GL_VERTEX_SHADER);
+    _shaders[index]->LoadShaderPartFromFile("shaders/Post/horizontalBlurBox_frag.glsl", GL_FRAGMENT_SHADER);
+    _shaders[index]->Link();
+    index = int(_shaders.size());
+    _shaders.push_back(Shader::Create());
+    _shaders[index]->LoadShaderPartFromFile("shaders/Post/verticalBlur_vert.glsl", GL_VERTEX_SHADER);
+    _shaders[index]->LoadShaderPartFromFile("shaders/Post/verticalBlurBox_frag.glsl", GL_FRAGMENT_SHADER);
+    _shaders[index]->Link();
+    index = int(_shaders.size());
+    _shaders.push_back(Shader::Create());
+    _shaders[index]->LoadShaderPartFromFile("shaders/Post/radialBlur_vert.glsl", GL_VERTEX_SHADER);
+    _shaders[index]->LoadShaderPartFromFile("shaders/Post/radialBlur_frag.glsl", GL_FRAGMENT_SHADER);
+    _shaders[index]->Link();
 
 }
 
 void CombinedBloom::ApplyEffect(PostEffect* buffer)
 {
+    
+    
     BindShader(1);
     _shaders[1]->SetUniform("u_Intensity", _threshold);
     buffer->BindColorAsTexture(0, 0, 0);
@@ -64,15 +92,16 @@ void CombinedBloom::ApplyEffect(PostEffect* buffer)
     buffer->UnbindTexture(0);
     UnbindShader();
 
-    BindShader(2);
-    _shaders[2]->SetUniform("u_width", 1280.f);
+    _shaders[widShader]->SetUniform("u_width", 1280.f);
+    _shaders[heiShader]->SetUniform("u_height", 720.f);
+
+    BindShader(widShader);
     _buffers[0]->BindColorAsTexture(0, 0);
     _buffers[1]->RenderToFSQ();
     _buffers[0]->UnbindTexture(0);
     UnbindShader();
 
-    BindShader(3);
-    _shaders[3]->SetUniform("u_height", 720.f);
+    BindShader(heiShader);
     _buffers[1]->BindColorAsTexture(0, 0);
     _buffers[2]->RenderToFSQ();
     _buffers[1]->UnbindTexture(0);
@@ -83,8 +112,7 @@ void CombinedBloom::ApplyEffect(PostEffect* buffer)
     {
         _buffers[1]->Clear();
 
-        BindShader(2);
-        _shaders[2]->SetUniform("u_width", 1280.f);
+        BindShader(widShader);
         _buffers[2]->BindColorAsTexture(0, 0);
         _buffers[1]->RenderToFSQ();
         _buffers[2]->UnbindTexture(0);
@@ -92,8 +120,7 @@ void CombinedBloom::ApplyEffect(PostEffect* buffer)
 
         _buffers[2]->Clear();
 
-        BindShader(3);
-        _shaders[3]->SetUniform("u_height", 720.f);
+        BindShader(heiShader);
         _buffers[1]->BindColorAsTexture(0, 0);
         _buffers[2]->RenderToFSQ();
         _buffers[1]->UnbindTexture(0);
@@ -151,4 +178,30 @@ int CombinedBloom::GetPasses() const
 void CombinedBloom::SetPasses(int passes)
 {
     _passes = passes;
+}
+
+void CombinedBloom::SetBlurType(int type)
+{
+    if (type == GAUSS)
+    {
+        widShader = 2;
+        heiShader = 3;
+    }
+    else if(type==BOX)
+    {
+        widShader = 5;
+        heiShader = 6;
+    }
+    else if (type == RADIAL)
+    {
+        widShader = 7;
+        heiShader = 7;
+    }
+    _blurType = BlurType(type);
+
+}
+
+int CombinedBloom::GetBlurType()
+{
+    return _blurType;
 }
