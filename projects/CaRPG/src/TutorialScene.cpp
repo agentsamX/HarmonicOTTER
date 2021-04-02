@@ -1614,6 +1614,11 @@ void TutorialScene::ImGUIUpdate()
 
 }
 
+int TutorialScene::GetID()
+{
+	return 0;
+}
+
 Camera::sptr& TutorialScene::GetCam()
 {
 	// TODO: insert return statement here

@@ -1863,6 +1863,11 @@ void Scene2::ImGUIUpdate()
 
 }
 
+int Scene2::GetID()
+{
+	return 2;
+}
+
 Camera::sptr& Scene2::GetCam()
 {
 	// TODO: insert return statement here

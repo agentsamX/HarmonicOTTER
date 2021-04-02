@@ -22,6 +22,7 @@ public:
 	int Update();
 	int PausedUpdate();
 	void ImGUIUpdate();
+	int GetID();
 	Camera::sptr& GetCam();
 private:
 	int KeyEvents(float delta);

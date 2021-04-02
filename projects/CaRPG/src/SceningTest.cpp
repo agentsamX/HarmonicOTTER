@@ -1202,6 +1202,7 @@ int SceningTest::Update()
 				//game is finished finished
 				m_Registry.get<syre::PathAnimator>(m_enemy).Stop();
 				//this is where we could go to next level
+				won = true;
 				bootToMenu += deltaTime;
 				if (bootToMenu > 7.0f)
 				{
@@ -1800,6 +1801,11 @@ void SceningTest::ImGUIUpdate()
 			glfwMakeContextCurrent(window);
 		}
 	
+}
+
+int SceningTest::GetID()
+{
+	return 1;
 }
 
 

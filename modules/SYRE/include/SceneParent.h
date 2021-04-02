@@ -23,6 +23,8 @@ namespace syre {
 		virtual void Start();
 		virtual int Update();
 		virtual void ImGUIUpdate();
+		virtual bool GetWon();
+		virtual int GetID();
 		GLFWwindow* window;
 		virtual Camera::sptr& GetCam();
 
@@ -31,6 +33,8 @@ namespace syre {
 		double lastFrame;
 		double thisFrame;
 		Camera::sptr camera;
+		bool won = false;
+
 
 	};
 }

@@ -19,6 +19,16 @@ void syre::SceneParent::ImGUIUpdate()
 {
 }
 
+bool syre::SceneParent::GetWon()
+{
+    return won;
+}
+
+int syre::SceneParent::GetID()
+{
+    return -1;
+}
+
 Camera::sptr& syre::SceneParent::GetCam()
 {
     // TODO: insert return statement here

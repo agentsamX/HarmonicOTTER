@@ -167,11 +167,10 @@ int main()
 	//end of cg tutorial
 
 
-
+	MidGameMenu* midMenu = new MidGameMenu(window);
 
 	std::vector<syre::SceneParent*> scenes;////////////
 	scenes.push_back(new MenuScreen(window));
-	scenes.push_back(new MidGameMenu(window));
 	scenes.push_back(new SceningTest(window));//////////////////////
 	
 	syre::SceneParent* curScene = scenes[0];
@@ -210,6 +209,9 @@ int main()
 	glfwSetCursor(window, cursor);
 	*/
 	int returned = 0;
+	bool wonTut = false;
+	bool won1 = false;
+	bool won2 = false;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -220,13 +222,23 @@ int main()
 		returned = curScene->Update();
 		if (returned != 0)
 		{
+			if (curScene->GetWon())
+			{
+				int temp = curScene->GetID();
+				if (temp == 0)
+					wonTut = true;
+				else if (temp == 1)
+					won1 = true;
+				else if(temp==2)
+					won2=true;
+			}
 
 			if(returned==1)
 			{
 				delete scenes[scenes.size() - 1];
 				scenes.pop_back();
 				scenes.push_back(new SceningTest(window)); //////////////////////
-				curScene = scenes[2];
+				curScene = scenes[1];
 
 				curScene->Start();
 				camera = curScene->GetCam();
@@ -238,7 +250,7 @@ int main()
 				delete scenes[scenes.size() - 1];
 				scenes.pop_back();
 				scenes.push_back(new Scene2(window)); //////////////////////
-				curScene = scenes[2];
+				curScene = scenes[1];
 
 				curScene->Start();
 				camera = curScene->GetCam();
@@ -250,7 +262,7 @@ int main()
 				delete scenes[scenes.size() - 1];
 				scenes.pop_back();
 				scenes.push_back(new TutorialScene(window)); //////////////////////
-				curScene = scenes[2];
+				curScene = scenes[1];
 
 				curScene->Start();
 				camera = curScene->GetCam();
@@ -263,7 +275,9 @@ int main()
 			}
 			else if (returned == -1)
 			{
-				curScene = scenes[1];
+				curScene = midMenu;
+
+				midMenu->SetWins(wonTut, won1, won2);
 
 				curScene->Start();
 				camera = curScene->GetCam();
