@@ -195,9 +195,24 @@ int main()
 	engine.LoadBus("Music", "{65daa684-95d9-408f-b23f-d587e44e016b}");
 	engine.CreateEventW("Menu Music", "{aefe09ea-1546-4ae9-9982-bf60713fdd02}");
 	engine.CreateEventW("Ambient", "{18c986e1-88b0-45ce-82c7-567d3447f2e8}");
-	engine.CreateEventW("Slipstream", "{50d08bc6-b9f1-4411-906f-69506bd36f13}");
+	//effects
+	engine.CreateEventW("Accelerate", "{e960091c-f5a8-442d-a048-d368c7084021}");
+	engine.CreateEventW("Brake", "{fa0e36c1-c1c1-48bf-838c-e8b3762717e1}");
+	engine.CreateEventW("E-Brake", "{91e753b6-4232-4b65-ae35-bbf0b2b21a98}");
 	engine.CreateEventW("Drift", "{3eb39553-5d08-456c-998b-822942c1f860}");
 	engine.CreateEventW("MultiNitro", "{6d8f789b-95db-4007-bd66-f26c1f377b3c}");
+	engine.CreateEventW("Nitro", "{36f21e41-ce5e-49c7-b670-4841094f5242}");
+	engine.CreateEventW("Quick Shift", "{11071f63-d5b9-4ff5-bf03-13eed2834d51}");
+	engine.CreateEventW("Sabotage", "{df8e111c-4f91-43c6-9247-fa321d748db8}");
+	engine.CreateEventW("Slipstream", "{50d08bc6-b9f1-4411-906f-69506bd36f13}");
+	//tut
+	engine.CreateEventW("Tut-AfterFirstTurn", "{01b60b7e-4a57-4659-a8b3-f6cae078bd56}");
+	engine.CreateEventW("Tut-AfterUTurn", "{02ae5be0-c7a6-49be-8936-8e882f5e799f}");
+	engine.CreateEventW("Tut-BeforeChicane", "{e6a8f8be-cea9-4cb1-a53c-6a46fb291d84}");
+	engine.CreateEventW("Tut-EndOfRace", "{7f7b8204-b9b5-4fa6-9cc3-ef6d9a3926d5}");
+	engine.CreateEventW("Tut-StartOfRace", "{8cf9dd30-c887-433a-8ccc-4a0e668247a6}");
+
+	
 	curScene->Start();
 
 	camera = curScene->GetCam();

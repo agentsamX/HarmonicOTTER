@@ -1269,6 +1269,7 @@ int Scene2::Update()
 				m_Registry.get<syre::PathAnimator>(m_enemy).Stop();
 				//this is where we could go to next level
 				bootToMenu += deltaTime;
+				won = true;
 				if (bootToMenu > 7.0f)
 				{
 					return -1;

@@ -28,6 +28,7 @@ namespace syre
 		void IncrementSegment(int);
 		void SetSpeed(int, bool);
 		bool GetHardStop();
+		int GetSegment();
 	private:
 		PathType pathType;
 		float InvLerp(float start, float end, float cur);

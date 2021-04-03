@@ -209,6 +209,11 @@ bool syre::PathAnimator::GetHardStop()
     return hardStop;
 }
 
+int syre::PathAnimator::GetSegment()
+{
+    return maxSegment;
+}
+
 float syre::PathAnimator::InvLerp(float start, float end, float cur)
 {
     return abs(cur - start) / abs(end - start);
