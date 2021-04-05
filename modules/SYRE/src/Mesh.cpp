@@ -7,6 +7,7 @@
 
 syre::Mesh::Mesh(std::string fileName)
 {
+	vao = VertexArrayObject::Create();
 	std::vector<float> combinedVertBuffer;
 	std::vector<glm::vec3> vertPos;
 	std::vector<unsigned int> indexedVertices;
@@ -186,6 +187,11 @@ glm::vec3 syre::Mesh::Vector3Parser(std::string line, int offset)
 
 
 	return glm::vec3(std::stof(xCoord),std::stof(yCoord),std::stof(zCoord));
+}
+
+syre::Mesh::Mesh(VertexArrayObject::sptr vaoAdd)
+{
+	vao = vaoAdd;
 }
 
 glm::vec2 syre::Mesh::Vector2Parser(std::string line, int offset)

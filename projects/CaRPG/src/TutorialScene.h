@@ -118,4 +118,9 @@ private:
 	float unear = 160.0f;
 	float ufar = 160.0f;
 
+	bool inEv = false;
+	float evTimer = 0.0f;
+	int curEv = 0;
+	bool evDone[5] = { false,false,false,false,false };
+	
 };

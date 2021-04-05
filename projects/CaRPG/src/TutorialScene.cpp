@@ -687,6 +687,91 @@ int TutorialScene::Update()
 		obstacleComponent.Draw();
 	}
 	glm::vec3 camX = glm::cross(camComponent->GetForward(), camComponent->GetUp());
+	//check for events
+	{
+		if (!evDone[0] && m_Registry.get<syre::PathAnimator>(m_PCar).GetSegment() > 0)
+		{
+			if (evTimer == 0.0f)
+			{
+				engine.GetEvent("Tut-StartOfRace").Play();
+			}
+			evTimer += deltaTime;
+			inEv = true;
+			if (evTimer >= 39.0f)
+			{
+				evDone[0] = true;
+				evTimer = 0.0f;
+				curEv++;
+				inEv = false;
+			}
+		}
+		if (!evDone[1] && m_Registry.get<syre::PathAnimator>(m_PCar).GetSegment() > 2)
+		{
+			if (evTimer == 0.0f)
+			{
+				engine.GetEvent("Tut-AfterFirstTurn").Play();
+			}
+			evTimer += deltaTime;
+			inEv = true;
+			if (evTimer >= 28.0f)
+			{
+				evDone[1] = true;
+				evTimer = 0.0f;
+				curEv++;
+				inEv = false;
+			}
+		}
+		if (!evDone[2] && m_Registry.get<syre::PathAnimator>(m_PCar).GetSegment() > 3)
+		{
+			if (evTimer == 0.0f)
+			{
+				engine.GetEvent("Tut-BeforeChicane").Play();
+			}
+			evTimer += deltaTime;
+			inEv = true;
+			if (evTimer >= 11.0f)
+			{
+				evDone[2] = true;
+				evTimer = 0.0f;
+				curEv++;
+				inEv = false;
+			}
+		}
+		if (!evDone[3] && m_Registry.get<syre::PathAnimator>(m_PCar).GetSegment() > 8)
+		{
+			if (evTimer == 0.0f)
+			{
+				engine.GetEvent("Tut-AfterUTurn").Play();
+			}
+			evTimer += deltaTime;
+			inEv = true;
+			if (evTimer >= 19.0f)
+			{
+				evDone[3] = true;
+				evTimer = 0.0f;
+				curEv++;
+				inEv = false;
+			}
+		}
+		if (!evDone[4] && m_Registry.get<syre::PathAnimator>(m_PCar).GetSegment() > 14)
+		{
+			if (evTimer == 0.0f)
+			{
+				engine.GetEvent("Tut-EndOfRace").Play();
+			}
+			evTimer += deltaTime;
+			inEv = true;
+			if (evTimer >= 6.0f)
+			{
+				evDone[4] = true;
+				evTimer = 0.0f;
+				curEv++;
+				inEv = false;
+			}
+		}
+	}
+
+	
 	KeyEvents(deltaTime);
 	flatShader->Bind();
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.115f)));
@@ -1678,6 +1763,7 @@ int TutorialScene::KeyEvents(float delta)
 		glm::vec3 curCamPos = camComponent->GetPosition();
 		glm::vec3 curCamFor = camComponent->GetForward();
 
+
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		{
 			curCamPos.x += 10.f * delta;
@@ -1726,8 +1812,22 @@ int TutorialScene::KeyEvents(float delta)
 		}
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && Elapsedtime >= 0.5)
 		{
+			AudioEngine& engine = AudioEngine::Instance();
+
 			double* x = new double;
 			double* y = new double;
+			if (inEv)
+			{
+				evDone[curEv] = true;
+				evTimer = 0.0f;
+				curEv++;
+				inEv = false;
+				engine.GetEvent("Tut-AfterFirstTurn").StopImmediately();
+				engine.GetEvent("Tut-AfterUTurn").StopImmediately();
+				engine.GetEvent("Tut-BeforeChicane").StopImmediately();
+				engine.GetEvent("Tut-EndOfRace").StopImmediately();
+				engine.GetEvent("Tut-StartOfRace").StopImmediately();
+			}
 
 			glfwGetCursorPos(window, x, y);
 			if (*x >= 70 && *x <= 95 && *y <= 615 && *y >= 597)

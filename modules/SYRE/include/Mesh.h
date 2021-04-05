@@ -17,8 +17,9 @@ namespace syre
 	{
 	public:
 	
-		VertexArrayObject::sptr vao=VertexArrayObject::Create();
+		VertexArrayObject::sptr vao;
 		Mesh(std::string fileName);
+		Mesh(VertexArrayObject::sptr vaoAdd);
 		glm::vec3 Vector3Parser(std::string line, int offset);
 		glm::vec2 Vector2Parser(std::string line, int offset);
 		void FaceLineProcessor(std::string line,std::vector<unsigned int>& indexVec);
