@@ -16,6 +16,11 @@ private:
 	Shader::sptr flatShader;
 	entt::entity m_MenuImage;
 	entt::entity m_winBadge;
+	entt::entity m_MapScreen;
+	entt::entity m_CarIcon;
+	glm::vec2 menuPos;
+	bool map[8][6];
+	float menuScale;
 	bool m_won1;
 	bool m_won2;
 	bool m_wonTut;
