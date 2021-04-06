@@ -13,6 +13,7 @@ class Obstacles
 public:
 	Obstacles();
 	~Obstacles();
+	void Adddeck(int);
 	void Draw();
 	int GetObs();
 	int GetValue();
@@ -28,5 +29,5 @@ private:
 	int P1wins = 0;
 	int P2wins = 0;
 	bool End = false;
-	std::vector <int> Deck = { 0,0,2,2,3,1,0,0,2,2,2,2,3,1,1,0,1,3,2,2,0,1 };
+	std::vector <int> Deck = {};
 };

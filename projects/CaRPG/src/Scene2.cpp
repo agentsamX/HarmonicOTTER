@@ -109,6 +109,9 @@ void Scene2::Start()
 	m_Hnumber = m_Registry.create();
 	m_Pscore = m_Registry.create();
 	m_Escore = m_Registry.create();
+	m_Endbutton = m_Registry.create();
+	m_A1 = m_Registry.create();
+	m_A2 = m_Registry.create();
 	//cards
 	m_Card = m_Registry.create();
 	m_TransparentBlack = m_Registry.create();
@@ -175,6 +178,18 @@ void Scene2::Start()
 	m_Registry.emplace<syre::Mesh>(m_Escore, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Escore, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Escore, "images/Progress Bar.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Endbutton, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Endbutton, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Endbutton, "images/EndTurn.png");
+
+	m_Registry.emplace<syre::Mesh>(m_A1, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_A1, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_A1, "images/EndTurn.png");
+
+	m_Registry.emplace<syre::Mesh>(m_A2, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_A2, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_A2, "images/EndTurn.png");
 
 	entt::entity start = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(start);
@@ -710,12 +725,12 @@ void Scene2::Start()
 
 
 
-	cardTextures.push_back(syre::Texture("images/NO2N.png"));
-	cardTextures.push_back(syre::Texture("images/DriftN.png"));
-	cardTextures.push_back(syre::Texture("images/SlipstreamN.png"));
-	cardTextures.push_back(syre::Texture("images/EBrakeN.png"));
+	cardTextures.push_back(syre::Texture("images/NO2.png"));
+	cardTextures.push_back(syre::Texture("images/Drift.png"));
+	cardTextures.push_back(syre::Texture("images/Slipstream.png"));
+	cardTextures.push_back(syre::Texture("images/EBrake.png"));
 	cardTextures.push_back(syre::Texture("images/QuickShiftN.png"));
-	cardTextures.push_back(syre::Texture("images/SabotageN.png"));
+	cardTextures.push_back(syre::Texture("images/Sabotage.png"));
 
 	hazardTextures.push_back(syre::Texture("images/Apex.png"));
 	hazardTextures.push_back(syre::Texture("images/Hairpin.png"));
@@ -793,6 +808,11 @@ void Scene2::Start()
 	progressBar2.push_back(syre::Texture("images/Blue1.png"));
 	progressBar2.push_back(syre::Texture("images/Blue1.png"));
 
+	ActionTextures.push_back(syre::Texture("images/A1.png"));
+	ActionTextures.push_back(syre::Texture("images/A2.png"));
+	ActionTextures.push_back(syre::Texture("images/A3.png"));
+	ActionTextures.push_back(syre::Texture("images/A4.png"));
+
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
 	flatShader->LoadShaderPartFromFile("flatFrag.glsl", GL_FRAGMENT_SHADER);
@@ -867,6 +887,29 @@ void Scene2::Start()
 	camComponent->SetFovDegrees(100.0f); // Set an initial FOV
 
 	auto& obstacleComponent = m_Registry.get<Obstacles>(m_Obstacle);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(3);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(3);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
 
 	auto listView = m_Registry.view<syre::TransformList>();
 	for (auto entity : listView)
@@ -962,6 +1005,11 @@ int Scene2::Update()
 		}
 	}
 
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.12f, 0.06f, 0.004f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.5, -0.8f));
+	m_Registry.get<syre::Texture>(m_Endbutton).Bind();
+	m_Registry.get<syre::Mesh>(m_Endbutton).Render();
+
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.09f)));
 	flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
 	int ObsVal = obstacleComponent.GetObs();
@@ -979,6 +1027,39 @@ int Scene2::Update()
 	int GerValE = EnemyComponent.GetGear();
 	eGearTextures[GerValE].Bind();
 	m_Registry.get<syre::Mesh>(m_EGears).Render();
+
+	int pos1 = PlayerComponent.GetPosition1();
+	int pos2 = PlayerComponent.GetPosition2();
+
+	if (pos1 != -1)
+	{
+		//flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.55, -0.60));
+		ActionTextures[1].Bind();
+		m_Registry.get<syre::Mesh>(m_A1).Render();
+	}
+	else if (pos1 == -1)
+	{
+		//flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.55, -0.60));
+		ActionTextures[0].Bind();
+		m_Registry.get<syre::Mesh>(m_A1).Render();
+	}
+
+	if (pos2 != -1)
+	{
+		//flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.45, -0.60));
+		ActionTextures[3].Bind();
+		m_Registry.get<syre::Mesh>(m_A2).Render();
+	}
+	else if (pos2 == -1)
+	{
+		//flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.45, -0.60));
+		ActionTextures[2].Bind();
+		m_Registry.get<syre::Mesh>(m_A2).Render();
+	}
 
 	if (helptog == true)
 	{
@@ -1079,6 +1160,109 @@ int Scene2::Update()
 	{
 		if (EnemyComponent.GetSabo() == false && EnemyComponent.GetEnded() == false)
 		{
+
+			if (obstacleComponent.GetObs() == 0)
+			{
+				if (abs(PlayerComponent.GetGear() - obstacleComponent.GetValue()) <= 2)
+				{
+					for (int i; i <= 5; i++)
+					{
+						if (EnemyComponent.GetCard(i, true) == 2)
+						{
+							EnemyComponent.PlayCard(i, 0);
+							break;
+						}
+					}
+				}
+				if (EnemyComponent.GetGear() + 3 <= 8)
+				{
+					for (int i; i <= 5; i++)
+					{
+						if (EnemyComponent.GetCard(i, true) == 0)
+						{
+							EnemyComponent.PlayCard(i, 0);
+							break;
+						}
+					}
+				}
+			}
+			else if (EnemyComponent.GetPosition1() == -1 || EnemyComponent.GetPosition2() == -1)
+			{
+				EnemyComponent.SetAcc();
+			}
+
+			if (obstacleComponent.GetObs() == 1 || obstacleComponent.GetObs() == 2)
+			{
+				if (abs(PlayerComponent.GetGear() - obstacleComponent.GetValue()) <= 2)
+				{
+					for (int i; i <= 5; i++)
+					{
+						if (EnemyComponent.GetCard(i, true) == 2)
+						{
+							EnemyComponent.PlayCard(i, 0);
+							break;
+						}
+					}
+				}
+				else if (abs(obstacleComponent.GetValue() - EnemyComponent.GetGear()) <= 3 && EnemyComponent.GetGear() < obstacleComponent.GetValue())
+				{
+					for (int i; i <= 5; i++)
+					{
+						if (EnemyComponent.GetCard(i, true) == 1)
+						{
+							EnemyComponent.PlayCard(i, 0);
+							break;
+						}
+					}
+				}
+				else if (EnemyComponent.GetPosition1() == -1 && EnemyComponent.GetGear() < obstacleComponent.GetValue() && EnemyComponent.GetPosition2() == -1 && EnemyComponent.GetGear() < obstacleComponent.GetValue())
+				{
+					EnemyComponent.SetAcc();
+				}
+				else if (EnemyComponent.GetPosition1() == -1 && EnemyComponent.GetGear() > obstacleComponent.GetValue() && EnemyComponent.GetPosition2() == -1 && EnemyComponent.GetGear() > obstacleComponent.GetValue())
+				{
+					EnemyComponent.SetBrk();
+				}
+			}
+
+			if (obstacleComponent.GetObs() == 3)
+			{
+				if (abs(PlayerComponent.GetGear() - obstacleComponent.GetValue()) <= 2)
+				{
+					for (int i; i <= 5; i++)
+					{
+						if (EnemyComponent.GetCard(i, true) == 2)
+						{
+							EnemyComponent.PlayCard(i, 0);
+							break;
+						}
+					}
+				}
+
+				if (abs(1 - obstacleComponent.GetValue()) == 0 || abs(1 - obstacleComponent.GetValue()) <= 2)
+				{
+					for (int i; i <= 5; i++)
+					{
+						if (EnemyComponent.GetCard(i, true) == 3)
+						{
+							EnemyComponent.PlayCard(i, 0);
+							break;
+						}
+					}
+				}
+
+				if (EnemyComponent.GetPosition1() == -1 && EnemyComponent.GetGear() < PlayerComponent.GetGear() || EnemyComponent.GetPosition2() == -1 && EnemyComponent.GetGear() < PlayerComponent.GetGear())
+				{
+					EnemyComponent.SetBrk();
+				}
+			}
+
+			EnemyComponent.ResolveCards();
+			PlayerComponent.SetOppGear(EnemyComponent.GetGear());
+		}
+		/*
+		if (EnemyComponent.GetSabo() == false && EnemyComponent.GetEnded() == false)
+		{
 			if (speedDemon == true)
 			{
 				for (int i = 0; i <= 5; i++)
@@ -1110,6 +1294,7 @@ int Scene2::Update()
 			EnemyComponent.ResolveCards();
 			PlayerComponent.SetOppGear(EnemyComponent.GetGear());
 		}
+		*/
 		/*
 	if (showGear == false)
 	{
@@ -1268,8 +1453,8 @@ int Scene2::Update()
 				//game is finished finished
 				m_Registry.get<syre::PathAnimator>(m_enemy).Stop();
 				//this is where we could go to next level
-				bootToMenu += deltaTime;
 				won = true;
+				bootToMenu += deltaTime;
 				if (bootToMenu > 7.0f)
 				{
 					return -1;
@@ -2022,6 +2207,37 @@ int Scene2::KeyEvents(float delta)
 				{
 					helptog = true;
 					Elapsedtime = 0;
+				}
+			}
+
+			if (*x >= 242 && *x <= 397 && *y <= 687 && *y >= 611)
+			{
+				if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
+				{
+					if (PlayerComponent.GetPosition1() != -1 && PlayerComponent.GetPosition1() != -2 && PlayerComponent.GetPosition1() != -3)
+					{
+						if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 2)
+						{
+							EnemyComponent.ChangeGears(PlayerComponent.GetGear());
+						}
+						else if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 5)
+						{
+							EnemyComponent.SetSabo();
+						}
+					}
+
+					if (PlayerComponent.GetPosition2() != -1 && PlayerComponent.GetPosition2() != -2 && PlayerComponent.GetPosition2() != -3)
+					{
+						if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 2)
+						{
+							EnemyComponent.ChangeGears(PlayerComponent.GetGear());
+						}
+						else if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 5)
+						{
+							EnemyComponent.SetSabo();
+						}
+					}
+					PlayerComponent.ResolveCards();
 				}
 			}
 		}

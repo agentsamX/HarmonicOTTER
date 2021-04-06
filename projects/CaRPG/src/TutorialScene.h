@@ -45,6 +45,9 @@ private:
 	entt::entity m_Hnumber;
 	entt::entity m_Pscore;
 	entt::entity m_Escore;
+	entt::entity m_Endbutton;
+	entt::entity m_A1;
+	entt::entity m_A2;
 
 	std::vector<syre::Texture> cardTextures;
 	std::vector<syre::Texture> hazardTextures;
@@ -57,6 +60,7 @@ private:
 	std::vector<syre::Texture> eneedleTextures;
 	std::vector<syre::Texture> htexTextures;
 	std::vector<syre::Texture> hnumberTextures;
+	std::vector<syre::Texture> ActionTextures;
 
 	entt::entity sceneBuff;
 	entt::entity cocoBuff;

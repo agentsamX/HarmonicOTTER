@@ -5,6 +5,11 @@ Obstacles::Obstacles()
 Obstacles::~Obstacles()
 {
 }
+void Obstacles::Adddeck(int obs)
+{
+	Deck.push_back(obs);
+}
+
 void Obstacles::Draw()
 {
 	if (Increment <= Deck.size()-1)

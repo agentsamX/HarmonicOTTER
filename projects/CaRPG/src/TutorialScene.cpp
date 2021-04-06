@@ -109,6 +109,9 @@ void TutorialScene::Start()
 	m_Hnumber = m_Registry.create();
 	m_Pscore = m_Registry.create();
 	m_Escore = m_Registry.create();
+	m_Endbutton = m_Registry.create();
+	m_A1 = m_Registry.create();
+	m_A2 = m_Registry.create();
 	//cards
 	m_Card = m_Registry.create();
 	m_TransparentBlack = m_Registry.create();
@@ -175,6 +178,18 @@ void TutorialScene::Start()
 	m_Registry.emplace<syre::Mesh>(m_Escore, "objects/Accelerometer.obj");
 	m_Registry.emplace<syre::Transform>(m_Escore, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
 	m_Registry.emplace<syre::Texture>(m_Escore, "images/Progress Bar.png");
+
+	m_Registry.emplace<syre::Mesh>(m_Endbutton, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_Endbutton, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_Endbutton, "images/EndTurn.png");
+
+	m_Registry.emplace<syre::Mesh>(m_A1, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_A1, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_A1, "images/EndTurn.png");
+
+	m_Registry.emplace<syre::Mesh>(m_A2, "objects/Accelerometer.obj");
+	m_Registry.emplace<syre::Transform>(m_A2, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(0.25f));
+	m_Registry.emplace<syre::Texture>(m_A2, "images/EndTurn.png");
 
 	entt::entity start = m_Registry.create();
 	m_Registry.emplace<syre::MorphRenderer>(start);
@@ -451,19 +466,18 @@ void TutorialScene::Start()
 
 	//cards
 
-
 	m_Registry.emplace<syre::Mesh>(m_Card, "objects/Card.obj");
 	m_Registry.emplace<syre::Transform>(m_Card, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2f));
 	m_Registry.emplace<syre::Texture>(m_Card, "images/NO2.png");
 
 
 
-	cardTextures.push_back(syre::Texture("images/NO2N.png"));
-	cardTextures.push_back(syre::Texture("images/DriftN.png"));
-	cardTextures.push_back(syre::Texture("images/SlipstreamN.png"));
-	cardTextures.push_back(syre::Texture("images/EBrakeN.png"));
+	cardTextures.push_back(syre::Texture("images/NO2.png"));
+	cardTextures.push_back(syre::Texture("images/Drift.png"));
+	cardTextures.push_back(syre::Texture("images/Slipstream.png"));
+	cardTextures.push_back(syre::Texture("images/EBrake.png"));
 	cardTextures.push_back(syre::Texture("images/QuickShiftN.png"));
-	cardTextures.push_back(syre::Texture("images/SabotageN.png"));
+	cardTextures.push_back(syre::Texture("images/Sabotage.png"));
 
 	hazardTextures.push_back(syre::Texture("images/Apex.png"));
 	hazardTextures.push_back(syre::Texture("images/Hairpin.png"));
@@ -541,6 +555,11 @@ void TutorialScene::Start()
 	progressBar2.push_back(syre::Texture("images/Blue1.png"));
 	progressBar2.push_back(syre::Texture("images/Blue1.png"));
 
+	ActionTextures.push_back(syre::Texture("images/A1.png"));
+	ActionTextures.push_back(syre::Texture("images/A2.png"));
+	ActionTextures.push_back(syre::Texture("images/A3.png"));
+	ActionTextures.push_back(syre::Texture("images/A4.png"));
+
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
 	flatShader->LoadShaderPartFromFile("flatFrag.glsl", GL_FRAGMENT_SHADER);
@@ -615,6 +634,14 @@ void TutorialScene::Start()
 	camComponent->SetFovDegrees(100.0f); // Set an initial FOV
 
 	auto& obstacleComponent = m_Registry.get<Obstacles>(m_Obstacle);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(3);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+
 
 	auto listView = m_Registry.view<syre::TransformList>();
 	for (auto entity : listView)
@@ -795,6 +822,11 @@ int TutorialScene::Update()
 		}
 	}
 
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.12f, 0.06f, 0.004f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.5, -0.8f));
+	m_Registry.get<syre::Texture>(m_Endbutton).Bind();
+	m_Registry.get<syre::Mesh>(m_Endbutton).Render();
+
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.09f)));
 	flatShader->SetUniform("offset", glm::vec2(0.90, 0.8f));
 	int ObsVal = obstacleComponent.GetObs();
@@ -812,6 +844,39 @@ int TutorialScene::Update()
 	int GerValE = EnemyComponent.GetGear();
 	eGearTextures[GerValE].Bind();
 	m_Registry.get<syre::Mesh>(m_EGears).Render();
+
+	int pos1 = PlayerComponent.GetPosition1();
+	int pos2 = PlayerComponent.GetPosition2();
+
+	if (pos1 != -1)
+	{
+		//flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.55, -0.60));
+		ActionTextures[1].Bind();
+		m_Registry.get<syre::Mesh>(m_A1).Render();
+	}
+	else if (pos1 == -1)
+	{
+		//flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.55, -0.60));
+		ActionTextures[0].Bind();
+		m_Registry.get<syre::Mesh>(m_A1).Render();
+	}
+
+	if (pos2 != -1)
+	{
+		//flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.45, -0.60));
+		ActionTextures[3].Bind();
+		m_Registry.get<syre::Mesh>(m_A2).Render();
+	}
+	else if (pos2 == -1)
+	{
+		//flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.125f)));
+		flatShader->SetUniform("offset", glm::vec2(-0.45, -0.60));
+		ActionTextures[2].Bind();
+		m_Registry.get<syre::Mesh>(m_A2).Render();
+	}
 
 	if (helptog == true)
 	{
@@ -902,6 +967,11 @@ int TutorialScene::Update()
 		m_Registry.get<syre::PathAnimator>(m_PCar).Stop();
 		m_Registry.get<syre::PathAnimator>(m_enemy).Stop();
 		deltaTime = deltaTime / 8.0f;
+	}
+	else if (!(m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() && m_Registry.get<syre::PathAnimator>(m_enemy).HitMax()))
+	{
+		m_Registry.get<syre::PathAnimator>(m_PCar).Resume();
+		m_Registry.get<syre::PathAnimator>(m_enemy).Resume();
 	}
 	else if (!(m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() && m_Registry.get<syre::PathAnimator>(m_enemy).HitMax()))
 	{
