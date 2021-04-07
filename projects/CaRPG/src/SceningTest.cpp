@@ -909,6 +909,7 @@ int SceningTest::Update()
 	bool done = false;
 	bool Pemp = false;
 	bool Eemp = false;
+	float newvol;
 	if (start == 0)
 	{
 		start += 1;
@@ -1049,6 +1050,8 @@ int SceningTest::Update()
 	{
 		if (PlayerComponent.GetScore() > floor((obstacleComponent.GetSize() / 8) * i) && PlayerComponent.GetScore() <= floor((obstacleComponent.GetSize() / 8) * (i + 1)))
 		{
+			newvol += 0.3;
+			engine.SetGlobalParameter("MusicVolume", newvol);
 			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
 			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
 			progressBar1[i].Bind();
@@ -1198,6 +1201,7 @@ int SceningTest::Update()
 				}
 				else if (EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 5)
 				{
+					engine.GetEvent("Sabotage").Restart();
 					PlayerComponent.SetSabo();
 				}
 			}
@@ -1210,6 +1214,7 @@ int SceningTest::Update()
 				}
 				else if (EnemyComponent.GetCard(EnemyComponent.GetPosition2(), true) == 5)
 				{
+					engine.GetEvent("Sabotage").Restart();
 					PlayerComponent.SetSabo();
 				}
 			}
@@ -1338,12 +1343,14 @@ int SceningTest::Update()
 			}
 			if (EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 1 || EnemyComponent.GetCard(EnemyComponent.GetPosition2(),true) == 1)
 			{
+				engine.GetEvent("Drift").Restart();
 				temp = EnemyComponent.GetGear();
 				EnemyComponent.ChangeGears(PlayerComponent.GetGear());
 				PlayerComponent.ChangeGears(temp);
 			}
 			if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1 || PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1)
 			{
+				engine.GetEvent("Drift").Restart();
 				temp = PlayerComponent.GetGear();
 				PlayerComponent.ChangeGears(EnemyComponent.GetGear());
 				EnemyComponent.ChangeGears(temp);
@@ -2031,7 +2038,7 @@ Camera::sptr& SceningTest::GetCam()
 
 int SceningTest::KeyEvents(float delta)
 {
-
+	AudioEngine& engine = AudioEngine::Instance();
 	if (isPaused)
 	{	
 		double* x = new double;
@@ -2231,6 +2238,7 @@ int SceningTest::KeyEvents(float delta)
 					}
 					else if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 5)
 					{
+						engine.GetEvent("Sabotage").Restart();
 						EnemyComponent.SetSabo();
 					}
 				}
@@ -2243,6 +2251,7 @@ int SceningTest::KeyEvents(float delta)
 					}
 					else if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 5)
 					{
+						engine.GetEvent("Sabotage").Restart();
 						EnemyComponent.SetSabo();
 					}
 				}
