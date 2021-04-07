@@ -55,7 +55,7 @@ bool initGLFW() {
 #endif
 
 	//Create a new GLFW window
-	window = glfwCreateWindow(1280,720, "SYRE baybeeeee", nullptr, nullptr);
+	window = glfwCreateWindow(1280,720, "CaRPG by Harmonic Industries", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Set our window resized callback

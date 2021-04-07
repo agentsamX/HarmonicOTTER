@@ -17,7 +17,7 @@ void MenuScreen::Start()
 	m_MenuImage = m_Registry.create();
 	m_Registry.emplace<syre::Mesh>(m_MenuImage, "objects/Menu_Plane.obj");
 	m_Registry.emplace<syre::Transform>(m_MenuImage, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-	m_Registry.emplace<syre::Texture>(m_MenuImage, "images/MenuMod.png");
+	m_Registry.emplace<syre::Texture>(m_MenuImage, "images/NewMenu.png");
 
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
@@ -40,8 +40,8 @@ int MenuScreen::Update()
 	engine.Update();
 
 	flatShader->Bind();
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(-0.68f)));
-	flatShader->SetUniform("offset", glm::vec2(-0.3f, -0.15f));
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(-0.7)));
+	flatShader->SetUniform("offset", glm::vec2(-0.375f, 0.0f));
 	flatShader->SetUniform("aspect", camera->GetAspect());
 	m_Registry.get<syre::Texture>(m_MenuImage).Bind();
 	m_Registry.get<syre::Mesh>(m_MenuImage).Render();
@@ -50,17 +50,17 @@ int MenuScreen::Update()
 	double* y = new double;
 
 	glfwGetCursorPos(window, x, y);
-	printf("Mouse at X %f Y %f\n", *x, *y);
+	//printf("Mouse at X %f Y %f\n", *x, *y);
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
-		if (153.0f < *x && *x < 330.f)
+		if (828.f < *x && *x < 1129.f)
 		{
-			if (266.0f < *y && *y < 333.0f)
+			if (269.f < *y && *y < 330.f)
 			{
 				return 3;
 			}
-			if (467.0f<*y&&*y<550.f)
+			if (391.f<*y&&*y<470.f)
 			{
 				clickTimes++;
 				if (clickTimes > 20)
@@ -69,7 +69,7 @@ int MenuScreen::Update()
 
 				}
 			}
-			else if (570.0f < *y &&*y< 638.0f)
+			else if (513.f < *y &&*y< 577.f)
 			{
 				return -2;
 			}
