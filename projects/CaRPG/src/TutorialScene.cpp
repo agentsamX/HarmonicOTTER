@@ -814,36 +814,6 @@ int TutorialScene::Update()
 		{
 			if (evTimer == 0.0f)
 			{
-				engine.GetEvent("Tut-BeforeChicane").Play();
-			}
-			evTimer += deltaTime;
-			inEv = true;
-
-			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
-			flatShader->SetUniform("offset", glm::vec2(-0.875f, -0.2f));
-			flatShader->SetUniform("aspect", 2.f);
-			Racer.Bind();
-			m_Registry.get<syre::Mesh>(m_Hazard).Render();
-
-			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.26f)));
-			flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.3f));
-			
-			flatShader->SetUniform("aspect", 0.5f);
-			Before1.Bind();
-			m_Registry.get<syre::Mesh>(m_Hazard).Render();
-
-			if (evTimer >= 11.0f)
-			{
-				evDone[2] = true;
-				evTimer = 0.0f;
-				curEv++;
-				inEv = false;
-			}
-		}
-		if (!evDone[3] && m_Registry.get<syre::PathAnimator>(m_PCar).GetSegment() > 8)
-		{
-			if (evTimer == 0.0f)
-			{
 				engine.GetEvent("Tut-AfterUTurn").Play();
 			}
 			evTimer += deltaTime;
@@ -857,7 +827,7 @@ int TutorialScene::Update()
 
 			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.26f)));
 			flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.3f));
-			
+
 			if (evTimer <= 9.0f)
 			{
 				flatShader->SetUniform("aspect", 0.5f);
@@ -870,11 +840,41 @@ int TutorialScene::Update()
 				AfterU2.Bind();
 				m_Registry.get<syre::Mesh>(m_Hazard).Render();
 			}
-			
+
 
 			if (evTimer >= 19.0f)
 			{
 				evDone[3] = true;
+				evTimer = 0.0f;
+				curEv++;
+				inEv = false;
+			}
+		}
+		if (!evDone[3] && m_Registry.get<syre::PathAnimator>(m_PCar).GetSegment() > 9)
+		{
+			if (evTimer == 0.0f)
+			{
+				engine.GetEvent("Tut-BeforeChicane").Play();
+			}
+			evTimer += deltaTime;
+			inEv = true;
+
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.875f, -0.2f));
+			flatShader->SetUniform("aspect", 2.f);
+			Racer.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
+
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.26f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.3f));
+
+			flatShader->SetUniform("aspect", 0.5f);
+			Before1.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
+
+			if (evTimer >= 11.0f)
+			{
+				evDone[2] = true;
 				evTimer = 0.0f;
 				curEv++;
 				inEv = false;
