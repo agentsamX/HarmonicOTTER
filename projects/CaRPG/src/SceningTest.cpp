@@ -1425,6 +1425,8 @@ int SceningTest::Update()
 				bootToMenu += deltaTime;
 				if (bootToMenu > 7.0f)
 				{
+					m_Registry.clear();
+
 					return -1;
 				}
 			}
@@ -1441,6 +1443,8 @@ int SceningTest::Update()
 			bootToMenu += deltaTime;
 			if (bootToMenu > 7.0f)
 			{
+				m_Registry.clear();
+
 				return -1;
 			}
 		}

@@ -1295,6 +1295,8 @@ int TutorialScene::Update()
 				bootToMenu += deltaTime;
 				if (bootToMenu > 7.0f)
 				{
+					m_Registry.clear();
+
 					return -1;
 				}
 			}
@@ -1311,6 +1313,8 @@ int TutorialScene::Update()
 			bootToMenu += deltaTime;
 			if (bootToMenu > 7.0f)
 			{
+				m_Registry.clear();
+
 				return -1;
 			}
 		}
@@ -1942,7 +1946,15 @@ int TutorialScene::KeyEvents(float delta)
 				}
 				else if (374.0f < *y && *y < 417.0f)
 				{
+					AudioEngine& engine = AudioEngine::Instance();
+
 					m_Registry.clear();
+					engine.GetEvent("Tut-AfterFirstTurn").StopImmediately();
+					engine.GetEvent("Tut-AfterUTurn").StopImmediately();
+					engine.GetEvent("Tut-BeforeChicane").StopImmediately();
+					engine.GetEvent("Tut-EndOfRace").StopImmediately();
+					engine.GetEvent("Tut-StartOfRace").StopImmediately();
+					engine.Update();
 					return -1;
 				}
 				else if (425.0f < *y && *y < 474.0f)
