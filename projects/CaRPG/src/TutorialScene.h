@@ -140,4 +140,7 @@ private:
 	syre::Texture End1 = syre::Texture("images/EndOfRace.png");
 
 	syre::Texture Racer = syre::Texture("images/SquaredOff.png");
+	syre::Texture Winner = syre::Texture("images/Win Screen.png");
+	syre::Texture Loser = syre::Texture("images/Lose Screen.png");
+
 };

@@ -247,7 +247,7 @@ int main()
 					won1 = true;
 				else if (temp == 2)
 					won2 = true;
-				else if (temp == 3);
+				else if (temp == 3)
 					debugMenu = true;
 			}
 
