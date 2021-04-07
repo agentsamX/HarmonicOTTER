@@ -2269,7 +2269,6 @@ int SceningTest::KeyEvents(float delta)
 					}
 					else if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 5)
 					{
-						engine.GetEvent("Sabotage").Restart();
 						EnemyComponent.SetSabo();
 					}
 				}
@@ -2282,7 +2281,6 @@ int SceningTest::KeyEvents(float delta)
 					}
 					else if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 5)
 					{
-						engine.GetEvent("Sabotage").Restart();
 						EnemyComponent.SetSabo();
 					}
 				}

@@ -12,7 +12,7 @@ void Obstacles::Adddeck(int obs)
 
 void Obstacles::Draw()
 {
-	if (Increment <= Deck.size()-1)
+	if (0 < Deck.size())
 	{
 		CurObs = Deck.top();
 		Deck.pop();
@@ -46,7 +46,6 @@ void Obstacles::Draw()
 			break;
 		}
 		*/
-		Increment++;
 	}
 	else
 	{

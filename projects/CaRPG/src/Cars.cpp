@@ -323,6 +323,10 @@ void Cars::ResolveCards()
 				Turns = 0;
 			}
 		}
+		else if (Hand[Position1] == 5)
+		{
+			audio.GetEvent("Sabotage").Restart();
+		}
 	}
 	if (Position2 != -6)
 	{
@@ -362,6 +366,10 @@ void Cars::ResolveCards()
 				{
 					Turns = 0;
 				}
+			}
+			else if (Hand[Position2] == 5)
+			{
+				audio.GetEvent("Sabotage").Restart();
 			}
 		}
 	}
