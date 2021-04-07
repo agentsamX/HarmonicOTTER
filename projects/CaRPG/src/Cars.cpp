@@ -159,7 +159,6 @@ void Cars::SetSabo()
 
 void Cars::PlayCard(int Position, int NewGear)
 {
-	AudioEngine& audio = AudioEngine::Instance();
 
 
 	if (Position2 != -6)
@@ -215,31 +214,6 @@ void Cars::PlayCard(int Position, int NewGear)
 			Acce = false;
 			Brake = false;
 		}
-	}
-
-	if (Hand[Position] == 0)
-	{
-		audio.GetEvent("MultiNitro").Restart();
-	}
-	if (Hand[Position] == 1)
-	{
-		audio.GetEvent("Drift").Restart();
-	}
-	if (Hand[Position] == 2)
-	{
-		audio.GetEvent("Slipstream").Restart();
-	}
-	if (Hand[Position] == 3)
-	{
-		// Put audio cues here 
-	}
-	if (Hand[Position] == 4)
-	{
-		// Put audio cues here 
-	}
-	if (Hand[Position] == 5)
-	{
-		// Put audio cues here 
 	}
 }
 /*
@@ -311,10 +285,12 @@ void Cars::ResetTurn()
 
 void Cars::ResolveCards()
 {
+	AudioEngine& audio = AudioEngine::Instance();
 	if (Position1 != -1 && Position1 != -2 && Position1 != -3)
 	{
 		if (Hand[Position1] == 0)
 		{
+			audio.GetEvent("MultiNitro").Restart();
 			if (Gear + 3 > 6)
 			{
 				Gear = 6;
@@ -326,14 +302,17 @@ void Cars::ResolveCards()
 		}
 		else if (Hand[Position1] == 2)
 		{
+			audio.GetEvent("Slipstream").Restart();
 			Gear = Oppgear;
 		}
 		else if (Hand[Position1] == 3)
 		{
+			audio.GetEvent("E-Brake").Restart();
 			Gear = 1;
 		}
 		else if (Hand[Position1] == 4)
 		{
+			audio.GetEvent("Quick Shift").Restart();
 			Quick = true;
 			if (Turns != 0)
 			{
@@ -347,6 +326,7 @@ void Cars::ResolveCards()
 		{
 			if (Hand[Position2] == 0)
 			{
+				audio.GetEvent("MultiNitro").Restart();
 				if (Gear + 3 > 6)
 				{
 					Gear = 6;
@@ -358,14 +338,17 @@ void Cars::ResolveCards()
 			}
 			else if (Hand[Position2] == 2)
 			{
+				audio.GetEvent("Slipstream").Restart();
 				Gear = Oppgear;
 			}
 			else if (Hand[Position2] == 3)
 			{
+				audio.GetEvent("E-Brake").Restart();
 				Gear = 1;
 			}
 			else if (Hand[Position2] == 4)
 			{
+				audio.GetEvent("Quick Shift").Restart();
 				Quick = true;
 				if (Turns != 0)
 				{
