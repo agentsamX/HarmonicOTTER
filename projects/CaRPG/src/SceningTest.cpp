@@ -1093,7 +1093,7 @@ int SceningTest::Update()
 	{
 		if (EnemyComponent.GetSabo() == false && EnemyComponent.GetEnded() == false)
 		{
-
+			EnemyComponent.SetOppGear(PlayerComponent.GetGear());
 			if (obstacleComponent.GetObs() == 0)
 			{
 				if (abs(PlayerComponent.GetGear() - obstacleComponent.GetValue()) <= 2)
@@ -1118,10 +1118,10 @@ int SceningTest::Update()
 						}
 					}
 				}
-			}
-			else if (EnemyComponent.GetPosition1() == -1 || EnemyComponent.GetPosition2() == -1)
-			{
-				EnemyComponent.SetAcc();
+				else if (EnemyComponent.GetPosition1() == -1 || EnemyComponent.GetPosition2() == -1)
+				{
+					EnemyComponent.SetAcc();
+				}
 			}
 
 			if (obstacleComponent.GetObs() == 1 || obstacleComponent.GetObs() == 2)
@@ -1190,6 +1190,29 @@ int SceningTest::Update()
 				}
 			}
 
+			if (EnemyComponent.GetPosition1() != -1 && EnemyComponent.GetPosition1() != -2 && EnemyComponent.GetPosition1() != -3)
+			{
+				if (EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 2)
+				{
+					PlayerComponent.ChangeGears(EnemyComponent.GetGear());
+				}
+				else if (EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 5)
+				{
+					PlayerComponent.SetSabo();
+				}
+			}
+
+			if (EnemyComponent.GetPosition2() != -1 && EnemyComponent.GetPosition2() != -2 && EnemyComponent.GetPosition2() != -3)
+			{
+				if (EnemyComponent.GetCard(EnemyComponent.GetPosition2(), true) == 2)
+				{
+					PlayerComponent.ChangeGears(EnemyComponent.GetGear());
+				}
+				else if (EnemyComponent.GetCard(EnemyComponent.GetPosition2(), true) == 5)
+				{
+					PlayerComponent.SetSabo();
+				}
+			}
 			EnemyComponent.ResolveCards();
 			PlayerComponent.SetOppGear(EnemyComponent.GetGear());
 		}
