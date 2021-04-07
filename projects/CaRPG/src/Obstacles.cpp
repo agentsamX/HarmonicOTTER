@@ -7,14 +7,15 @@ Obstacles::~Obstacles()
 }
 void Obstacles::Adddeck(int obs)
 {
-	Deck.push_back(obs);
+	Deck.push(obs);
 }
 
 void Obstacles::Draw()
 {
 	if (Increment <= Deck.size()-1)
 	{
-		CurObs = Deck.at(Increment);
+		CurObs = Deck.top();
+		Deck.pop();
 		srand((unsigned)time(0));
 		Value = (rand() % 6 + 1);
 		/*
