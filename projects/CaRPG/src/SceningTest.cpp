@@ -1343,14 +1343,12 @@ int SceningTest::Update()
 			}
 			if (EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 1 || EnemyComponent.GetCard(EnemyComponent.GetPosition2(),true) == 1)
 			{
-				engine.GetEvent("Drift").Restart();
 				temp = EnemyComponent.GetGear();
 				EnemyComponent.ChangeGears(PlayerComponent.GetGear());
 				PlayerComponent.ChangeGears(temp);
 			}
 			if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1 || PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1)
 			{
-				engine.GetEvent("Drift").Restart();
 				temp = PlayerComponent.GetGear();
 				PlayerComponent.ChangeGears(EnemyComponent.GetGear());
 				EnemyComponent.ChangeGears(temp);

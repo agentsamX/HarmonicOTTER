@@ -300,6 +300,10 @@ void Cars::ResolveCards()
 				Gear += 3;
 			}
 		}
+		else if (Hand[Position1] == 1)
+		{
+			audio.GetEvent("Drift").Restart();
+		}
 		else if (Hand[Position1] == 2)
 		{
 			audio.GetEvent("Slipstream").Restart();
@@ -336,6 +340,10 @@ void Cars::ResolveCards()
 					Gear += 3;
 				}
 			}
+			else if (Hand[Position2] == 1)
+			{
+				audio.GetEvent("Drift").Restart();
+			}
 			else if (Hand[Position2] == 2)
 			{
 				audio.GetEvent("Slipstream").Restart();
@@ -360,6 +368,7 @@ void Cars::ResolveCards()
 
 	if (Position1 == -3 || Position2 == -3)
 	{
+		audio.GetEvent("Accelerate").Restart();
 		if (Gear + 1 != 7)
 		{
 			if (Quick == false)
@@ -379,6 +388,7 @@ void Cars::ResolveCards()
 
 	if (Position1 == -2 || Position2 == -2)
 	{
+		audio.GetEvent("Brake").Restart();
 		if (Gear - 1 != 0)
 		{
 			if (Quick == false)
