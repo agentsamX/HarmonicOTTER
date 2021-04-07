@@ -887,6 +887,7 @@ void Scene2::Start()
 	camComponent->SetFovDegrees(100.0f); // Set an initial FOV
 
 	auto& obstacleComponent = m_Registry.get<Obstacles>(m_Obstacle);
+	/*
 	obstacleComponent.Adddeck(0);
 	obstacleComponent.Adddeck(1);
 	obstacleComponent.Adddeck(0);
@@ -910,6 +911,32 @@ void Scene2::Start()
 	obstacleComponent.Adddeck(3);
 	obstacleComponent.Adddeck(2);
 	obstacleComponent.Adddeck(2);
+	*/
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(3);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(3);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(3);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(3);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(0);
 
 	auto listView = m_Registry.view<syre::TransformList>();
 	for (auto entity : listView)

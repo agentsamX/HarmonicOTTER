@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <stack>
 
 class Obstacles
 {
@@ -29,5 +30,5 @@ private:
 	int P1wins = 0;
 	int P2wins = 0;
 	bool End = false;
-	std::vector <int> Deck = {};
+	std::stack <int> Deck = {};
 };

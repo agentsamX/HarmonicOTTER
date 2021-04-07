@@ -820,6 +820,7 @@ void SceningTest::Start()
 	camComponent->SetFovDegrees(100.0f); // Set an initial FOV
 
 	auto& obstacleComponent = m_Registry.get<Obstacles>(m_Obstacle);
+	/*
 	obstacleComponent.Adddeck(0);
 	obstacleComponent.Adddeck(0);
 	obstacleComponent.Adddeck(2);
@@ -842,6 +843,29 @@ void SceningTest::Start()
 	obstacleComponent.Adddeck(2);
 	obstacleComponent.Adddeck(0);
 	obstacleComponent.Adddeck(1);
+	*/
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(3);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(3);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(3);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(0);
 
 	auto listView = m_Registry.view<syre::TransformList>();
 	for (auto entity : listView)
@@ -1343,14 +1367,12 @@ int SceningTest::Update()
 			}
 			if (EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 1 || EnemyComponent.GetCard(EnemyComponent.GetPosition2(),true) == 1)
 			{
-				engine.GetEvent("Drift").Restart();
 				temp = EnemyComponent.GetGear();
 				EnemyComponent.ChangeGears(PlayerComponent.GetGear());
 				PlayerComponent.ChangeGears(temp);
 			}
 			if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1 || PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 1)
 			{
-				engine.GetEvent("Drift").Restart();
 				temp = PlayerComponent.GetGear();
 				PlayerComponent.ChangeGears(EnemyComponent.GetGear());
 				EnemyComponent.ChangeGears(temp);
