@@ -31,6 +31,7 @@ public:
 	void SetCamPos(glm::vec3 camPos);
 	void SetPlayerPos(glm::vec3 playPos);
 	void SetEnemyPos(glm::vec3 enemPos);
+	void SetEmissive(bool emissive);
 
 	DirectionalLight& GetSunRef();
 	
@@ -50,5 +51,7 @@ private:
 
 	bool _sunEnabled = true;
 	
+	bool emissiveOn = true;
+
 	DirectionalLight _sun;
 };

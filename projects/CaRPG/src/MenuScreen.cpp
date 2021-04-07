@@ -50,7 +50,7 @@ int MenuScreen::Update()
 	double* y = new double;
 
 	glfwGetCursorPos(window, x, y);
-	//printf("Mouse at X %f Y %f\n", *x, *y);
+	printf("Mouse at X %f Y %f\n", *x, *y);
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
@@ -58,7 +58,16 @@ int MenuScreen::Update()
 		{
 			if (266.0f < *y && *y < 333.0f)
 			{
-				return 1;
+				return 3;
+			}
+			if (467.0f<*y&&*y<550.f)
+			{
+				clickTimes++;
+				if (clickTimes > 20)
+				{
+					won = true;
+
+				}
 			}
 			else if (570.0f < *y &&*y< 638.0f)
 			{
@@ -78,4 +87,9 @@ Camera::sptr& MenuScreen::GetCam()
 {
 	// TODO: insert return statement here
 	return camera;
+}
+
+int MenuScreen::GetID()
+{
+	return 3;
 }

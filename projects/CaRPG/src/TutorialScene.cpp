@@ -229,7 +229,7 @@ void TutorialScene::Start()
 
 	//trees
 	entt::entity trackTrees = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackTrees, "objects/TreesMap.obj");
+	m_Registry.emplace<syre::Mesh>(trackTrees, "objects/TutorialTree.obj");
 	m_Registry.emplace<syre::Transform>(trackTrees, glm::vec3(8.0f, 9.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackTrees, "images/Tree.png");
 
@@ -241,7 +241,7 @@ void TutorialScene::Start()
 
 	//signs
 	entt::entity trackSigns = m_Registry.create();
-	m_Registry.emplace<syre::Mesh>(trackSigns, "objects/SignsMap.obj");
+	m_Registry.emplace<syre::Mesh>(trackSigns, "objects/TutorialSigns.obj");
 	m_Registry.emplace<syre::Transform>(trackSigns, glm::vec3(8.0f, 9.0f, -0.5f), glm::vec3(90.0f, 0.0f, 180.0f), glm::vec3(2.2f));
 	m_Registry.emplace<syre::Texture>(trackSigns, "images/Signs.png");
 
@@ -302,7 +302,7 @@ void TutorialScene::Start()
 	m_Registry.emplace<syre::TransformList>(swayingTree);
 	m_Registry.get<syre::TransformList>(swayingTree).SetDefaultRot(glm::vec3(90.0f, 0.0f, 0.0f));
 	m_Registry.get<syre::TransformList>(swayingTree).SetDefaultSca(glm::vec3(1.0f));
-	m_Registry.get<syre::TransformList>(swayingTree).AddPos(glm::vec3(-1.0f, -80.0f, 0.0f));
+	//m_Registry.get<syre::TransformList>(swayingTree).AddPos(glm::vec3(-1.0f, -80.0f, 0.0f));
 
 
 
@@ -715,6 +715,7 @@ int TutorialScene::Update()
 	}
 	glm::vec3 camX = glm::cross(camComponent->GetForward(), camComponent->GetUp());
 	//check for events
+	flatShader->Bind();
 	{
 		if (!evDone[0] && m_Registry.get<syre::PathAnimator>(m_PCar).GetSegment() > 0)
 		{
@@ -724,6 +725,39 @@ int TutorialScene::Update()
 			}
 			evTimer += deltaTime;
 			inEv = true;
+
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.875f, -0.2f));
+			flatShader->SetUniform("aspect", 2.f);
+			Racer.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
+
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.26f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.3f));
+			if (evTimer <= 7.0f)
+			{
+				flatShader->SetUniform("aspect", 0.3f);
+				Start1.Bind();
+				m_Registry.get<syre::Mesh>(m_Hazard).Render();
+			}
+			else if (evTimer <= 17.0f)
+			{
+				flatShader->SetUniform("aspect", 0.5f);
+				Start2.Bind();
+				m_Registry.get<syre::Mesh>(m_Hazard).Render();
+			}
+			else if (evTimer <= 28.0f)
+			{
+				flatShader->SetUniform("aspect", 0.5f);
+				Start3.Bind();
+				m_Registry.get<syre::Mesh>(m_Hazard).Render();
+			}
+			else
+			{
+				flatShader->SetUniform("aspect", 0.5f);
+				Start4.Bind();
+				m_Registry.get<syre::Mesh>(m_Hazard).Render();
+			}
 			if (evTimer >= 39.0f)
 			{
 				evDone[0] = true;
@@ -740,6 +774,34 @@ int TutorialScene::Update()
 			}
 			evTimer += deltaTime;
 			inEv = true;
+
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.875f, -0.2f));
+			flatShader->SetUniform("aspect", 2.f);
+			Racer.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
+
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.26f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.3f));
+			if (evTimer <= 11.0f)
+			{
+				flatShader->SetUniform("aspect", 0.5f);
+				After1.Bind();
+				m_Registry.get<syre::Mesh>(m_Hazard).Render();
+			}
+			else if (evTimer <= 20.0f)
+			{
+				flatShader->SetUniform("aspect", 0.5f);
+				After2.Bind();
+				m_Registry.get<syre::Mesh>(m_Hazard).Render();
+			}
+			else
+			{
+				flatShader->SetUniform("aspect", 0.5f);
+				After3.Bind();
+				m_Registry.get<syre::Mesh>(m_Hazard).Render();
+			}
+			
 			if (evTimer >= 28.0f)
 			{
 				evDone[1] = true;
@@ -756,6 +818,20 @@ int TutorialScene::Update()
 			}
 			evTimer += deltaTime;
 			inEv = true;
+
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.875f, -0.2f));
+			flatShader->SetUniform("aspect", 2.f);
+			Racer.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
+
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.26f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.3f));
+			
+			flatShader->SetUniform("aspect", 0.5f);
+			Before1.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
+
 			if (evTimer >= 11.0f)
 			{
 				evDone[2] = true;
@@ -772,6 +848,30 @@ int TutorialScene::Update()
 			}
 			evTimer += deltaTime;
 			inEv = true;
+
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.875f, -0.2f));
+			flatShader->SetUniform("aspect", 2.f);
+			Racer.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
+
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.26f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.3f));
+			
+			if (evTimer <= 9.0f)
+			{
+				flatShader->SetUniform("aspect", 0.5f);
+				AfterU1.Bind();
+				m_Registry.get<syre::Mesh>(m_Hazard).Render();
+			}
+			else
+			{
+				flatShader->SetUniform("aspect", 0.5f);
+				AfterU2.Bind();
+				m_Registry.get<syre::Mesh>(m_Hazard).Render();
+			}
+			
+
 			if (evTimer >= 19.0f)
 			{
 				evDone[3] = true;
@@ -788,6 +888,21 @@ int TutorialScene::Update()
 			}
 			evTimer += deltaTime;
 			inEv = true;
+
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.875f, -0.2f));
+			flatShader->SetUniform("aspect", 2.f);
+			Racer.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
+
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.26f)));
+			flatShader->SetUniform("offset", glm::vec2(-0.48f, -0.3f));
+			
+			flatShader->SetUniform("aspect", 0.5f);
+			End1.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
+			
+
 			if (evTimer >= 6.0f)
 			{
 				evDone[4] = true;
@@ -1300,8 +1415,15 @@ int TutorialScene::Update()
 
 	shadow->BindDepthAsTexture(30);
 
+	DirectionalLight& tempSun = illum->GetSunRef();
+	tempSun._ambientPow = ambientOn ? 0.2f : 0.0f;
+	tempSun._lightAmbientPow = ambientOn ? 0.2f : 0.0f;
+	tempSun._lightSpecularPow = specularOn ? 0.7f : 0.0f;
+	tempSun._lightCol = diffuseOn ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
 	illum->SetPlayerPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	illum->SetEnemyPos(m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	illum->SetEmissive(carLighting);
 	illum->ApplyEffect(g);
 
 	shadow->UnbindTexture(30);
@@ -1695,8 +1817,8 @@ void TutorialScene::ImGUIUpdate()
 			ImGui::Checkbox("Diffuse Lighting", &diffuseOn);
 			ImGui::Checkbox("Specular Lighting", &specularOn);
 			ImGui::Checkbox("Emissive Car Lighting", &carLighting);
-			ImGui::Checkbox("Specular Ramping", &rampOnSpec);
-			ImGui::Checkbox("Diffuse Ramping", &rampOnDiff);
+			//ImGui::Checkbox("Specular Ramping", &rampOnSpec);
+			//ImGui::Checkbox("Diffuse Ramping", &rampOnDiff);
 		}
 		if (ImGui::CollapsingHeader("FMOD"))
 		{

@@ -32,7 +32,12 @@ void MidGameMenu::Start()
 	m_CarIcon = m_Registry.create();
 	m_Registry.emplace<syre::Mesh>(m_CarIcon, "objects/RoadHazard.obj");
 	m_Registry.emplace<syre::Transform>(m_CarIcon, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-	m_Registry.emplace<syre::Texture>(m_CarIcon, "images/Completed.png");
+	m_Registry.emplace<syre::Texture>(m_CarIcon, "images/AStarCar.png");
+
+	m_DoneGame = m_Registry.create();
+	m_Registry.emplace<syre::Mesh>(m_DoneGame, "objects/RoadHazard.obj");
+	m_Registry.emplace<syre::Transform>(m_DoneGame, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+	m_Registry.emplace<syre::Texture>(m_DoneGame, "images/ThankYouForPlaying.png");
 
 	flatShader = Shader::Create();
 	flatShader->LoadShaderPartFromFile("flatVert.glsl", GL_VERTEX_SHADER);
@@ -46,7 +51,19 @@ int MidGameMenu::Update()
 	int height;
 	glfwGetWindowSize(window, &width, &height);
 
+	thisFrame = glfwGetTime();
+	float deltaTime = thisFrame - lastFrame;
+
 	flatShader->Bind();
+	if (m_won1 && m_won2 && m_wonTut)
+	{
+		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)));
+		flatShader->SetUniform("offset", glm::vec2(0.0f, 0.0f));
+		flatShader->SetUniform("aspect", 0.5f);//this is atypical
+		m_Registry.get<syre::Texture>(m_DoneGame).Bind();
+		m_Registry.get<syre::Mesh>(m_DoneGame).Render();
+	}
+	
 	if (m_won1)
 	{
 		flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.05f)));
@@ -72,9 +89,40 @@ int MidGameMenu::Update()
 		m_Registry.get<syre::Mesh>(m_winBadge).Render();
 	}
 
+	if (!moving)
+	{
+		if (curLevel == 1)
+		{
+			menuPos = carPos;
+		}
+		else if (curLevel == 2)
+		{
+			menuPos = carPos;
+		}
+		else if (curLevel == 3)
+		{
+			menuPos = carPos;
+		}
+	}
+	else
+	{
+		
+		timer += deltaTime;
+		float t = timer / 0.5f;
+		carPos = glm::mix(menuPos, destPos, t);
+		//printf("%f %f\n", t, timer);
+		if (t >= 1.0f)
+		{
+			menuPos = destPos;
+			timer = 0.0f;
+		}
+	}
 
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(menuScale)));
-	flatShader->SetUniform("offset", menuPos);
+	//0.882,-0.824,-0.039,,0.922
+		//0.285,0.120
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.04)));
+	flatShader->SetUniform("offset", glm::vec2(-0.02f+0.13*(float)xPos,-0.76+0.3*(float)yPos));
 	flatShader->SetUniform("aspect", float(width) / float(height));//this is atypical
 	m_Registry.get<syre::Texture>(m_CarIcon).Bind();
 	m_Registry.get<syre::Mesh>(m_CarIcon).Render();
@@ -96,29 +144,42 @@ int MidGameMenu::Update()
 	double* y = new double;
 
 	glfwGetCursorPos(window, x, y);
-	printf("Mouse at X %f Y %f\n", *x, *y);
+	//printf("Mouse at X %f Y %f\n", *x, *y);
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
 		if (47.0f < *x && *x < 347.f)
 		{
 			if (200.0f < *y && *y < 283.0f)
 			{
+				moving = true;
+				curLevel = 1;
+				destPos = glm::vec2(0.137, 0.667);
+
 				if(!m_wonTut)
 					return 3;
 			}
 			else if (336.0f < *y && *y < 419.0f)
 			{
+				moving = true;
+				curLevel = 2;
+				destPos = glm::vec2(0.392, -0.451);
+
 				if(!m_won1)
 					return 1;
 			}
 			else if (471.0f < *y && *y < 556.0f)
 			{
+				moving = true;
+				curLevel = 2;
+				destPos = glm::vec2(0.765, 0.157);
+
 				if(!m_won2)
 					return 2;
 			}
 
 		}
 	}
+	lastFrame = thisFrame;
 
 	return 0;
 }
@@ -134,6 +195,8 @@ void MidGameMenu::ImGUIUpdate()
 	{
 		ImGui::SliderFloat("Scale", &menuScale, 0.0, 0.5);
 		ImGui::SliderFloat2("Pos", &menuPos.x, -1.0f, 1.0f);
+		ImGui::SliderInt("xInt", &xPos,0,7);
+		ImGui::SliderInt("yInt", &yPos,0,5);
 	}
 
 	ImGui::End();

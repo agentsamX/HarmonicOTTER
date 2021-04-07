@@ -227,6 +227,7 @@ int main()
 	bool wonTut = false;
 	bool won1 = false;
 	bool won2 = false;
+	bool debugMenu = false;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -244,8 +245,10 @@ int main()
 					wonTut = true;
 				else if (temp == 1)
 					won1 = true;
-				else if(temp==2)
-					won2=true;
+				else if (temp == 2)
+					won2 = true;
+				else if (temp == 3);
+					debugMenu = true;
 			}
 
 			if(returned==1)
@@ -302,7 +305,8 @@ int main()
 			
 
 		}
-		curScene->ImGUIUpdate();
+		if(debugMenu)
+			curScene->ImGUIUpdate();
 		glfwSwapBuffers(window);
 	}
 

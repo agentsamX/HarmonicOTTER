@@ -1605,8 +1605,16 @@ int Scene2::Update()
 
 	shadow->BindDepthAsTexture(30);
 
+
+	DirectionalLight& tempSun = illum->GetSunRef();
+	tempSun._ambientPow = ambientOn ? 0.2f : 0.0f;
+	tempSun._lightAmbientPow = ambientOn ? 0.2f : 0.0f;
+	tempSun._lightSpecularPow = specularOn ? 0.7f : 0.0f;
+	tempSun._lightCol = diffuseOn ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
 	illum->SetPlayerPos(m_Registry.get<syre::Transform>(m_PCar).GetPosition());
 	illum->SetEnemyPos(m_Registry.get<syre::Transform>(m_enemy).GetPosition());
+	illum->SetEmissive(carLighting);
 	illum->ApplyEffect(g);
 
 	shadow->UnbindTexture(30);
@@ -1997,8 +2005,8 @@ void Scene2::ImGUIUpdate()
 			ImGui::Checkbox("Diffuse Lighting", &diffuseOn);
 			ImGui::Checkbox("Specular Lighting", &specularOn);
 			ImGui::Checkbox("Emissive Car Lighting", &carLighting);
-			ImGui::Checkbox("Specular Ramping", &rampOnSpec);
-			ImGui::Checkbox("Diffuse Ramping", &rampOnDiff);
+			//ImGui::Checkbox("Specular Ramping", &rampOnSpec);
+			//ImGui::Checkbox("Diffuse Ramping", &rampOnDiff);
 		}
 		if (ImGui::CollapsingHeader("FMOD"))
 		{

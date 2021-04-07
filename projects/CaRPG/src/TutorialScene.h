@@ -126,5 +126,18 @@ private:
 	float evTimer = 0.0f;
 	int curEv = 0;
 	bool evDone[5] = { false,false,false,false,false };
-	
+
+	syre::Texture Start1 = syre::Texture("images/StartOfRace1.png");
+	syre::Texture Start2 = syre::Texture("images/StartOfRace2.png");
+	syre::Texture Start3 = syre::Texture("images/StartOfRace3.png");
+	syre::Texture Start4 = syre::Texture("images/StartOfRace4.png");
+	syre::Texture After1 = syre::Texture("images/AfterFirstTurn1.png");
+	syre::Texture After2 = syre::Texture("images/AfterFirstTurn2.png");
+	syre::Texture After3 = syre::Texture("images/AfterFirstTurn3.png");
+	syre::Texture AfterU1 = syre::Texture("images/AfterUTurn1.png");
+	syre::Texture AfterU2 = syre::Texture("images/AfterUTurn2.png");
+	syre::Texture Before1 = syre::Texture("images/BeforeChicane.png");
+	syre::Texture End1 = syre::Texture("images/EndOfRace.png");
+
+	syre::Texture Racer = syre::Texture("images/SquaredOff.png");
 };

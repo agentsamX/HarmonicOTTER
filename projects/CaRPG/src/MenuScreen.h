@@ -12,7 +12,9 @@ public:
 	int Update();
 	void ImGUIUpdate();
 	Camera::sptr& GetCam();
+	int GetID();
 private:
 	Shader::sptr flatShader;
 	entt::entity m_MenuImage;
+	int clickTimes = 0;
 };

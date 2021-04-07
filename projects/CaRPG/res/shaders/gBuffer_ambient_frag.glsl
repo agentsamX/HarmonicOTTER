@@ -35,6 +35,8 @@ layout(binding = 5) uniform sampler2D s_skyBox;
 uniform vec3 u_PlayerPos;
 uniform vec3 u_EnemyPos;
 
+uniform int u_emissiveOn;
+
 out vec4 frag_color;
 
 void main()
@@ -60,6 +62,6 @@ void main()
 
     //frag_color=vec4(result,1.0);
 
-	frag_color =textureColor/(distPlay/3)*vec4(result,1.0)+vec4(1/(distPlay),0.0f,1/(distEnemy),0.0f);
+	frag_color =textureColor/(distPlay/3)*vec4(result,1.0)+(vec4(1/(distPlay),0.0f,1/(distEnemy),0.0f)*float(u_emissiveOn));
 
 }
