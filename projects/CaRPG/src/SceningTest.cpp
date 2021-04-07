@@ -1406,7 +1406,12 @@ int SceningTest::Update()
 		m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);//needs changed
 		if (PlayerComponent.GetScore() >= EnemyComponent.GetScore())
 		{
-			printf("PLAYER WINS");
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f)));
+			flatShader->SetUniform("offset", glm::vec2(0.0f, 0.4f));
+			flatShader->SetUniform("aspect", 0.4f);
+			Winner.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
+
 			m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(1.0, true);
 			m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(1.0, false);
 			if (m_Registry.get<syre::PathAnimator>(m_PCar).GetHardStop())
@@ -1424,7 +1429,11 @@ int SceningTest::Update()
 		}
 		else if (PlayerComponent.GetScore() < EnemyComponent.GetScore())
 		{
-			printf("ENEMY WINS");
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f)));
+			flatShader->SetUniform("offset", glm::vec2(0.0f, 0.4f));
+			flatShader->SetUniform("aspect", 0.4f);
+			Loser.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
 			m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(1.0, false);
 			m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(1.0, true);
 			bootToMenu += deltaTime;

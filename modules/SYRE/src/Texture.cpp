@@ -8,9 +8,9 @@ syre::Texture::Texture(std::string file){
 
 	image = stbi_load(file.c_str(), &width, &height, &channels, 0);
 
-	if (image)
+	/*if (image)
 		printf("Image loaded: %i x %i\n",width,height);
-	else printf("Failed to load image\n");
+	else printf("Failed to load image\n");*/
 
 	glGenTextures(1, &textureHandle);
 	glBindTexture(GL_TEXTURE_2D, textureHandle);

@@ -844,7 +844,7 @@ int TutorialScene::Update()
 
 			if (evTimer >= 19.0f)
 			{
-				evDone[3] = true;
+				evDone[2] = true;
 				evTimer = 0.0f;
 				curEv++;
 				inEv = false;
@@ -874,7 +874,7 @@ int TutorialScene::Update()
 
 			if (evTimer >= 11.0f)
 			{
-				evDone[2] = true;
+				evDone[3] = true;
 				evTimer = 0.0f;
 				curEv++;
 				inEv = false;
@@ -1278,7 +1278,12 @@ int TutorialScene::Update()
 		m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);//needs changed
 		if (PlayerComponent.GetScore() >= EnemyComponent.GetScore())
 		{
-			printf("PLAYER WINS");
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f)));
+			flatShader->SetUniform("offset", glm::vec2(0.0f, 0.4f));
+			flatShader->SetUniform("aspect", 0.4f);
+			Winner.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
+
 			m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(1.0, true);
 			m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(1.0, false);
 			if (m_Registry.get<syre::PathAnimator>(m_PCar).GetHardStop())
@@ -1296,7 +1301,11 @@ int TutorialScene::Update()
 		}
 		else if (PlayerComponent.GetScore() < EnemyComponent.GetScore())
 		{
-			printf("ENEMY WINS");
+			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f)));
+			flatShader->SetUniform("offset", glm::vec2(0.0f, 0.4f));
+			flatShader->SetUniform("aspect", 0.4f);
+			Loser.Bind();
+			m_Registry.get<syre::Mesh>(m_Hazard).Render();
 			m_Registry.get<syre::PathAnimator>(m_PCar).SetSpeed(1.0, false);
 			m_Registry.get<syre::PathAnimator>(m_enemy).SetSpeed(1.0, true);
 			bootToMenu += deltaTime;
@@ -2002,24 +2011,11 @@ int TutorialScene::KeyEvents(float delta)
 			escRelease = false;
 
 		}
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && Elapsedtime >= 0.5)
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && Elapsedtime >= 1.0)
 		{
 			AudioEngine& engine = AudioEngine::Instance();
-
 			double* x = new double;
 			double* y = new double;
-			if (inEv)
-			{
-				evDone[curEv] = true;
-				evTimer = 0.0f;
-				curEv++;
-				inEv = false;
-				engine.GetEvent("Tut-AfterFirstTurn").StopImmediately();
-				engine.GetEvent("Tut-AfterUTurn").StopImmediately();
-				engine.GetEvent("Tut-BeforeChicane").StopImmediately();
-				engine.GetEvent("Tut-EndOfRace").StopImmediately();
-				engine.GetEvent("Tut-StartOfRace").StopImmediately();
-			}
 
 			glfwGetCursorPos(window, x, y);
 			if (*x >= 70 && *x <= 95 && *y <= 615 && *y >= 597)
@@ -2067,6 +2063,50 @@ int TutorialScene::KeyEvents(float delta)
 					Elapsedtime = 0;
 				}
 			}
+
+			if (*x >= 242 && *x <= 397 && *y <= 687 && *y >= 611)
+			{
+				
+				if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
+				{
+					if (inEv)
+					{
+						evDone[curEv] = true;
+						evTimer = 0.0f;
+						curEv++;
+						inEv = false;
+						engine.GetEvent("Tut-AfterFirstTurn").StopImmediately();
+						engine.GetEvent("Tut-AfterUTurn").StopImmediately();
+						engine.GetEvent("Tut-BeforeChicane").StopImmediately();
+						engine.GetEvent("Tut-EndOfRace").StopImmediately();
+						engine.GetEvent("Tut-StartOfRace").StopImmediately();
+					}
+					if (PlayerComponent.GetPosition1() != -1 && PlayerComponent.GetPosition1() != -2 && PlayerComponent.GetPosition1() != -3)
+					{
+						if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 2)
+						{
+							EnemyComponent.ChangeGears(PlayerComponent.GetGear());
+						}
+						else if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 5)
+						{
+							EnemyComponent.SetSabo();
+						}
+					}
+
+					if (PlayerComponent.GetPosition2() != -1 && PlayerComponent.GetPosition2() != -2 && PlayerComponent.GetPosition2() != -3)
+					{
+						if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 2)
+						{
+							EnemyComponent.ChangeGears(PlayerComponent.GetGear());
+						}
+						else if (PlayerComponent.GetCard(PlayerComponent.GetPosition2(), true) == 5)
+						{
+							EnemyComponent.SetSabo();
+						}
+					}
+					PlayerComponent.ResolveCards();
+				}
+			}
 		}
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
 		{
@@ -2078,8 +2118,21 @@ int TutorialScene::KeyEvents(float delta)
 		}
 		if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
 		{
+			AudioEngine& engine = AudioEngine::Instance();
 			if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
 			{
+				if (inEv)
+				{
+					evDone[curEv] = true;
+					evTimer = 0.0f;
+					curEv++;
+					inEv = false;
+					engine.GetEvent("Tut-AfterFirstTurn").StopImmediately();
+					engine.GetEvent("Tut-AfterUTurn").StopImmediately();
+					engine.GetEvent("Tut-BeforeChicane").StopImmediately();
+					engine.GetEvent("Tut-EndOfRace").StopImmediately();
+					engine.GetEvent("Tut-StartOfRace").StopImmediately();
+				}
 				if (PlayerComponent.GetPosition1() != -1 && PlayerComponent.GetPosition1() != -2 && PlayerComponent.GetPosition1() != -3)
 				{
 					if (PlayerComponent.GetCard(PlayerComponent.GetPosition1(), true) == 2)
@@ -2105,6 +2158,7 @@ int TutorialScene::KeyEvents(float delta)
 				}
 				PlayerComponent.ResolveCards();
 			}
+			
 		}
 		camComponent->SetPosition(curCamPos);
 		return 0;

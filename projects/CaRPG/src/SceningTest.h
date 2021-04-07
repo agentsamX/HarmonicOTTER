@@ -121,4 +121,7 @@ private:
 	float lr = 200.0f;
 	float unear = 160.0f;
 	float ufar = 160.0f;
+
+	syre::Texture Winner = syre::Texture("images/Win Screen.png");
+	syre::Texture Loser = syre::Texture("images/Lose Screen.png");
 };
