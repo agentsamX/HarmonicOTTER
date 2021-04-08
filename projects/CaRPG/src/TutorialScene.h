@@ -121,6 +121,7 @@ private:
 	float lr = 200.0f;
 	float unear = 160.0f;
 	float ufar = 160.0f;
+	float newvol;
 
 	bool inEv = false;
 	float evTimer = 0.0f;

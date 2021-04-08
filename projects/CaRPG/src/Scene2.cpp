@@ -1479,6 +1479,8 @@ int Scene2::Update()
 				m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(1);
 				m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(1);
 			}
+			newvol += 0.3;
+			engine.SetGlobalParameter("MusicVolume", newvol);
 			PlayerComponent.ResetTurn();
 			EnemyComponent.ResetTurn();
 			obstacleComponent.Draw();

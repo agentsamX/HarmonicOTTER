@@ -115,6 +115,7 @@ private:
 
 	int shadowWidth = 4096;
 	int shadowHeight = 4096;
+	float newvol;
 
 
 	float ud = 200.0f;

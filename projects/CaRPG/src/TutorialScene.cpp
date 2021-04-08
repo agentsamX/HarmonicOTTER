@@ -708,7 +708,6 @@ int TutorialScene::Update()
 	bool done = false;
 	bool Pemp = false;
 	bool Eemp = false;
-	float newvol;
 	if (start == 0)
 	{
 		start += 1;
@@ -1051,8 +1050,6 @@ int TutorialScene::Update()
 		val1 = 0;
 	}
 
-	newvol += 0.3;
-	engine.SetGlobalParameter("MusicVolume", newvol);
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
 	flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
 	progressBar1[val1].Bind();
@@ -1250,6 +1247,8 @@ int TutorialScene::Update()
 				m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(1);
 				m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(1);
 			}
+			newvol += 0.3;
+			engine.SetGlobalParameter("MusicVolume", newvol);
 			PlayerComponent.ResetTurn();
 			EnemyComponent.ResetTurn();
 			obstacleComponent.Draw();
