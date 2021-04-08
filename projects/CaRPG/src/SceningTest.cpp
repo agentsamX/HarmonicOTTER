@@ -1428,6 +1428,7 @@ int SceningTest::Update()
 	{
 		m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);//needs changed
 		m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);//needs changed
+		helptog = false;
 		if (PlayerComponent.GetScore() >= EnemyComponent.GetScore())
 		{
 			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f)));

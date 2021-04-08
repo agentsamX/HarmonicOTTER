@@ -1498,6 +1498,7 @@ int Scene2::Update()
 	{
 		m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(2);//needs changed
 		m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(2);//needs changed
+		helptog = false;
 		if (PlayerComponent.GetScore() >= EnemyComponent.GetScore())
 		{
 			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f)));
@@ -1724,7 +1725,7 @@ int Scene2::Update()
 
 
 
-
+	
 	if (!manualCamera)
 	{
 		camComponent->SetPosition(m_Registry.get<syre::Transform>(m_PCar).GetPosition() + glm::vec3(1.0f, 5.0f, 5.0f));

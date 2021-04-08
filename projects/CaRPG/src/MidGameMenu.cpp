@@ -121,17 +121,7 @@ int MidGameMenu::Update()
 	//0.882,-0.824,-0.039,,0.922
 		//0.285,0.120
 
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.04)));
-	flatShader->SetUniform("offset", glm::vec2(-0.02f+0.13*(float)xPos,-0.76+0.3*(float)yPos));
-	flatShader->SetUniform("aspect", float(width) / float(height));//this is atypical
-	m_Registry.get<syre::Texture>(m_CarIcon).Bind();
-	m_Registry.get<syre::Mesh>(m_CarIcon).Render();
-
-	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.51)));
-	flatShader->SetUniform("offset", glm::vec2(0.451f,0.0f));
-	flatShader->SetUniform("aspect", float(width) / float(height));//this is atypical
-	m_Registry.get<syre::Texture>(m_MapScreen).Bind();
-	m_Registry.get<syre::Mesh>(m_MapScreen).Render();
+	
 	
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
 	flatShader->SetUniform("offset", glm::vec2(0.0f,0.0f));
