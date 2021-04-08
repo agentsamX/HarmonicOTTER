@@ -1003,7 +1003,6 @@ int Scene2::Update()
 	bool done = false;
 	bool Pemp = false;
 	bool Eemp = false;
-	float newvol;
 	if (start == 0)
 	{
 		start += 1;
@@ -1140,40 +1139,29 @@ int Scene2::Update()
 		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
 	}
 
-	for (int i = 0; i < 8; i++)
+	int val1 = (round((float)PlayerComponent.GetScore() / (float)obstacleComponent.GetSize() * 8) - 1);
+	if (val1 < 0)
 	{
-		if (PlayerComponent.GetScore() > floor((obstacleComponent.GetSize() / 8) * i) && PlayerComponent.GetScore() <= floor((obstacleComponent.GetSize() / 8) * (i + 1)))
-		{
-			newvol += 0.3;
-			engine.SetGlobalParameter("MusicVolume", newvol);
-			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
-			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
-			progressBar1[i].Bind();
-			m_Registry.get<syre::Mesh>(m_Pscore).Render();
-		}
-		else if (PlayerComponent.GetScore() < floor((obstacleComponent.GetSize() / 8) * i))
-		{
-			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
-			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
-			progressBar1[0].Bind();
-			m_Registry.get<syre::Mesh>(m_Pscore).Render();
-		}
-
-		if (EnemyComponent.GetScore() > floor((obstacleComponent.GetSize() / 8) * i) && EnemyComponent.GetScore() <= floor((obstacleComponent.GetSize() / 8) * (i + 1)))
-		{
-			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
-			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
-			progressBar2[i].Bind();
-			m_Registry.get<syre::Mesh>(m_Escore).Render();
-		}
-		else if (EnemyComponent.GetScore() < floor((obstacleComponent.GetSize() / 8) * i))
-		{
-			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
-			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
-			progressBar2[0].Bind();
-			m_Registry.get<syre::Mesh>(m_Pscore).Render();
-		}
+		val1 = 0;
 	}
+	//("%f, %f",Pl)
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
+	progressBar1[val1].Bind();
+	m_Registry.get<syre::Mesh>(m_Pscore).Render();
+
+
+	int val2 = (round((float)EnemyComponent.GetScore() / (float)obstacleComponent.GetSize() * 8) - 1);
+	if (val2 < 0)
+	{
+		val2 = 0;
+	}
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
+	progressBar2[val2].Bind();
+	m_Registry.get<syre::Mesh>(m_Escore).Render();
 
 	if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
 	{

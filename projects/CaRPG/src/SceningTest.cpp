@@ -933,7 +933,6 @@ int SceningTest::Update()
 	bool done = false;
 	bool Pemp = false;
 	bool Eemp = false;
-	float newvol;
 	if (start == 0)
 	{
 		start += 1;
@@ -1070,40 +1069,29 @@ int SceningTest::Update()
 		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
 	}
 
-	for (int i = 0; i < 8; i++)
+	int val1 = (round((float)PlayerComponent.GetScore() / (float)obstacleComponent.GetSize() * 8) - 1);
+	if (val1 < 0)
 	{
-		if (PlayerComponent.GetScore() > floor((obstacleComponent.GetSize() / 8) * i) && PlayerComponent.GetScore() <= floor((obstacleComponent.GetSize() / 8) * (i + 1)))
-		{
-			newvol += 0.3;
-			engine.SetGlobalParameter("MusicVolume", newvol);
-			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
-			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
-			progressBar1[i].Bind();
-			m_Registry.get<syre::Mesh>(m_Pscore).Render();
-		}
-		else if (PlayerComponent.GetScore() < floor((obstacleComponent.GetSize() / 8) * i))
-		{
-			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
-			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
-			progressBar1[0].Bind();
-			m_Registry.get<syre::Mesh>(m_Pscore).Render();
-		}
-
-		if (EnemyComponent.GetScore() > floor((obstacleComponent.GetSize() / 8) * i) && EnemyComponent.GetScore() <= floor((obstacleComponent.GetSize() / 8) * (i + 1)))
-		{
-			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
-			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
-			progressBar2[i].Bind();
-			m_Registry.get<syre::Mesh>(m_Escore).Render();
-		}
-		else if (EnemyComponent.GetScore() < floor((obstacleComponent.GetSize() / 8) * i))
-		{
-			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
-			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
-			progressBar2[0].Bind();
-			m_Registry.get<syre::Mesh>(m_Pscore).Render();
-		}
+		val1 = 0;
 	}
+	//("%f, %f",Pl)
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
+	progressBar1[val1].Bind();
+	m_Registry.get<syre::Mesh>(m_Pscore).Render();
+
+
+	int val2 = (round((float)EnemyComponent.GetScore() / (float)obstacleComponent.GetSize() * 8) - 1);
+	if (val2 < 0)
+	{
+		val2 = 0;
+	}
+
+	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
+	flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
+	progressBar2[val2].Bind();
+	m_Registry.get<syre::Mesh>(m_Escore).Render();
 
 	if (m_Registry.get<syre::PathAnimator>(m_PCar).HitMax() || m_Registry.get<syre::PathAnimator>(m_enemy).HitMax())
 	{
@@ -1118,134 +1106,6 @@ int SceningTest::Update()
 	}
 	if (obstacleComponent.GetEnd() != true)
 	{
-		if (EnemyComponent.GetSabo() == false && EnemyComponent.GetEnded() == false)
-		{
-			EnemyComponent.SetOppGear(PlayerComponent.GetGear());
-			if (obstacleComponent.GetObs() == 0)
-			{
-				if (abs(PlayerComponent.GetGear() - obstacleComponent.GetValue()) <= 2)
-				{
-					for (int i; i <= 5; i++)
-					{
-						if (EnemyComponent.GetCard(i, true) == 2)
-						{
-							EnemyComponent.PlayCard(i, 0);
-							break;
-						}
-					}
-				}
-				if (EnemyComponent.GetGear() + 3 <= 8)
-				{
-					for (int i; i <= 5; i++)
-					{
-						if (EnemyComponent.GetCard(i, true) == 0)
-						{
-							EnemyComponent.PlayCard(i, 0);
-							break;
-						}
-					}
-				}
-				else if (EnemyComponent.GetPosition1() == -1 || EnemyComponent.GetPosition2() == -1)
-				{
-					EnemyComponent.SetAcc();
-				}
-			}
-
-			if (obstacleComponent.GetObs() == 1 || obstacleComponent.GetObs() == 2)
-			{
-				if (abs(PlayerComponent.GetGear() - obstacleComponent.GetValue()) <= 2)
-				{
-					for (int i; i <= 5; i++)
-					{
-						if (EnemyComponent.GetCard(i, true) == 2)
-						{
-							EnemyComponent.PlayCard(i, 0);
-							break;
-						}
-					}
-				}
-				else if (abs(obstacleComponent.GetValue() - EnemyComponent.GetGear()) <= 3 && EnemyComponent.GetGear() < obstacleComponent.GetValue())
-				{
-					for (int i; i <= 5; i++)
-					{
-						if (EnemyComponent.GetCard(i, true) == 1)
-						{
-							EnemyComponent.PlayCard(i, 0);
-							break;
-						}
-					}
-				}
-				else if (EnemyComponent.GetPosition1() == -1 && EnemyComponent.GetGear() < obstacleComponent.GetValue() && EnemyComponent.GetPosition2() == -1 && EnemyComponent.GetGear() < obstacleComponent.GetValue())
-				{
-					EnemyComponent.SetAcc();
-				}
-				else if (EnemyComponent.GetPosition1() == -1 && EnemyComponent.GetGear() > obstacleComponent.GetValue() && EnemyComponent.GetPosition2() == -1 && EnemyComponent.GetGear() > obstacleComponent.GetValue())
-				{
-					EnemyComponent.SetBrk();
-				}
-			}
-
-			if (obstacleComponent.GetObs() == 3)
-			{
-				if (abs(PlayerComponent.GetGear() - obstacleComponent.GetValue()) <= 2)
-				{
-					for (int i; i <= 5; i++)
-					{
-						if (EnemyComponent.GetCard(i, true) == 2)
-						{
-							EnemyComponent.PlayCard(i, 0);
-							break;
-						}
-					}
-				}
-				
-				if (abs(1 - obstacleComponent.GetValue()) == 0 || abs(1 - obstacleComponent.GetValue()) <= 2)
-				{
-					for (int i; i <= 5; i++)
-					{
-						if (EnemyComponent.GetCard(i, true) == 3)
-						{
-							EnemyComponent.PlayCard(i, 0);
-							break;
-						}
-					}
-				}
-
-				if (EnemyComponent.GetPosition1() == -1 && EnemyComponent.GetGear() < PlayerComponent.GetGear() || EnemyComponent.GetPosition2() == -1 && EnemyComponent.GetGear() < PlayerComponent.GetGear())
-				{
-					EnemyComponent.SetBrk();
-				}
-			}
-
-			if (EnemyComponent.GetPosition1() != -1 && EnemyComponent.GetPosition1() != -2 && EnemyComponent.GetPosition1() != -3)
-			{
-				if (EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 2)
-				{
-					PlayerComponent.ChangeGears(EnemyComponent.GetGear());
-				}
-				else if (EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 5)
-				{
-					engine.GetEvent("Sabotage").Restart();
-					PlayerComponent.SetSabo();
-				}
-			}
-
-			if (EnemyComponent.GetPosition2() != -1 && EnemyComponent.GetPosition2() != -2 && EnemyComponent.GetPosition2() != -3)
-			{
-				if (EnemyComponent.GetCard(EnemyComponent.GetPosition2(), true) == 2)
-				{
-					PlayerComponent.ChangeGears(EnemyComponent.GetGear());
-				}
-				else if (EnemyComponent.GetCard(EnemyComponent.GetPosition2(), true) == 5)
-				{
-					engine.GetEvent("Sabotage").Restart();
-					PlayerComponent.SetSabo();
-				}
-			}
-			EnemyComponent.ResolveCards();
-			PlayerComponent.SetOppGear(EnemyComponent.GetGear());
-		}
-		/*
 		if (EnemyComponent.GetSabo() == false && EnemyComponent.GetEnded() == false)
 		{
 			if (speedDemon == true)
@@ -1279,7 +1139,7 @@ int SceningTest::Update()
 			EnemyComponent.ResolveCards();
 			PlayerComponent.SetOppGear(EnemyComponent.GetGear());
 		}
-		*/
+
 		/*
 	if (showGear == false)
 	{
@@ -1409,6 +1269,8 @@ int SceningTest::Update()
 				m_Registry.get<syre::PathAnimator>(m_PCar).IncrementSegment(1);
 				m_Registry.get<syre::PathAnimator>(m_enemy).IncrementSegment(1);
 			}
+			newvol += 0.3;
+			engine.SetGlobalParameter("MusicVolume", newvol);
 			PlayerComponent.ResetTurn();
 			EnemyComponent.ResetTurn();
 			obstacleComponent.Draw();
