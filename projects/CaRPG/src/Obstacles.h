@@ -30,5 +30,6 @@ private:
 	int P1wins = 0;
 	int P2wins = 0;
 	bool End = false;
+	int size;
 	std::stack <int> Deck = {};
 };
