@@ -1003,6 +1003,7 @@ int Scene2::Update()
 	bool done = false;
 	bool Pemp = false;
 	bool Eemp = false;
+	float newvol;
 	if (start == 0)
 	{
 		start += 1;
@@ -1143,6 +1144,8 @@ int Scene2::Update()
 	{
 		if (PlayerComponent.GetScore() > floor((obstacleComponent.GetSize() / 8) * i) && PlayerComponent.GetScore() <= floor((obstacleComponent.GetSize() / 8) * (i + 1)))
 		{
+			newvol += 0.3;
+			engine.SetGlobalParameter("MusicVolume", newvol);
 			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
 			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
 			progressBar1[i].Bind();
@@ -1292,6 +1295,7 @@ int Scene2::Update()
 				}
 				else if (EnemyComponent.GetCard(EnemyComponent.GetPosition1(), true) == 5)
 				{
+					engine.GetEvent("Sabotage").Restart();
 					PlayerComponent.SetSabo();
 				}
 			}
@@ -1304,6 +1308,7 @@ int Scene2::Update()
 				}
 				else if (EnemyComponent.GetCard(EnemyComponent.GetPosition2(), true) == 5)
 				{
+					engine.GetEvent("Sabotage").Restart();
 					PlayerComponent.SetSabo();
 				}
 			}
@@ -1645,7 +1650,6 @@ int Scene2::Update()
 	g->Unbind();
 
 	shadow->BindDepthAsTexture(30);
-
 
 	DirectionalLight& tempSun = illum->GetSunRef();
 	tempSun._ambientPow = ambientOn ? 0.2f : 0.0f;

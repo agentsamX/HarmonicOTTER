@@ -8,6 +8,7 @@ Obstacles::~Obstacles()
 void Obstacles::Adddeck(int obs)
 {
 	Deck.push(obs);
+	size = Deck.size();
 }
 
 void Obstacles::Draw()
@@ -152,7 +153,7 @@ bool Obstacles::GetEnd()
 
 int Obstacles::GetSize()
 {
-	return Deck.size();
+	return size;
 }
 
 int Obstacles::GetP1wins()
