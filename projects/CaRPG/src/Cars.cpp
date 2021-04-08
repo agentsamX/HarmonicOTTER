@@ -262,7 +262,7 @@ void Cars::ResetTurn()
 	Acce = false;
 	Brake = false;
 	PEnd = false;
-	if (Turns == 2 && Quick == true)
+	if (Turns == 1 && Quick == true)
 	{
 		Turns = 0;
 		Quick = false;
