@@ -846,16 +846,15 @@ void SceningTest::Start()
 	*/
 	obstacleComponent.Adddeck(1);
 	obstacleComponent.Adddeck(0);
-	obstacleComponent.Adddeck(2);
-	obstacleComponent.Adddeck(2);
-	obstacleComponent.Adddeck(3);
 	obstacleComponent.Adddeck(1);
+	obstacleComponent.Adddeck(3);
+	obstacleComponent.Adddeck(0);
+	obstacleComponent.Adddeck(0);
 	obstacleComponent.Adddeck(0);
 	obstacleComponent.Adddeck(1);
 	obstacleComponent.Adddeck(1);
 	obstacleComponent.Adddeck(3);
-	obstacleComponent.Adddeck(2);
-	obstacleComponent.Adddeck(2);
+	obstacleComponent.Adddeck(1);
 	obstacleComponent.Adddeck(2);
 	obstacleComponent.Adddeck(2);
 	obstacleComponent.Adddeck(0);
