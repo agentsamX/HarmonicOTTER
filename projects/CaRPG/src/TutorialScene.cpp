@@ -1045,11 +1045,12 @@ int TutorialScene::Update()
 		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
 	}
 
-	float val1 = (round((float)EnemyComponent.GetScore() / (float)obstacleComponent.GetSize()) * 8 - 1);
-	if ((round((float)PlayerComponent.GetScore() / (float)obstacleComponent.GetSize()) * 8 - 1) < 0)
+	int val1 = (round((float)PlayerComponent.GetScore() / (float)obstacleComponent.GetSize() * 8) - 1);
+	if (val1 < 0)
 	{
 		val1 = 0;
 	}
+	//("%f, %f",Pl)
 
 	newvol += 0.3;
 	engine.SetGlobalParameter("MusicVolume", newvol);
@@ -1059,8 +1060,8 @@ int TutorialScene::Update()
 	m_Registry.get<syre::Mesh>(m_Pscore).Render();
 
 
-	float val2 = (round((float)EnemyComponent.GetScore() / (float)obstacleComponent.GetSize()) * 8 - 1);
-	if ((round((float)EnemyComponent.GetScore() / (float)obstacleComponent.GetSize()) * 8 - 1) < 0)
+	int val2 = (round((float)EnemyComponent.GetScore() / (float)obstacleComponent.GetSize()*8) - 1);
+	if (val2 < 0)
 	{
 		val2 = 0;
 	}
