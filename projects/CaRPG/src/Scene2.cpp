@@ -373,9 +373,9 @@ void Scene2::Start()
 	carPath.AddPoint(glm::vec3(-175.0f, -313.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	carPath.AddPoint(glm::vec3(-175.0f, -313.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)); 
 
-	carPath.AddPoint(glm::vec3(-250.0f, -313.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //rocks
+	/*carPath.AddPoint(glm::vec3(-250.0f, -313.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //rocks
 	carPath.AddPoint(glm::vec3(-250.0f, -313.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	carPath.AddPoint(glm::vec3(-250.0f, -313.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-250.0f, -313.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));*/
 
 	carPath.AddPoint(glm::vec3(-310.0f, -313.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //str
 	carPath.AddPoint(glm::vec3(-310.0f, -313.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -421,9 +421,9 @@ void Scene2::Start()
 	carPath.AddPoint(glm::vec3(-230.0f, 125.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	carPath.AddPoint(glm::vec3(-230.0f, 125.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
-	carPath.AddPoint(glm::vec3(-300.0f, 125.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //rocks 
+/*	carPath.AddPoint(glm::vec3(-300.0f, 125.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //rocks 
 	carPath.AddPoint(glm::vec3(-300.0f, 125.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	carPath.AddPoint(glm::vec3(-300.0f, 125.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	carPath.AddPoint(glm::vec3(-300.0f, 125.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));*/
 
 	carPath.AddPoint(glm::vec3(-365.0f, 125.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //str 
 	carPath.AddPoint(glm::vec3(-365.0f, 125.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -575,9 +575,9 @@ void Scene2::Start()
 	enemyCarPath.AddPoint(glm::vec3(-175.0f, -317.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	enemyCarPath.AddPoint(glm::vec3(-179.0f, -317.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	
-	enemyCarPath.AddPoint(glm::vec3(-250.0f, -317.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //rocks
+	/*enemyCarPath.AddPoint(glm::vec3(-250.0f, -317.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //rocks
 	enemyCarPath.AddPoint(glm::vec3(-250.0f, -317.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	enemyCarPath.AddPoint(glm::vec3(-250.0f, -317.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-250.0f, -317.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));*/
 								   
 	enemyCarPath.AddPoint(glm::vec3(-310.0f, -317.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //str
 	enemyCarPath.AddPoint(glm::vec3(-310.0f, -317.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -623,9 +623,9 @@ void Scene2::Start()
 	enemyCarPath.AddPoint(glm::vec3(-230.0f, 121.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	enemyCarPath.AddPoint(glm::vec3(-230.0f, 121.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 								  
-	enemyCarPath.AddPoint(glm::vec3(-300.0f, 121.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //rocks 
+	/*enemyCarPath.AddPoint(glm::vec3(-300.0f, 121.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //rocks
 	enemyCarPath.AddPoint(glm::vec3(-300.0f, 121.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	enemyCarPath.AddPoint(glm::vec3(-300.0f, 121.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	enemyCarPath.AddPoint(glm::vec3(-300.0f, 121.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));*/
 								  
 	enemyCarPath.AddPoint(glm::vec3(-365.0f, 121.f, 0.0f), glm::vec3(90.0f, 0.0f, -90.0f)); //str 
 	enemyCarPath.AddPoint(glm::vec3(-365.0f, 121.f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
