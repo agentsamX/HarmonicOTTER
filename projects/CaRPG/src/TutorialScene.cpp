@@ -1044,11 +1044,12 @@ int TutorialScene::Update()
 		m_Registry.get<syre::Mesh>(m_Gearbox).Render();
 	}
 
-	float val1 = (round((float)EnemyComponent.GetScore() / (float)obstacleComponent.GetSize()) * 8 - 1);
-	if ((round((float)PlayerComponent.GetScore() / (float)obstacleComponent.GetSize()) * 8 - 1) < 0)
+	int val1 = (round((float)PlayerComponent.GetScore() / (float)obstacleComponent.GetSize() * 8) - 1);
+	if (val1 < 0)
 	{
 		val1 = 0;
 	}
+	//("%f, %f",Pl)
 
 	flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
 	flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
@@ -1056,8 +1057,8 @@ int TutorialScene::Update()
 	m_Registry.get<syre::Mesh>(m_Pscore).Render();
 
 
-	float val2 = (round((float)EnemyComponent.GetScore() / (float)obstacleComponent.GetSize()) * 8 - 1);
-	if ((round((float)EnemyComponent.GetScore() / (float)obstacleComponent.GetSize()) * 8 - 1) < 0)
+	int val2 = (round((float)EnemyComponent.GetScore() / (float)obstacleComponent.GetSize()*8) - 1);
+	if (val2 < 0)
 	{
 		val2 = 0;
 	}
