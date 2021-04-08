@@ -708,6 +708,7 @@ int TutorialScene::Update()
 	bool done = false;
 	bool Pemp = false;
 	bool Eemp = false;
+	float newvol;
 	if (start == 0)
 	{
 		start += 1;
@@ -1046,14 +1047,16 @@ int TutorialScene::Update()
 
 	for (int i = 0; i < 8; i++)
 	{
-		if (PlayerComponent.GetScore() > floor((obstacleComponent.GetSize() / 8) * i) && PlayerComponent.GetScore() <= floor((obstacleComponent.GetSize() / 8) * (i + 1)))
+		if (PlayerComponent.GetScore() > (obstacleComponent.GetSize() / 8) * i && PlayerComponent.GetScore() <= (obstacleComponent.GetSize() / 8) * (i + 1))
 		{
+			newvol += 0.3;
+			engine.SetGlobalParameter("MusicVolume", newvol);
 			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
 			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
 			progressBar1[i].Bind();
 			m_Registry.get<syre::Mesh>(m_Pscore).Render();
 		}
-		else if (PlayerComponent.GetScore() < floor((obstacleComponent.GetSize() / 8) * i))
+		else if (PlayerComponent.GetScore() < (obstacleComponent.GetSize() / 8) * i)
 		{
 			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
 			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
@@ -1061,14 +1064,14 @@ int TutorialScene::Update()
 			m_Registry.get<syre::Mesh>(m_Pscore).Render();
 		}
 
-		if (EnemyComponent.GetScore() > floor((obstacleComponent.GetSize() / 8) * i) && EnemyComponent.GetScore() <= floor((obstacleComponent.GetSize() / 8) * (i + 1)))
+		if (EnemyComponent.GetScore() > (obstacleComponent.GetSize() / 8) * i && EnemyComponent.GetScore() <= (obstacleComponent.GetSize() / 8) * (i + 1))
 		{
 			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
 			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
 			progressBar2[i].Bind();
 			m_Registry.get<syre::Mesh>(m_Escore).Render();
 		}
-		else if (EnemyComponent.GetScore() < floor((obstacleComponent.GetSize() / 8) * i))
+		else if (EnemyComponent.GetScore() < ((obstacleComponent.GetSize() / 8) * i))
 		{
 			flatShader->SetUniformMatrix("scale", glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.1f, 0.004f)));
 			flatShader->SetUniform("offset", glm::vec2(-0.6, 0.85f));
