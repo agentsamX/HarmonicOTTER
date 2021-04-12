@@ -245,7 +245,7 @@ bool Framebuffer::CheckFBO()
 	//Check the framebuffer status
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		printf("Framebuffer is not vibing\n");
+		//printf("Framebuffer is not vibing\n");
 		return false;
 	}
 	return true;

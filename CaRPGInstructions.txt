@@ -1,17 +1,17 @@
-Welcome to our game CaRPG
+On the player's turn they can perform two actions
 
-Some general info about the Gameplay
+This includes playing cards (bottom right), using the accelerate or brake pedals (bottom left), or a combination of both
 
-1.Currently the opponent does their action before the current obstacle. To see their car's current gear level refer to the gearbox in the bottom left
+The goal is to get your gear level(bottom left in red) to match the objective in the top right
 
-2.The top right will tell the player the current obstacle and the requirements to succeed. The image in the top right is also in reference to the current obstacle
+Once the player has selected their actions they can hit end turn to move on
 
-3.Once both cars come to a stop the player may take as much time planning their strategy as they want. On the player's turn they can do a total of two actions (unless the current obstacle is a chicane (S curve) in which case they get one action)
+As the player wins turns the bar at the top will fill up
 
-4. Actions vary from playing a card or accelerating/braking (this is done by clicking the two pedals located in the bottom left corner)
+Eventually the race will finish and the player will return to the menu
 
-5. For every obstacle a victor will be decided. After the player uses both their action the game will increase their score.
+Try to complete all 3 levels
 
-6. Once all obstacles are complete the game will see whether the player or their opponent has the higher score and then finish. The winner will also be clear visually
+Completed levels cannot be played again
 
-7. The player is controlling the red car
+To access the debug menu, click the option button on the menu 10 times

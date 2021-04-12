@@ -70,14 +70,14 @@ bool Obstacles::Resolve(int pGear, int oGear)
 	{
 		if (pGear >= oGear && pGear >= Value)
 		{
-			printf("PLAYER WINS APEX\n");
-			printf("\n");
+			//printf("PLAYER WINS APEX\n");
+			//printf("\n");
 			return 1;
 		}
 		else if (pGear < oGear && oGear >= Value)
 		{
-			printf("ENEMY WINS APEX\n");
-			printf("\n");
+			//printf("ENEMY WINS APEX\n");
+			//printf("\n");
 			return 0;
 		}
 	}
@@ -85,14 +85,14 @@ bool Obstacles::Resolve(int pGear, int oGear)
 	{
 		if (abs(pGear - Value) <= abs(oGear - Value))
 		{
-			printf("PLAYER WINS HAIRPIN\n");
-			printf("\n");
+			//("PLAYER WINS HAIRPIN\n");
+			//printf("\n");
 			return 1;
 		}
 		else
 		{
-			printf("ENEMY WINS HAIRPIN\n");
-			printf("\n");
+			//printf("ENEMY WINS HAIRPIN\n");
+			//printf("\n");
 			return 0;
 		}
 	}
@@ -115,16 +115,16 @@ bool Obstacles::Resolve(int pGear, int oGear)
 			{
 				P1wins = 0;
 				P2wins = 0;
-				printf("CHICANE PLAYER WIN\n");
-				printf("\n");
+				//printf("CHICANE PLAYER WIN\n");
+				//printf("\n");
 				return 1;
 			}
 			else
 			{
 				P1wins = 0;
 				P2wins = 0;
-				printf("CHICANE ENEMY WIN\n");
-				printf("\n");
+				//printf("CHICANE ENEMY WIN\n");
+				//printf("\n");
 				return 0;
 			}
 		}
@@ -133,14 +133,14 @@ bool Obstacles::Resolve(int pGear, int oGear)
 	{
 		if (pGear < oGear)
 		{
-			printf("PLAYER WINS ROCKS\n");
-			printf("\n");
+			//printf("PLAYER WINS ROCKS\n");
+			//printf("\n");
 			return 1;
 		}
 		else
 		{
-			printf("PLAYER WINS ROCKS\n");
-			printf("\n");
+			//printf("PLAYER WINS ROCKS\n");
+			//printf("\n");
 			return 0;
 		}
 	}
